@@ -1,6 +1,6 @@
 # OFI
 
-*Introdction here*
+*Introduction here*
 
 ## Installation
 
