@@ -22,5 +22,11 @@ module Ofi
       end
     end
 
+    initializer "ofi.register_actions", :before => 'foreman_tasks.initialize_dynflow' do |app|
+      ForemanTasks.dynflow.require!
+      action_paths = %W[#{Ofi::Engine.root}/app/lib/actions]
+      ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
+    end
+
   end
 end

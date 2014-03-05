@@ -7,6 +7,10 @@
 See [How_to_Install_a_Plugin](http://projects.theforeman.org/projects/foreman/wiki/How_to_Install_a_Plugin)
 for how to install Foreman plugins
 
+Simlink `config/ofi.local.rb` to yours Foreman `bundle.d`.
+
+    ln -s ../../OFI/config/ofi.local.rb ofi.local.rb
+
 ## Usage
 
 *Usage here*
