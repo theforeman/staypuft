@@ -13,6 +13,11 @@ module Ofi
     initializer 'ofi.register_plugin', :after=> :finisher_hook do |app|
       Foreman::Plugin.register :ofi do
         requires_foreman '>= 1.4'
+        sub_menu :top_menu, :content_menu, :caption => N_('OpenStack Installer'), :after => :infrastructure_menu do
+          menu :top_menu, :openstack_deployments,
+               :url_hash => {:controller=> :openstack_deployments, :action=>:index},
+               :caption=> N_('Deployments')
+        end
       end
     end
 
