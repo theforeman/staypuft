@@ -1,11 +1,11 @@
-require File.expand_path('../lib/ofi/version', __FILE__)
+require File.expand_path('../lib/staypuft/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = 'ofi'
-  s.version     = Ofi::VERSION
+  s.name        = 'staypuft'
+  s.version     = Staypuft::VERSION
   s.date        = Date.today.to_s
-  s.authors     = ['OFI team']
-  s.email       = ['foreman-dev+ofi@googlegroups.com']
+  s.authors     = ['Staypuft team']
+  s.email       = ['foreman-dev+staypuft@googlegroups.com']
   s.homepage    = 'https://github.com/theforeman/OFI'
   s.summary     = 'OpenStack Foreman Installer'
   s.description = 'OpenStack Foreman Installer'
