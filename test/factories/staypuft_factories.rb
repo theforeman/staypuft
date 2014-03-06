@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :host do
-    name 'ofi'
+    name 'staypuft'
   end
 end

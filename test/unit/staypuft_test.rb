@@ -1,6 +1,6 @@
 require 'test_plugin_helper'
 
-class OfiTest < ActiveSupport::TestCase
+class StaypuftTest < ActiveSupport::TestCase
   setup do
     User.current = User.find_by_login "admin"
   end
