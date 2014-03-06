@@ -1,0 +1,17 @@
+<%= render :layout => 'title' do %>
+  <%= form_for(:deployment, :url => wizard_path, :method => 'PUT') do |f| %>
+    <%# base_errors_for @deployment %>
+
+    <%= openstack_deployment_wizard 1 %>
+    <%= text_f f, :name %><br />
+    <%= text_f f, :title %><br />
+
+    <div class="form_actions">
+      <%= link_to _("Cancel"), openstack_deployments_path, :confirm => _("This will clear whole deployment configuration. Are you sure?"), :class => "btn btn-danger" %>
+      <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
+        <%= _("Next") %>
+        <span class="glyphicon glyphicon-chevron-right"></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
