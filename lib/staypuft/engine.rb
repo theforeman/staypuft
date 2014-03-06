@@ -1,4 +1,4 @@
-module Ofi
+module Staypuft
   class Engine < ::Rails::Engine
 
     config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
@@ -6,12 +6,12 @@ module Ofi
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
 
     # Add any db migrations
-    initializer "ofi.load_app_instance_data" do |app|
-      app.config.paths['db/migrate'] += Ofi::Engine.paths['db/migrate'].existent
+    initializer "staypuft.load_app_instance_data" do |app|
+      app.config.paths['db/migrate'] += Staypuft::Engine.paths['db/migrate'].existent
     end
 
-    initializer 'ofi.register_plugin', :after=> :finisher_hook do |app|
-      Foreman::Plugin.register :ofi do
+    initializer 'staypuft.register_plugin', :after=> :finisher_hook do |app|
+      Foreman::Plugin.register :staypuft do
         requires_foreman '>= 1.4'
         sub_menu :top_menu, :content_menu, :caption => N_('OpenStack Installer'), :after => :infrastructure_menu do
           menu :top_menu, :openstack_deployments,
@@ -23,13 +23,13 @@ module Ofi
 
     rake_tasks do
       Rake::Task['db:seed'].enhance do
-        Ofi::Engine.load_seed
+        Staypuft::Engine.load_seed
       end
     end
 
-    initializer "ofi.register_actions", :before => 'foreman_tasks.initialize_dynflow' do |app|
+    initializer "staypuft.register_actions", :before => 'foreman_tasks.initialize_dynflow' do |app|
       ForemanTasks.dynflow.require!
-      action_paths = %W[#{Ofi::Engine.root}/app/lib/actions]
+      action_paths = %W[#{Staypuft::Engine.root}/app/lib/actions]
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
     end
 
