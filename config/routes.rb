@@ -1,4 +1,5 @@
-Staypuft::Engine.routes.draw do
-  resources :openstack_deployments
-
+Rails.application.routes.draw do
+  scope :module => :staypuft do
+    resources :openstack_deployments
+  end
 end
