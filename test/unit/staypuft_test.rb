@@ -2,7 +2,7 @@ require 'test_plugin_helper'
 
 class StaypuftTest < ActiveSupport::TestCase
   setup do
-    User.current = User.find_by_login "admin"
+    User.current = User.admin
   end
 
   test "the truth" do
