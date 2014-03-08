@@ -15,7 +15,7 @@ module Staypuft
         requires_foreman '>= 1.4'
         sub_menu :top_menu, :content_menu, :caption => N_('OpenStack Installer'), :after => :infrastructure_menu do
           menu :top_menu, :openstack_deployments,
-               :url_hash => {:controller=> :openstack_deployments, :action=>:index},
+               :url_hash => {:controller=> 'staypuft/openstack_deployments', :action=>:index},
                :caption=> N_('Deployments')
         end
       end
