@@ -15,6 +15,8 @@ module Actions
     module Host
       class PuppetRun < Dynflow::Action
 
+        middleware.use Actions::Staypuft::Middleware::AsCurrentUser
+
         def plan(host)
           Type! host, ::Host
           plan_self id: host.id
