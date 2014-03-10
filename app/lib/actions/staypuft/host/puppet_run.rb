@@ -11,14 +11,19 @@
 # http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
 
 module Actions
-  module Host
-    class PuppetRun < Dynflow::Action
-      def plan(host)
-        plan_self id: host.id
-      end
+  module Staypuft
+    module Host
+      class PuppetRun < Dynflow::Action
 
-      def run
-        ::Host.find(id).puppetrun!
+        def plan(host)
+          Type! host, ::Host
+          plan_self id: host.id
+        end
+
+        def run
+          ::Host.find(id).puppetrun!
+        end
+
       end
     end
   end
