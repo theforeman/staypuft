@@ -13,17 +13,21 @@
 module Actions
   module Staypuft
     module Host
-      class PuppetRun < Dynflow::Action
+      class PuppetRun < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
         def plan(host)
           Type! host, ::Host
-          plan_self id: host.id
+          plan_self id: host.id, name: host.name
         end
 
         def run
           ::Host.find(id).puppetrun!
+        end
+
+        def humanized_input
+          input[:name]
         end
 
       end

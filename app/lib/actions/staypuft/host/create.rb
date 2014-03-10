@@ -13,7 +13,7 @@
 module Actions
   module Staypuft
     module Host
-      class Create < Dynflow::Action
+      class Create < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
@@ -51,9 +51,13 @@ module Actions
               enabled:             true,
               provision_method:    'build')
           host.save!
-          output.update host_id: host.id
+          output.update host: { id: host.id }
 
           # TODO suspend and wait for the provisioning to finish
+        end
+
+        def humanized_input
+          input[:name]
         end
 
       end
