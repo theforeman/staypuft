@@ -3,8 +3,49 @@
     <%# base_errors_for @deployment %>
 
     <%= deployment_wizard 3 %>
-    <%= text_f f, :name %><br />
-    <%= text_f f, :title %><br />
+    <div class="form-group tabbed_side_nav_form row">
+      <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
+        <h3><%= _("Services") %></h3>
+        <li class="active"><a href="#nova" data-toggle="tab"><%= _("Nova (Compute)") %></a></li>
+        <li><a href="#glance" data-toggle="tab"><%= _("Glance (Image)") %></a></li>
+        <li><a href="#neutron" data-toggle="tab"><%= _("Neutron (Networking)") %></a></li>
+        <li><a href="#cinder" data-toggle="tab"><%= _("Cinder (Block Storage)") %></a></li>
+        <li><a href="#keystone" data-toggle="tab"><%= _("Keystone (Identity)") %></a></li>
+        <li><a href="#horizon" data-toggle="tab"><%= _("Horizon (Dashboard)") %></a></li>
+      </ul>
+
+      <div class="tab-content col-md-9">
+        <div class="tab-pane active" id="nova">
+          <h3><%= _("Nova (Compute) Service Configuration") %></h3>
+          <%= field(f, :hypervisor, :label => _('Hypervisor')) do
+              radio_button_f(f, :hypervisor, :value =>'kvm', :checked => true, :text => _("KVM"))+
+              radio_button_f(f, :hypervisor, :value =>'qemu', :checked => false, :text => _("QEMU"))
+          end %>
+          <%= text_f f, :nova_network %><br />
+        </div>
+        <div class="tab-pane" id="glance">
+          <h3><%= _("Glance (Image) Service Configuration") %></h3>
+          <%= text_f f, :name %><br />
+          <%= text_f f, :description %><br />
+        </div>
+        <div class="tab-pane" id="neutron">
+          <h3><%= _("Neutron (Networking) Service Configuration") %></h3>
+          <%= text_f f, :name %><br />
+        </div>
+        <div class="tab-pane" id="cinder">
+          <h3><%= _("Cinder (Block Storage) Service Configuration") %></h3>
+          <%= text_f f, :name %><br />
+        </div>
+        <div class="tab-pane" id="keystone">
+          <h3><%= _("Keystone (Identity) Service Configuration") %></h3>
+          <%= text_f f, :name %><br />
+        </div>
+        <div class="tab-pane" id="horizon">
+          <h3><%= _("Horizon (Dashboard) Service Configuration") %></h3>
+          <%= text_f f, :name %><br />
+        </div>
+      </div>
+    </div>
 
     <div class="form_actions">
       <a class="btn btn-default" href="<%= previous_wizard_path %>">

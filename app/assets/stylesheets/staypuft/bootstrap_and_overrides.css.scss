@@ -1,4 +1,37 @@
+@import "mixin";
+@import "colors";
+
 .well {
   padding: 19px 36px;
   background-color: #f5f5f5;
+}
+
+.tabbed_side_nav_form{
+  .nav.nav-pills.nav-stacked {
+    padding-right: 0;
+    & > li > a {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    & > li.active {
+      z-index: 1;
+      & > a:after {
+        content: "";
+        position: absolute;
+        top: 0px;
+        right:-15px;
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        border-width: 20px 0 20px 15px;
+        border-color: transparent transparent transparent rgb(66, 139, 202);
+        -webkit-transform:rotate(360deg);
+      }
+    }
+  }
+  .tab-content {
+    border-left: 1px solid #999;
+    background: #eee;
+    box-shadow: -3px 0px 4px -3px rgba(50, 50, 50, 0.75);
+  }
 }
