@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   scope :module => :staypuft do
-    resources :openstack_deployments
-    resources :openstack_deployment_steps
+    resources :deployments
+    resources :deployment_steps
   end
 end

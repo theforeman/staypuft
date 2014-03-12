@@ -1,0 +1,8 @@
+<% title _("OpenStack Deployments") %>
+<% title_actions display_link_if_authorized(_("New Deployment"), hash_for_deployment_steps_path, :class => 'btn-success'), help_path %>
+
+<%= alert :header => _('There are no deployments yet.'),
+          :text   => _('Please create at least one Deployment.'),
+          :close  => false,
+          :class  => 'alert-info' %>
+

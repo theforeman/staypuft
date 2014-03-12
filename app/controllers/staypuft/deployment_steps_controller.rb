@@ -1,16 +1,16 @@
 module Staypuft
-  class OpenstackDeploymentStepsController < ApplicationController
+  class DeploymentStepsController < ApplicationController
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
     def show
-      # @deployment = OpenstackDeployment.new
+      # @deployment = Deployment.new
 
       render_wizard
     end
 
     def update
-      # TODO(jtomasek): delete this info when OpenstackDeployment model is done
+      # TODO(jtomasek): delete this info when Deployment model is done
       # we can use 'case' if we need to distinquish among steps
       # render_wizard @deployment will try to call save on that object
       # if validations fail, wizard renders submitted steps
@@ -30,7 +30,7 @@ module Staypuft
   private
 
     def redirect_to_finish_wizard
-      redirect_to openstack_deployments_path, :notice => "Deployment has been succesfully configured."
+      redirect_to deployments_path, :notice => "Deployment has been succesfully configured."
     end
   end
 end

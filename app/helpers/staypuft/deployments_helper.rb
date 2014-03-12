@@ -1,6 +1,6 @@
 module Staypuft
-  module OpenstackDeploymentsHelper
-    def openstack_deployment_wizard(step)
+  module DeploymentsHelper
+    def deployment_wizard(step)
       wizard_header(
         step,
          _("Deployment Settings"),
