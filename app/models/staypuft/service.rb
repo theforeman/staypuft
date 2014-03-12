@@ -3,8 +3,8 @@ module Staypuft
     has_many :role_services, :dependent => :destroy
     has_many :roles, :through => :role_services
 
-    #has_many :service_classes, :dependent => :destroy
-    #has_many :puppetclasses, :through => :service_classes
+    has_many :service_classes, :dependent => :destroy
+    has_many :puppetclasses, :through => :service_classes
 
     attr_accessible :description, :name
 
