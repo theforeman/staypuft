@@ -1,7 +1,7 @@
 module Staypuft
   class Role < ActiveRecord::Base
     has_many :layout_roles, :dependent => :destroy
-    has_many :layouts, :through => layout_roles
+    has_many :layouts, :through => :layout_roles
 
     has_many :role_classes, :dependent => :destroy
     has_many :puppetclasses, :through => :role_classes
