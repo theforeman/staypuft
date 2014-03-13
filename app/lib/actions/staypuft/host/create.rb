@@ -17,11 +17,11 @@ module Actions
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
-        def plan(name, hostgroup, compute_resource)
+        def plan(name, hostgroup, compute_resource, options = {})
           # TODO: set action_subject
           # TODO: compute_resource or mac
 
-          Type! hostgroup, Hostgroup
+          Type! hostgroup, ::Hostgroup
           Type! compute_resource, ComputeResource
 
           compute_attributes = hostgroup.
@@ -31,10 +31,14 @@ module Actions
               first.
               vm_attrs
 
+          options = { :start => true }.merge options
+
           plan_self name:                name,
                     hostgroup_id:        hostgroup.id,
                     compute_resource_id: compute_resource.id,
-                    compute_attributes:  compute_attributes
+                    compute_attributes:  compute_attributes,
+                    options:             options
+
         end
 
         def run
@@ -43,17 +47,16 @@ module Actions
               name:                input[:name],
               hostgroup_id:        input[:hostgroup_id],
               compute_resource_id: input[:compute_resource_id],
-              compute_attributes:  input[:compute_attributes].
-                                       # for libvirt to start the machine, ugh, it has to be string
-                                       merge(start: '1'),
-              build:               true,
+              compute_attributes:  input[:compute_attributes],
+              build:               false,
               managed:             true,
-              enabled:             true,
-              provision_method:    'build')
+              enabled:             true)
           host.save!
-          output.update host: { id: host.id }
-
-          # TODO suspend and wait for the provisioning to finish
+          host.power.start if input[:options][:start]
+          output.update host: { id:   host.id,
+                                name: host.name,
+                                ip:   host.ip,
+                                mac:  host.mac }
         end
 
         def humanized_input
