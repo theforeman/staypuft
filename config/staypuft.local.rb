@@ -1,1 +1,1 @@
-gemspec path: '../Staypuft'
+gemspec path: '../staypuft'
