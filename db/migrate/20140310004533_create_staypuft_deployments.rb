@@ -6,6 +6,9 @@ class CreateStaypuftDeployments < ActiveRecord::Migration
       t.references :layout, :null => false
       t.foreign_key :staypuft_layouts, column: :layout_id, :name => "staypuft_deployments_layout_id_fk"
 
+      t.references :hostgroup, :null => false
+      t.foreign_key :hostgroups, :name => "staypuft_deployments_hostgroup_id_fk"
+
       t.timestamps
     end
 

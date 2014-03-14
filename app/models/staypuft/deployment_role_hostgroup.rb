@@ -1,5 +1,5 @@
 module Staypuft
-  class DeploymentHostgroup < ActiveRecord::Base
+  class DeploymentRoleHostgroup < ActiveRecord::Base
     attr_accessible :deployment, :deployment_id, :hostgroup, :hostgroup_id
 
     belongs_to :deployment

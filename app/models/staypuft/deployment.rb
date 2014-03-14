@@ -1,10 +1,12 @@
 module Staypuft
   class Deployment < ActiveRecord::Base
-    belongs_to :layout
     attr_accessible :description, :name, :layout_id, :layout
 
-    has_many :deployment_hostgroups, :dependent => :destroy
-    has_many :hostgroups, :through => :deployment_hostgroups
+    belongs_to :layout
+    belongs_to :hostgroup
+
+    has_many :deployment_role_hostgroups, :dependent => :destroy
+    has_many :child_hostgroups, :through => :deployment_role_hostgroups, :class_name => 'Hostgroup'
 
     validates  :name, :presence => true, :uniqueness => true
 
