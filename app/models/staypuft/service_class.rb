@@ -5,8 +5,9 @@ module Staypuft
     belongs_to :service
     belongs_to :puppetclass
 
-    validates :service_id, :presence => true
-    validates :puppetclass_id, :presence => true, :uniqueness => {:scope => :service_id}
+    validates :service, :presence => true
+    validates :puppetclass, :presence => true
+    validates :puppetclass_id, :uniqueness => {:scope => :service_id}
 
   end
 end
