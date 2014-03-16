@@ -5,9 +5,10 @@ module Staypuft
     has_many :layout_roles, :dependent => :destroy
     has_many :roles, :through => :layout_roles
 
-    attr_accessible :description, :name
+    attr_accessible :description, :name, :networking
 
-    validates  :name, :presence => true, :uniqueness => true
+    validates  :name, :presence => true, :uniqueness =>  {:scope => :networking}
+    validates :networking, :presence => true, inclusion => {:in =>['nova', 'neutron']}
 
   end
 end
