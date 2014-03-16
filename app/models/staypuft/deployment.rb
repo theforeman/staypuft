@@ -7,6 +7,7 @@ module Staypuft
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
     has_many :child_hostgroups, :through => :deployment_role_hostgroups, :class_name => 'Hostgroup'
+    has_many :roles, :through => :child_hostgroups
 
     validates  :name, :presence => true, :uniqueness => true
 

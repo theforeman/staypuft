@@ -8,6 +8,7 @@ module Staypuft
 
     has_many :hostgroup_roles, :dependent => :destroy
     has_many :hostgroups, :through => :hostgroup_roles
+    has_many :deployments, :through => :child_hostgroups
 
     has_many :role_services, :dependent => :destroy
     has_many :services, :through => :role_services
