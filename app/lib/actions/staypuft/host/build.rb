@@ -23,20 +23,32 @@ module Actions
 
         def run
           host = ::Host.find(input[:host_id])
-          host.setBuild or fail Foreman::Exception, 'setting build flag failed'
+          host.setBuild or fail(Staypuft::Exception, 'Setting Build Flag Failed')
 
-          # TODO: find out how to reliably restart a host (virt and bare)
-          if host.power.state == 'running'
-            host.power.reset or fail Foreman::Exception, 'resetting host failed'
+          check_expected_state(host.power.state)
+          if ['running', 'on'].include?(host.power.state)
+            if !host.power.reset
+              fail(::Staypuft::Exception, "Resetting Host Failed")
+            end
           end
 
-          # reset leaves it shutoff on libvirt
-          if host.power.state == 'shutoff'
-            host.power.start or fail Foreman::Exception, 'starting host failed'
+          # FIXME host.power.reset leaves the host in "shutdown" state for 
+          # libvirt not tested in BMC.  The following code makes sure the host
+          # starts again
+          check_expected_state(host.power.state)
+          if ['shutoff', 'off'].include?(host.power.state)
+            host.power.start or fail(::Staypuft::Exception, "Starting Host Failed")
+          end
+
+        end
+
+        private
+        def check_expected_state(state)
+          if !['running', 'on', 'cycle', 'shutdown', 'off'].include?(state.downcase)
+            raise(::Staypuft::Exception, "Unexpected Host Power State: #{state}")
           end
         end
       end
-
     end
   end
 end

@@ -5,6 +5,7 @@ module Staypuft
     config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
+    config.autoload_paths += Dir["#{config.root}/app/lib"]
 
     # Add any db migrations
     initializer "staypuft.load_app_instance_data" do |app|
