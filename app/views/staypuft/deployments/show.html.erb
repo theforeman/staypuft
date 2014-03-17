@@ -1,0 +1,79 @@
+<% title _("Deployment name goes here") %>
+<% title_actions display_link_if_authorized(_("Deploy changes"), hash_for_deployment_steps_path, :class => 'btn-success'), help_path %>
+
+<div class="row tabbed_side_nav_table">
+  <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">
+    <h3><%= _("Host Groups") %></h3>
+    <li class="active">
+      <a href="#controller" data-toggle="tab" class="roles_list">
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-ok"></span><span>0</span></div>
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-warning-sign"><span>0</span></div>
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-time"><span>0</span></div>
+        <div class="col-xs-6"><%= _("Controller") %></div>
+        <span class="clearfix"></span>
+      </a>
+    </li>
+    <li>
+      <a href="#network" data-toggle="tab" class="roles_list">
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-ok"></span><span>0</span></div>
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-warning-sign"><span>0</span></div>
+        <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-time"><span>0</span></div>
+        <div class="col-xs-6"><%= _("Network") %></div>
+        <span class="clearfix"></span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content col-md-8">
+    <div class="tab-pane active" id="controller">
+      <h3><%= _("Available Hosts") %></h3>
+      <%= form_for(:host_group) do |f| %>
+        <p>
+          <%= f.submit _("Apply"), :class => "btn btn-primary btn-sm" %>
+        </p>
+        <%= f.fields_for :hosts do |host_form| %>
+          <table class="table table-bordered table-striped table-condensed">
+            <tr>
+              <th>
+                <%= check_box_tag :check_all %>
+              </th>
+              <th><%= sort :label, :as => _('Host MAC Address') %></th>
+              <th><%= sort :label, :as => _('Host IP Address') %></th>
+            </tr>
+            <tr>
+              <td>
+                <%= check_box_tag "hostgroup[host_ids][]", 1, true , :id => "hostgroup_host_ids_#{1}" %>
+              </td>
+              <td>44:1e:a1:71:a9:be</td>
+              <td>10.35.160.11</td>
+            </tr>
+            <tr>
+              <td>
+                <%= check_box_tag "hostgroup[host_ids][]", 2, true , :id => "hostgroup_host_ids_#{2}" %>
+              </td>
+              <td>44:1e:a1:71:a9:be</td>
+              <td>10.35.160.11</td>
+            </tr>
+            <tr>
+              <td>
+                <%= check_box_tag "hostgroup[host_ids][]", 3, false , :id => "hostgroup_host_ids_#{3}" %>
+              </td>
+              <td>44:1e:a1:71:a9:be</td>
+              <td>10.35.160.11</td>
+            </tr>
+            <tr>
+              <td>
+                <%= check_box_tag "hostgroup[host_ids][]", 4, false , :id => "hostgroup_host_ids_#{4}" %>
+              </td>
+              <td>44:1e:a1:71:a9:be</td>
+              <td>10.35.160.11</td>
+            </tr>
+          </table>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="tab-pane" id="network">
+      <h3><%= _("Available Hosts") %></h3>
+    </div>
+  </div>
+</div>
