@@ -31,15 +31,13 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 -   Working provisioning setup.
 -   Defined two `Hostgroup`s which are able to provision `Host`s by setting just name, hostgroup, and compute_resource (tested with libvirt).
 
+        compute_resource = ComputeResource.find_by_name!(ENV['COMPUTE_RESOURCE'] || 'Libvirt')
+        hostgroup1       = ::Hostgroup.find_by_name!(ENV['HOSTGROUP1'] || 'integration-test-1')
+        hostgroup2       = ::Hostgroup.find_by_name!(ENV['HOSTGROUP2'] || 'integration-test-2')
+
 ### Run
 
-_temporary_
-
-There is `app/lib/actions/staypuft/test.rb` file defining `Actions::Staypuft#test` and `#test2` methods to test the actions. _Please see the source code for methods signatures._
-
--   run console `rails c`
--   run `Actions::Staypuft#test` to provision just one host from one hostgroup
--   run `Actions::Staypuft#tes2` to provision 3 hosts from 2 different hostgroups in given order
+Use `rake staypuft:orchestration_poc` to run the POC. Use option `TEST=simple` or `TEST=complex` to choose which one.
 
 The progress of the deployment can be mointored at:
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>

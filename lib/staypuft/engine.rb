@@ -26,6 +26,7 @@ module Staypuft
       Rake::Task['db:seed'].enhance do
         Staypuft::Engine.load_seed
       end
+      load "#{Staypuft::Engine.root}/lib/staypuft/tasks/orchestration.rake"
     end
 
     initializer "staypuft.register_actions", :before => 'foreman_tasks.initialize_dynflow' do |app|

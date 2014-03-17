@@ -23,9 +23,9 @@ module Actions
 
           # expecting roles to be ordered by dependency
           # TODO: where is the order stored? acts_as_list in Role scoped by layout_id?
-          hostgroups = deployment.layout.ordered_roles.map(&:hostgroup)
+          hostgroups = deployment.layout.ordered_roles.map { |role| role.hostgroup(deployment) }
 
-          plan_action DeployHostgroups, hostgroups
+          plan_action Hostgroup::OrderedDeploy, hostgroups
         end
       end
     end
