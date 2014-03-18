@@ -34,6 +34,10 @@ module Staypuft
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
     end
 
+    initializer "staypuft.add_namespaced_assets" do |app|
+      app.config.assets.paths << "#{Staypuft::Engine.root}/app/assets/stylesheets/staypuft"
+    end
+
   end
 
   def table_name_prefix

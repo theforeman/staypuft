@@ -11,3 +11,14 @@
  *= require_self
  *= require_tree .
  */
+
+//@import "bootstrap";
+
+.service-box {
+  width: 200px;
+  display: block;
+  float: left;
+  height: 300px;
+  min-height: 200px;
+  margin-right: 10px;
+}

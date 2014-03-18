@@ -1,4 +1,4 @@
-@import "mixin";
+@import "bootstrap/mixins";
 @import "colors";
 
 .well {
@@ -34,4 +34,10 @@
     background: #eee;
     box-shadow: -3px 0px 4px -3px rgba(50, 50, 50, 0.75);
   }
+}
+
+.wizard {
+  width: 675px;
+  display: block;
+  @include center-block;
 }
