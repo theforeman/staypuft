@@ -3,8 +3,82 @@
     <%# base_errors_for @deployment %>
 
     <%= deployment_wizard 2 %>
-    <%= text_f f, :name %><br />
-    <%= text_f f, :title %><br />
+    <h3><%= _("Host Groups & Available Services") %></h3>
+    <!-- Remove this and use whatever was selected for :distributed previously -->
+    <h4><%= _("Distributed with High Availability") %></h4>
+    <!--<h4><%# f.distributed %></h4>-->
+
+    <div class="panel panel-default service-box">
+      <div class="panel-heading"><%= _("Controller") %></div>
+      <div class="panel-body">
+        <%= f.label :qpid, "Qpid", :class=> "checkbox inline"  do %>
+         <%= f.check_box(:qpid, :checked => true) %>Qpid&trade;
+        <% end %>
+        <%= f.label :mysql,  "MySQL", :class=> "checkbox inline" do %>
+         <%= f.check_box(:mysql, :checked => true) %>MySQL
+        <% end %>
+        <%= f.label :keystone,  "Keystone", :class=> "checkbox inline" do %>
+         <%= f.check_box(:keystone, :checked => true) %>Keystone
+        <% end %>
+        <%= f.label :nova_scheduler, "Nova Scheduler", :class=> "checkbox inline" do %>
+         <%= f.check_box(:nova_scheduler, :checked => true) %>Nova Scheduler
+        <% end %>
+        <%= f.label :nova_api,  "Nova API", :class=> "checkbox inline" do %>
+         <%= f.check_box(:nova_api, :checked => true) %>Nova API
+        <% end %>
+        <%= f.label :glance,  "Glance", :class=> "checkbox inline" do %>
+         <%= f.check_box(:glance, :checked => true) %>Glance
+        <% end %>
+        <%= f.label :ceilometer,  "Ceilometer", :class=> "checkbox inline" do %>
+         <%= f.check_box(:ceilometer, :checked => true) %>Ceilometer
+        <% end %>
+       </div>
+    </div>
+
+    <div class="panel panel-default service-box">
+      <div class="panel-heading"><%= _("Network") %></div>
+      <div class="panel-body">
+        <%= f.label :neutron,  "Neutron - L3", :class=> "checkbox inline" do %>
+         <%= f.check_box(:neutron, :checked => true) %>Neutron - L3
+        <% end %>
+        <%= f.label :dhcp,  "DHCP", :class=> "checkbox inline" do %>
+         <%= f.check_box(:dhcp, :checked => true) %>DHCP
+        <% end %>
+        <%= f.label :ovs,  "OVS", :class=> "checkbox inline" do %>
+         <%= f.check_box(:ovs, :checked => true) %>OVS
+        <% end %>
+       </div>
+    </div>
+
+    <div class="panel panel-default service-box">
+      <div class="panel-heading"><%= _("Compute") %></div>
+      <div class="panel-body">
+        <%= f.label :nova_compute,  "Nova Compute", :class=> "checkbox inline" do %>
+         <%= f.check_box(:nova_compute, :checked => true) %>Nova Compute
+        <% end %>
+        <%= f.label :neutron_ovs_agent,  "Neutron OVS Agent", :class=> "checkbox inline" do %>
+         <%= f.check_box(:neutron_ovs_agent, :checked => true) %>Neutron OVS Agent
+        <% end %>
+       </div>
+    </div>
+
+    <div class="panel panel-default service-box">
+      <div class="panel-heading"><%= _("Volume Storage") %></div>
+      <div class="panel-body">
+        <%= f.label :cinder,  "Cinder", :class=> "checkbox inline" do %>
+         <%= f.check_box(:cinder, :checked => true) %>Cinder
+        <% end %>
+       </div>
+    </div>
+
+    <div class="panel panel-default service-box">
+      <div class="panel-heading"><%= _("Object Storage") %></div>
+      <div class="panel-body">
+        <%= f.label :swift, :class=> "checkbox inline" do %>
+          <%= f.check_box(:swift, :checked => true) %>Swift
+        <% end %>
+      </div>
+    </div>
 
     <div class="form_actions">
       <a class="btn btn-default" href="<%= previous_wizard_path %>">
