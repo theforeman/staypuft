@@ -1,6 +1,6 @@
 module Staypuft
+  ENGINE_NAME = "staypuft"
   class Engine < ::Rails::Engine
-    isolate_namespace Staypuft
 
     config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
@@ -35,4 +35,17 @@ module Staypuft
     end
 
   end
+
+  def table_name_prefix
+    Staypuft::ENGINE_NAME + '_'
+  end
+
+  def self.table_name_prefix
+    Staypuft::ENGINE_NAME + '_'
+  end
+
+  def use_relative_model_naming
+    true
+  end
+
 end
