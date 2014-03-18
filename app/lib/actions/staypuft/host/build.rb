@@ -43,8 +43,9 @@ module Actions
         end
 
         private
+
         def check_expected_state(state)
-          if !['running', 'on', 'cycle', 'shutdown', 'off'].include?(state.downcase)
+          if !%w(running on cycle shutoff off).include?(state.downcase)
             raise(::Staypuft::Exception, "Unexpected Host Power State: #{state}")
           end
         end
