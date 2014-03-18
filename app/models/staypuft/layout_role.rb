@@ -7,6 +7,7 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :role, :presence => true, :uniqueness => {:scope => :layout}
+    validates  :deploy_order, :presence => true, :uniqueness => true
 
   end
 end
