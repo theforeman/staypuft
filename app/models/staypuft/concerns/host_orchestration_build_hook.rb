@@ -5,6 +5,7 @@ module Staypuft
 
       included do
         define_model_callbacks :built, :only => :after
+        # TODO open Foreman PR and add a check to remove it after migration to Foreman 1.5
         after_commit :run_built_hooks
         after_built :wake_up_orchestration
       end

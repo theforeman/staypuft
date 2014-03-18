@@ -23,7 +23,7 @@ module Actions
 
         def run
           host = ::Host.find(input[:host_id])
-          host.setBuild or fail(Staypuft::Exception, 'Setting Build Flag Failed')
+          host.setBuild or fail(::Staypuft::Exception, 'Setting Build Flag Failed')
 
           check_expected_state(host.power.state)
           if ['running', 'on'].include?(host.power.state)

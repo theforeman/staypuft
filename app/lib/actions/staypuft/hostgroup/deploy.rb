@@ -17,18 +17,18 @@ module Actions
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
-        def plan(hostgroup)
+        def plan(hostgroup, hosts)
           Type! hostgroup, ::Hostgroup
+          (Type! hosts, Array).all? { |v| Type! v, ::Host::Base }
 
           input.update id: hostgroup.id, name: hostgroup.name
 
           # hostgroup.hosts returns already converted hosts from Host::Discovered with build flag
           # set to false so they are not built when assigned to the hostgroup in wizard
-          hostgroup.hosts.each do |host|
+          # run Hostgroup's Hosts filtered by hosts
+          (hostgroup.hosts & hosts).each do |host|
             # planned in concurrence
-            # do not touch already installed modules
-            # TODO: add better way how to filter hosts (scenarios: redeploy, adding single host when scaling)
-            plan_action Host::Deploy, host unless host.installed_at
+            plan_action Host::Deploy, host
           end
         end
 

@@ -18,12 +18,13 @@ module Actions
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
-        def plan(hostgroups)
+        def plan(hostgroups, hosts = hostgroups.inject([]) { |a, hg| a + hg.hosts })
           (Type! hostgroups, Array).all? { |v| Type! v, ::Hostgroup }
+          (Type! hosts, Array).all? { |v| Type! v, ::Host::Base }
 
           sequence do
             hostgroups.each do |hostgroup|
-              plan_action Hostgroup::Deploy, hostgroup
+              plan_action Hostgroup::Deploy, hostgroup, hosts
             end
           end
         end
