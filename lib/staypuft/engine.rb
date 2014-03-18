@@ -12,13 +12,13 @@ module Staypuft
       app.config.paths['db/migrate'] += Staypuft::Engine.paths['db/migrate'].existent
     end
 
-    initializer 'staypuft.register_plugin', :after=> :finisher_hook do |app|
+    initializer 'staypuft.register_plugin', :after => :finisher_hook do |app|
       Foreman::Plugin.register :staypuft do
         requires_foreman '>= 1.4'
         sub_menu :top_menu, :content_menu, :caption => N_('OpenStack Installer'), :after => :infrastructure_menu do
           menu :top_menu, :openstack_deployments,
-               :url_hash => {:controller=> 'staypuft/deployments', :action=>:index},
-               :caption=> N_('Deployments')
+               :url_hash => { :controller => 'staypuft/deployments', :action => :index },
+               :caption  => N_('Deployments')
         end
       end
     end

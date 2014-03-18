@@ -26,9 +26,9 @@ module Actions
           host.setBuild or fail(::Staypuft::Exception, 'Setting Build Flag Failed')
 
           check_expected_state(host.power.state)
-          if ['running', 'on'].include?(host.power.state)
+          if %w(running on).include?(host.power.state)
             if !host.power.reset
-              fail(::Staypuft::Exception, "Resetting Host Failed")
+              fail(::Staypuft::Exception, 'Resetting Host Failed')
             end
           end
 
@@ -36,8 +36,8 @@ module Actions
           # libvirt not tested in BMC.  The following code makes sure the host
           # starts again
           check_expected_state(host.power.state)
-          if ['shutoff', 'off'].include?(host.power.state)
-            host.power.start or fail(::Staypuft::Exception, "Starting Host Failed")
+          if %w(shutoff off).include?(host.power.state)
+            host.power.start or fail(::Staypuft::Exception, 'Starting Host Failed')
           end
 
         end
