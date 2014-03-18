@@ -22,17 +22,21 @@ module Staypuft
       end
     end
 
+    config.to_prepare do
+      ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
+    end
+
     rake_tasks do
       Rake::Task['db:seed'].enhance do
         Staypuft::Engine.load_seed
       end
-      load "#{Staypuft::Engine.root}/lib/staypuft/tasks/orchestration.rake"
     end
 
     initializer "staypuft.register_actions", :before => 'foreman_tasks.initialize_dynflow' do |app|
       ForemanTasks.dynflow.require!
       action_paths = %W[#{Staypuft::Engine.root}/app/lib/actions]
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
+      ForemanTasks.dynflow.config.remote = true
     end
 
   end

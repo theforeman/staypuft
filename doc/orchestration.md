@@ -29,6 +29,7 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 ### Requirements
 
 -   Working provisioning setup.
+-   Running Dynflow executor.
 -   Defined two `Hostgroup`s which are able to provision `Host`s by setting just name, hostgroup, and compute_resource (tested with libvirt).
 
         compute_resource = ComputeResource.find_by_name!(ENV['COMPUTE_RESOURCE'] || 'Libvirt')
@@ -37,7 +38,8 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 
 ### Run
 
-Use `rake staypuft:orchestration_poc` to run the POC. Use option `TEST=simple` or `TEST=complex` to choose which one.
+Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
+Run `rails runner ../Staypuft/scripts/orchestration_poc.rb` to run the POC. Use environment variables `TEST=simple` or `TEST=complex` to choose which test to run.
 
 The progress of the deployment can be mointored at:
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>

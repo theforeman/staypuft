@@ -13,42 +13,31 @@
 module Actions
   module Staypuft
     module Host
-      # TODO: switch to using callbacks
+
       class WaitUntilInstalled < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
-        include Dynflow::Action::Polling
+
+        def run(event = nil)
+          case event
+          when nil
+            suspend do |suspended_action|
+              Rails.cache.write(
+                  ::Staypuft::Concerns::HostOrchestrationBuildHook.cache_id(input[:host_id]),
+                  { execution_plan_id: suspended_action.execution_plan_id,
+                    step_id:           suspended_action.step_id })
+            end
+          when Hash
+            output[:installed_at] = event.fetch(:installed_at).to_s
+          else
+            raise TypeError
+          end
+        end
 
         def plan(host_id)
           plan_self host_id: host_id
         end
 
-        def external_task
-          output[:installed_at]
-        end
-
-        def done?
-          !!external_task # converting to boolean
-        end
-
-        private
-
-        def invoke_external_task
-          nil
-        end
-
-        def external_task=(external_task_data)
-          output[:installed_at] = external_task_data
-        end
-
-        def poll_external_task
-          time =::Host.find(input[:host_id]).installed_at
-          time ? time.to_s : nil
-        end
-
-        def poll_interval
-          5
-        end
       end
     end
   end
