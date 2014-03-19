@@ -1,2 +1,2 @@
 # enabling puppet run'
-Setting['puppetrun'] = true
+#Setting['puppetrun'] = true
