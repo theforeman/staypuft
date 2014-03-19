@@ -4,16 +4,7 @@ module Staypuft
       extend ActiveSupport::Concern
 
       included do
-        define_model_callbacks :built, :only => :after
-        # TODO open Foreman PR and add a check to remove it after migration to Foreman 1.5
-        after_commit :run_built_hooks
-        after_built :wake_up_orchestration
-      end
-
-      def run_built_hooks
-        if previous_changes[:build] == [true, false] && installed_at
-          run_callbacks :built
-        end
+        before_provision :wake_up_orchestration
       end
 
       def wake_up_orchestration
