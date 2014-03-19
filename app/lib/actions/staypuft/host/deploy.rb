@@ -23,7 +23,7 @@ module Actions
           sequence do
             plan_action Host::Build, host.id
             plan_action Host::WaitUntilInstalled, host.id
-            # TODO: wait until host is restarted after provisioning (wait for report)
+            plan_action Host::WaitUntilHostReady, host.id
           end
         end
 
