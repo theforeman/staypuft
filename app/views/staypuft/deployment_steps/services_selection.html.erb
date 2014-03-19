@@ -9,73 +9,73 @@
     <!--<h4><%# f.distributed %></h4>-->
 
     <div class="panel panel-default service-box">
-      <div class="panel-heading"><%= _("Controller") %></div>
+      <div class="panel-heading"><strong><%= _("Controller") %></strong></div>
       <div class="panel-body">
         <%= f.label :qpid, "Qpid", :class=> "checkbox inline"  do %>
-         <%= f.check_box(:qpid, :checked => true) %>Qpid&trade;
+         <%= f.check_box(:qpid, :checked => true, :disabled => "disabled") %>Qpid&trade;
         <% end %>
         <%= f.label :mysql,  "MySQL", :class=> "checkbox inline" do %>
-         <%= f.check_box(:mysql, :checked => true) %>MySQL
+         <%= f.check_box(:mysql, :checked => true, :disabled => "disabled") %>MySQL
         <% end %>
         <%= f.label :keystone,  "Keystone", :class=> "checkbox inline" do %>
-         <%= f.check_box(:keystone, :checked => true) %>Keystone
+         <%= f.check_box(:keystone, :checked => true, :disabled => "disabled") %>Keystone
         <% end %>
         <%= f.label :nova_scheduler, "Nova Scheduler", :class=> "checkbox inline" do %>
-         <%= f.check_box(:nova_scheduler, :checked => true) %>Nova Scheduler
+         <%= f.check_box(:nova_scheduler, :checked => true, :disabled => "disabled") %>Nova Scheduler
         <% end %>
         <%= f.label :nova_api,  "Nova API", :class=> "checkbox inline" do %>
-         <%= f.check_box(:nova_api, :checked => true) %>Nova API
+         <%= f.check_box(:nova_api, :checked => true, :disabled => "disabled") %>Nova API
         <% end %>
         <%= f.label :glance,  "Glance", :class=> "checkbox inline" do %>
-         <%= f.check_box(:glance, :checked => true) %>Glance
+         <%= f.check_box(:glance, :checked => true, :disabled => "disabled") %>Glance
         <% end %>
         <%= f.label :ceilometer,  "Ceilometer", :class=> "checkbox inline" do %>
-         <%= f.check_box(:ceilometer, :checked => true) %>Ceilometer
+         <%= f.check_box(:ceilometer, :checked => true, :disabled => "disabled") %>Ceilometer
         <% end %>
        </div>
     </div>
 
     <div class="panel panel-default service-box">
-      <div class="panel-heading"><%= _("Network") %></div>
+      <div class="panel-heading"><strong><%= _("Network") %></strong></div>
       <div class="panel-body">
         <%= f.label :neutron,  "Neutron - L3", :class=> "checkbox inline" do %>
-         <%= f.check_box(:neutron, :checked => true) %>Neutron - L3
+         <%= f.check_box(:neutron, :checked => true, :disabled => "disabled") %>Neutron - L3
         <% end %>
         <%= f.label :dhcp,  "DHCP", :class=> "checkbox inline" do %>
-         <%= f.check_box(:dhcp, :checked => true) %>DHCP
+         <%= f.check_box(:dhcp, :checked => true, :disabled => "disabled") %>DHCP
         <% end %>
         <%= f.label :ovs,  "OVS", :class=> "checkbox inline" do %>
-         <%= f.check_box(:ovs, :checked => true) %>OVS
+         <%= f.check_box(:ovs, :checked => true, :disabled => "disabled") %>OVS
         <% end %>
        </div>
     </div>
 
     <div class="panel panel-default service-box">
-      <div class="panel-heading"><%= _("Compute") %></div>
+      <div class="panel-heading"><strong><%= _("Compute") %></strong></div>
       <div class="panel-body">
         <%= f.label :nova_compute,  "Nova Compute", :class=> "checkbox inline" do %>
-         <%= f.check_box(:nova_compute, :checked => true) %>Nova Compute
+         <%= f.check_box(:nova_compute, :checked => true, :disabled => "disabled") %>Nova Compute
         <% end %>
         <%= f.label :neutron_ovs_agent,  "Neutron OVS Agent", :class=> "checkbox inline" do %>
-         <%= f.check_box(:neutron_ovs_agent, :checked => true) %>Neutron OVS Agent
+         <%= f.check_box(:neutron_ovs_agent, :checked => true, :disabled => "disabled") %>Neutron OVS Agent
         <% end %>
        </div>
     </div>
 
     <div class="panel panel-default service-box">
-      <div class="panel-heading"><%= _("Volume Storage") %></div>
+      <div class="panel-heading"><strong><%= _("Volume Storage") %></strong></div>
       <div class="panel-body">
         <%= f.label :cinder,  "Cinder", :class=> "checkbox inline" do %>
-         <%= f.check_box(:cinder, :checked => true) %>Cinder
+         <%= f.check_box(:cinder, :checked => true, :disabled => "disabled") %>Cinder
         <% end %>
        </div>
     </div>
 
     <div class="panel panel-default service-box">
-      <div class="panel-heading"><%= _("Object Storage") %></div>
+      <div class="panel-heading"><strong><%= _("Object Storage") %></strong></div>
       <div class="panel-body">
         <%= f.label :swift, :class=> "checkbox inline" do %>
-          <%= f.check_box(:swift, :checked => true) %>Swift
+          <%= f.check_box(:swift, :checked => true, :disabled => "disabled") %>Swift
         <% end %>
       </div>
     </div>
