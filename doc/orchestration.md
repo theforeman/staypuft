@@ -39,7 +39,7 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 ### Run
 
 Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
-Run `rails runner ../Staypuft/scripts/orchestration_poc.rb` to run the POC. Use environment variables `TEST=simple` or `TEST=complex` to choose which test to run.
+Run `rails runner ../staypuft/script/orchestration_poc.rb` to run the POC. Use environment variables `TEST=simple` or `TEST=complex` to choose which test to run.
 
 The progress of the deployment can be mointored at:
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>
