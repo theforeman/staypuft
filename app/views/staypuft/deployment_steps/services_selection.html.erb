@@ -4,9 +4,7 @@
 
     <%= deployment_wizard 2 %>
     <h3><%= _("Host Groups & Available Services") %></h3>
-    <!-- Remove this and use whatever was selected for :distributed previously -->
-    <h4><%= _("Distributed with High Availability") %></h4>
-    <!--<h4><%# f.distributed %></h4>-->
+    <h4><%= Staypuft::Layout.last.name + " - " + Staypuft::Layout.last.networking.capitalize %></h4>
 
     <div class="panel panel-default service-box">
       <div class="panel-heading"><strong><%= _("Controller") %></strong></div>
