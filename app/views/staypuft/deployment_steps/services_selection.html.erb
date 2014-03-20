@@ -1,6 +1,6 @@
 <%= render :layout => 'title' do %>
-  <%= form_for(:deployment, :url => wizard_path, :method => 'PUT') do |f| %>
-    <%# base_errors_for @deployment %>
+  <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
+    <%= base_errors_for @deployment %>
 
     <%= deployment_wizard 2 %>
     <h3><%= _("Host Groups & Available Services") %></h3>

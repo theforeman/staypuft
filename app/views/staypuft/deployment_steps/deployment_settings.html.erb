@@ -1,37 +1,28 @@
 <%= render :layout => 'title' do %>
-  <%= form_for(:deployment, :url => wizard_path, :method => 'PUT') do |f| %>
-    <%# base_errors_for @deployment %>
+  <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
+    <%= base_errors_for @deployment %>
 
     <div class="wizard-container">
       <%= deployment_wizard 1 %>
     </div>
     <%= text_f f, :name %><br />
-    <%= text_f f, :title %><br />
+    <%= textarea_f f, :description, :rows => 3 %><br />
 
     <div class="row">
-     <%= f.label :distributed, _("Deployment Layout"), :class => "col-md-2 control-label" %><br />
-      <div class="col-md-4">
-        <!--     <%= f.radio_button :distributed, false %>
-        <%= f.label :distributed, _("All-In-One"), :value => "aio"  %><br />-->
-        <%= f.radio_button :distributed, false, :checked => false %>
-        <%= f.label :distributed, _("Distributed"), :value => "distributed" %><br />
-        <%= f.radio_button :distributed, false, :checked => true %>
-        <%= f.label :distributed, _("Distributed With High Availability"), :value => "distributed-ha" %>
+      <div class="clearfix">
+        <div class="form-group">
+          <label class="col-md-2 control-label" for="layout_id"><%= _("Deployment Layout") %></label>
+          <div class="col-md-4">
+            <% @layouts.each do |layout| %>
+              <%= radio_button_f_non_inline(f, :layout_id, :checked => layout.id == @deployment.layout_id,:value=>layout.id, :text=> "#{layout.name}, #{layout.networking.capitalize} " + _("Networking")) %>
+            <% end %>
+          </div>
+        </div>
       </div>
-   </div>
-
-    <div class="row">
-     <%= f.label :networking, _("Networking"), :class => "col-md-2 control-label" %><br />
-     <div class="col-md-4">
-       <%= f.radio_button :networking, false, :checked => false %>
-       <%= f.label :networking, _("Nova Networking"), :value => "nova_networking" %><br />
-       <%= f.radio_button :networking, false, :checked => true %>
-       <%= f.label :networking, _("Neutron Networking"), :value => "neutron_networking" %>
-     </div>
     </div>
 
-    <div class="row">
-     <%= f.label :services_password, _("Services Password"), :class => "col-md-2 control-label" %><br />
+<!--     <div class="row">
+      <%= f.label :services_password, _("Services Password"), :class => "col-md-2 control-label" %><br />
       <div class="row">
         <div class="col-md-8">
           <%= f.radio_button :services_password, false, :checked => true %>
@@ -48,8 +39,8 @@
           <%= f.label :services_password, _("Generate random passwords for all services"), :value => "random_password" %>
         </div>
       </div>
-   </div>
-
+    </div>
+ -->
     <div class="form_actions">
       <%= link_to _("Cancel"), deployments_path, :confirm => _("This will clear whole deployment configuration. Are you sure?"), :class => "btn btn-danger" %>
       <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>

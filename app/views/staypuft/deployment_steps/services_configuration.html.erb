@@ -1,6 +1,6 @@
 <%= render :layout => 'title' do %>
-  <%= form_for(:deployment, :url => wizard_path, :method => 'PUT') do |f| %>
-    <%# base_errors_for @deployment %>
+  <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
+    <%= base_errors_for @deployment %>
 
     <%= deployment_wizard 3 %>
     <div class="form-group tabbed_side_nav_form row">
@@ -17,11 +17,8 @@
       <div class="tab-content col-md-9">
         <div class="tab-pane active" id="nova">
           <h3><%= _("Nova (Compute) Service Configuration") %></h3>
-          <%= field(f, :hypervisor, :label => _('Hypervisor')) do
-              radio_button_f(f, :hypervisor, :value =>'kvm', :checked => true, :text => _("KVM"))+
-              radio_button_f(f, :hypervisor, :value =>'qemu', :checked => false, :text => _("QEMU"))
-          end %>
-          <%= text_f f, :nova_network %><br />
+          <%= text_f f, :name %><br />
+          <%= text_f f, :description %><br />
         </div>
         <div class="tab-pane" id="glance">
           <h3><%= _("Glance (Image) Service Configuration") %></h3>

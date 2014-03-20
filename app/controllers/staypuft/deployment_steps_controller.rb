@@ -4,7 +4,8 @@ module Staypuft
     steps :deployment_settings, :services_selection, :services_configuration
 
     def show
-      # @deployment = Deployment.new
+      @layouts = Layout.all
+      @deployment = Deployment.first
 
       render_wizard
     end
@@ -18,18 +19,35 @@ module Staypuft
       # validates_presence_of :some_attribute, :if => :on_deployment_settings_step?
       # see wicked wiki for more info
 
-      #case step
-      #when :deployment_settings
-      #  @deployment.update_attributes(params[:deployment])
-      #end
-      #render_wizard @deployment
+      @layouts = Layout.all
+      @deployment = Deployment.first
 
-      render_wizard
+      case step
+      when :deployment_settings
+        @deployment.update_attributes(params[:staypuft_deployment])
+
+        @deployment.hostgroup.name = @deployment.name
+        @deployment.hostgroup.save!
+
+        @deployment.layout.roles.each do |role|
+          role_hostgroup = Hostgroup.where(:name =>"#{@deployment.name}: #{role.name}").first_or_initialize
+          role_hostgroup.parent_id = @deployment.hostgroup.parent_id
+          if !role.puppetclasses.empty? or role_hostgroup.puppetclasses.include?(role.puppetclasses.first)
+            role_hostgroup.puppetclasses << role.puppetclasses.first
+          end
+          role_hostgroup.save!
+
+          DeploymentRoleHostgroup.where(:deployment_id => @deployment.id, :hostgroup_id => role_hostgroup.id).first_or_create!
+          HostgroupRole.where(:role_id => role.id, :hostgroup_id => role_hostgroup.id).first_or_create!
+        end
+      end
+
+      render_wizard @deployment
     end
 
   private
 
-    def redirect_to_finish_wizard
+    def redirect_to_finish_wizard(options = {})
       redirect_to deployments_path, :notice => "Deployment has been succesfully configured."
     end
   end
