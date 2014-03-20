@@ -12,5 +12,7 @@ module Staypuft
     validates  :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true
+
+    scoped_search :on => :name, :complete_value => :true
   end
 end
