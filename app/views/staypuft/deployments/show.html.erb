@@ -1,4 +1,4 @@
-<% title _("Deployment name goes here") %>
+<% title Staypuft::Deployment.first.name %>
 <% title_actions display_link_if_authorized(_("Deploy changes"), hash_for_deployment_steps_path, :class => 'btn-success'), help_path %>
 
 <div class="row tabbed_side_nav_table">
