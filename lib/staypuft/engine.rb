@@ -5,21 +5,26 @@ module Staypuft
     config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
+    config.autoload_paths += Dir["#{config.root}/app/lib"]
 
     # Add any db migrations
     initializer "staypuft.load_app_instance_data" do |app|
       app.config.paths['db/migrate'] += Staypuft::Engine.paths['db/migrate'].existent
     end
 
-    initializer 'staypuft.register_plugin', :after=> :finisher_hook do |app|
+    initializer 'staypuft.register_plugin', :after => :finisher_hook do |app|
       Foreman::Plugin.register :staypuft do
         requires_foreman '>= 1.4'
         sub_menu :top_menu, :content_menu, :caption => N_('OpenStack Installer'), :after => :infrastructure_menu do
           menu :top_menu, :openstack_deployments,
-               :url_hash => {:controller=> 'staypuft/deployments', :action=>:index},
-               :caption=> N_('Deployments')
+               :url_hash => { :controller => 'staypuft/deployments', :action => :index },
+               :caption  => N_('Deployments')
         end
       end
+    end
+
+    config.to_prepare do
+      ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
     end
 
     rake_tasks do
@@ -32,6 +37,7 @@ module Staypuft
       ForemanTasks.dynflow.require!
       action_paths = %W[#{Staypuft::Engine.root}/app/lib/actions]
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
+      ForemanTasks.dynflow.config.remote = true
     end
 
   end

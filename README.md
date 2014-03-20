@@ -72,17 +72,6 @@ sudo service foreman-proxy restart
 
 ## Usage
 
-### Dynflow test from console
-
-#### CREATE
-
-Assuming that hostgroup is set up with all the necessary information to provision a host, a host provisioning can be triggered using Dynflow form console. E.g.
-
-    result = ForemanTasks.trigger Actions::Staypuft::Host::Create,
-                                  'rhel4',
-                                  Hostgroup.find(8),
-                                  ComputeResource.find(1)
-
 #### PUPPET RUN
 
 Assuming that host is created and running and you have enabled puppetssh.  See the section Enabling Puppet SSH.
