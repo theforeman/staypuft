@@ -6,7 +6,8 @@ module Staypuft
     belongs_to :role
 
     validates :service, :presence => true
-    validates :role, :presence => true, :uniqueness => {:scope => :service}
+    validates :role, :presence => true
+    validates :role_id, :uniqueness => {:scope => :service_id}
 
   end
 end

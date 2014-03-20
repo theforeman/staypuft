@@ -6,7 +6,8 @@ module Staypuft
     belongs_to :hostgroup
 
     validates :deployment, :presence => true
-    validates :hostgroup, :presence => true, :uniqueness => true
+    validates :hostgroup, :presence => true
+    validates :hostgroup_id, :uniqueness => true
 
   end
 end

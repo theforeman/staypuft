@@ -6,7 +6,9 @@ module Staypuft
     belongs_to :role
 
     validates :layout, :presence => true
-    validates :role, :presence => true, :uniqueness => {:scope => :layout}
+    validates :role, :presence => true
+    validates :role_id, :uniqueness => {:scope => :layout_id}
+    validates  :deploy_order, :presence => true, :uniqueness => {:scope => :layout_id}
 
   end
 end
