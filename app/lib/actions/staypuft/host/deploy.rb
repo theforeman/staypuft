@@ -23,7 +23,7 @@ module Actions
           sequence do
             plan_action Host::Build, host.id
             plan_action Host::WaitUntilInstalled, host.id
-            # TODO: wait until host is restarted after provisioning (wait for report)
+            plan_action Host::WaitUntilHostReady, host.id
           end
         end
 
@@ -31,7 +31,7 @@ module Actions
           # TODO: fix dynflow to allow better progress getting
           steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
           progress = steps.map(&:progress).map(&:first).reduce(&:+) / steps.size
-          format '%3d%% %s', progress * 100, input[:host][:name]
+          format '%3d%% Host: %s', progress * 100, input[:host][:name]
         end
 
       end
