@@ -11,3 +11,11 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require_tree .
+
+$(function() {
+  // Check all checkboxes in table
+  $('#check_all').on('change', function(e) {
+    var table = $(e.target).closest('table');
+    $('td input:checkbox', table).attr('checked', e.target.checked);
+  });
+});
