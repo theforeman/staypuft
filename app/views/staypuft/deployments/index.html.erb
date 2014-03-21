@@ -1,5 +1,5 @@
 <% title _("OpenStack Deployments") %>
-<% if @deployments %>
+<% if @deployments.present? %>
   <table class="table table-bordered table-striped">
     <tr>
       <th><%= sort :name, :as => _('Deployment Name') %></th>
@@ -13,7 +13,7 @@
   <%= page_entries_info @deployments %>
   <%= will_paginate     @deployments %>
 <% else %>
-<% title_actions display_link_if_authorized(_("New Deployment"), hash_for_deployment_steps_path, :class => 'btn-success'), help_path %>
+<% title_actions display_link_if_authorized(_("New Deployment"), hash_for_new_deployment_path, :class => 'btn-success'), help_path %>
 
 <%= alert :header => _('There are no deployments yet.'),
           :text   => _('Please create at least one Deployment.'),
