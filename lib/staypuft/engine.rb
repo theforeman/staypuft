@@ -25,6 +25,8 @@ module Staypuft
 
     config.to_prepare do
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
+      ::Puppetclass.send :include, Staypuft::PuppetclassExtensions
+      ::Hostgroup.send :include, Staypuft::HostgroupExtensions
     end
 
     rake_tasks do
