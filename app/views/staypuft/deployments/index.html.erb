@@ -3,10 +3,14 @@
   <table class="table table-bordered table-striped">
     <tr>
       <th><%= sort :name, :as => _('Deployment Name') %></th>
+      <th></th>
     </tr>
     <% @deployments.each do |deployment| %>
       <tr>
         <td> <%= link_to deployment.name, deployment_path(deployment.id) %> </td>
+        <td>  <%= action_buttons(
+                      display_delete_if_authorized(hash_for_deployment_path(:id => deployment.id), :confirm => _("Are you sure?"))) %>
+        </td>
       </tr>
     <% end %>
   </table>
