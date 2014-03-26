@@ -11,4 +11,21 @@ module Staypuft::Concerns::HostgroupExtensions
     has_one :role, :through => :hostgroup_role, :class_name => 'Staypuft::Role'
 
   end
+
+  module ClassMethods
+    def nest(name, parent)
+      new           = parent.dup
+      new.parent_id = parent.id
+      new.name      = name
+
+      new.puppetclasses = parent.puppetclasses
+      new.locations     = parent.locations
+      new.organizations = parent.organizations
+
+      # Clone any parameters as well
+      new.group_parameters.each { |param| parent.group_parameters << param.dup }
+      new
+    end
+  end
+
 end
