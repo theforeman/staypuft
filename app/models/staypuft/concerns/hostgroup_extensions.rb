@@ -13,7 +13,7 @@ module Staypuft::Concerns::HostgroupExtensions
   end
 
   module ClassMethods
-    Gem::Version.new(SETTINGS[:version]) < Gem::Version.new('1.5') or
+    Gem::Version.new(SETTINGS[:version].to_s.gsub(/-develop$/, '')) < Gem::Version.new('1.5') or
         raise 'remove nest method, nesting Hostgroups is fixed in Foreman 1.5, use just parent_id'
 
     def nest(name, parent)
