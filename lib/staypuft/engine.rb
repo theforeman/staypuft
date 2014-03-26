@@ -23,6 +23,10 @@ module Staypuft
       end
     end
 
+    initializer "staypuft.add_namespaced_assets" do |app|
+      app.config.assets.paths << "#{Staypuft::Engine.root}/app/assets/stylesheets/staypuft"
+    end
+
     config.to_prepare do
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Puppetclass.send :include, Staypuft::PuppetclassExtensions
