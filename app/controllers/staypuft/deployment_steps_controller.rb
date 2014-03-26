@@ -36,7 +36,7 @@ module Staypuft
                     HostgroupRole.table_name           => { role_id: role }).
               first
 
-          role_hostgroup ||= Hostgroup.nest("#{@deployment.name}: #{role.name}", @deployment.hostgroup).tap do |hostgroup|
+          role_hostgroup ||= Hostgroup.nest("#{role.name}", @deployment.hostgroup).tap do |hostgroup|
             hostgroup.build_deployment_role_hostgroup deployment: @deployment
             hostgroup.build_hostgroup_role role: role
           end
