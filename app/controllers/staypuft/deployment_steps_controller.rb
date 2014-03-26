@@ -30,8 +30,16 @@ module Staypuft
         @deployment.hostgroup.save!
 
         @deployment.layout.roles.each do |role|
-          role_hostgroup = Hostgroup.where(parent_deployment: @deployment, :role => role).first ||
-              Hostgroup.nest("#{@deployment.name}: #{role.name}", @deployment.hostgroup)
+          role_hostgroup = Hostgroup.
+              joins(:deployment_role_hostgroup, :hostgroup_role).
+              where(DeploymentRoleHostgroup.table_name => { deployment_id: @deployment },
+                    HostgroupRole.table_name           => { role_id: role }).
+              first
+
+          role_hostgroup ||= Hostgroup.nest("#{@deployment.name}: #{role.name}", @deployment.hostgroup).tap do |hostgroup|
+            hostgroup.build_deployment_role_hostgroup deployment: @deployment
+            hostgroup.build_hostgroup_role role: role
+          end
 
           role.puppetclasses.each do |puppetclass|
             unless role_hostgroup.puppetclasses.include?(puppetclass)
@@ -39,9 +47,6 @@ module Staypuft
             end
           end
           role_hostgroup.save!
-
-          DeploymentRoleHostgroup.where(:deployment_id => @deployment.id, :hostgroup_id => role_hostgroup.id).first_or_create!
-          HostgroupRole.where(:role_id => role.id, :hostgroup_id => role_hostgroup.id).first_or_create!
         end
       end
 
