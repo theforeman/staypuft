@@ -21,11 +21,11 @@ module Actions
         def plan(deployment)
           Type! deployment, ::Staypuft::Deployment
 
-          # expecting roles to be ordered by dependency
-          # TODO: where is the order stored? acts_as_list in Role scoped by layout_id?
-          hostgroups = deployment.layout.ordered_roles.map { |role| role.hostgroup(deployment) }
+          role_id_hostgroup_map = deployment.child_hostgroups.includes(:role).
+              inject({}) { |hash, host_group| hash.update host_group.role.id => host_group }
+          ordered_hostgroups    = deployment.layout.roles.map { |role| role_id_hostgroup_map[role.id] }
 
-          plan_action Hostgroup::OrderedDeploy, hostgroups
+          plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
         end
       end
     end

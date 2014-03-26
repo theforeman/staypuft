@@ -7,14 +7,15 @@ module Staypuft
     end
 
     def new
-      base_hostgroup = Hostgroup.where(:name => "base_hostgroup").first_or_create!
+      # TODO get the hostgroup base id from settings
+      base_hostgroup = Hostgroup.where(:name => 'base_hostgroup').first or
+          raise 'missing base_hostgroup'
 
-      deployment = Deployment.new(:name => SecureRandom.hex)
+      deployment             = Deployment.new(:name => SecureRandom.hex)
       deployment.description = "This is a deployment"
-      deployment.layout = Layout.where(:name => "Distributed",
-                                                 :networking => "neutron").first
-      deployment_hostgroup = Hostgroup.new(:name => deployment.name)
-      deployment_hostgroup.parent_id = base_hostgroup.id
+      deployment.layout      = Layout.where(:name       => "Distributed",
+                                            :networking => "neutron").first
+      deployment_hostgroup   = ::Hostgroup.nest deployment.name, base_hostgroup
       deployment_hostgroup.save!
 
       deployment.hostgroup = deployment_hostgroup
@@ -28,10 +29,9 @@ module Staypuft
     end
 
     def destroy
-      deployment = Deployment.find(params[:id])
-      if(deployment.destroy)
-        process_success
-      end
+      Deployment.find(params[:id]).destroy
+      process_success
     end
+
   end
 end

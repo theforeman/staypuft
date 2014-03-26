@@ -1,4 +1,4 @@
-module Staypuft::PuppetclassExtensions
+module Staypuft::Concerns::PuppetclassExtensions
   extend ActiveSupport::Concern
 
   included do

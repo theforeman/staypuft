@@ -2,9 +2,6 @@ module Staypuft
   ENGINE_NAME = "staypuft"
   class Engine < ::Rails::Engine
 
-    config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
-    config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
-    config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/lib"]
 
     # Add any db migrations
@@ -25,8 +22,8 @@ module Staypuft
 
     config.to_prepare do
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
-      ::Puppetclass.send :include, Staypuft::PuppetclassExtensions
-      ::Hostgroup.send :include, Staypuft::HostgroupExtensions
+      ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
+      ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
     end
 
     rake_tasks do
