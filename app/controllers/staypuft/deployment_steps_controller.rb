@@ -3,27 +3,27 @@ module Staypuft
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
+    before_filter :get_deployment
+
     def show
-      @layouts    = Layout.all
-      @deployment = Deployment.first
+      case step
+      when :deployment_settings
+        @layouts = Layout.all
+      end
 
       render_wizard
     end
 
     def update
-      # TODO(jtomasek): delete this info when Deployment model is done
-      # we can use 'case' if we need to distinquish among steps
-      # render_wizard @deployment will try to call save on that object
-      # if validations fail, wizard renders submitted steps
+      # TODO(jtomasek):
       # in model we need to conditionally validate based on the step eg:
       # validates_presence_of :some_attribute, :if => :on_deployment_settings_step?
       # see wicked wiki for more info
 
-      @layouts    = Layout.all
-      @deployment = Deployment.first
-
       case step
       when :deployment_settings
+        @layouts = Layout.all
+
         @deployment.update_attributes(params[:staypuft_deployment])
 
         @deployment.hostgroup.name = @deployment.name
@@ -54,9 +54,12 @@ module Staypuft
     end
 
     private
+    def get_deployment
+      @deployment = Deployment.first
+    end
 
     def redirect_to_finish_wizard(options = {})
-      redirect_to deployments_path, :notice => "Deployment has been succesfully configured."
+      redirect_to deployment_path(@deployment), :notice => _("Deployment has been succesfully configured.")
     end
   end
 end
