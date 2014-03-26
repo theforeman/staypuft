@@ -28,10 +28,8 @@ module Staypuft
     end
 
     def destroy
-      deployment = Deployment.find(params[:id])
-      if(deployment.destroy)
-        process_success
-      end
+      Deployment.find(params[:id]).destroy
+      process_success
     end
   end
 end
