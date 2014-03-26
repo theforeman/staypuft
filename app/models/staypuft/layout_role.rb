@@ -1,6 +1,6 @@
 module Staypuft
   class LayoutRole < ActiveRecord::Base
-    attr_accessible :layout, :layout_id, :role, :role_id
+    attr_accessible :layout, :layout_id, :role, :role_id, :deploy_order
 
     belongs_to :layout
     belongs_to :role

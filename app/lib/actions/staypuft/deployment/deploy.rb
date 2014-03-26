@@ -21,9 +21,8 @@ module Actions
         def plan(deployment)
           Type! deployment, ::Staypuft::Deployment
 
-          role_id_hostgroup_map = deployment.child_hostgroups.includes(:role).
-              inject({}) { |hash, host_group| hash.update host_group.role.id => host_group }
-          ordered_hostgroups    = deployment.layout.roles.map { |role| role_id_hostgroup_map[role.id] }
+          # already ordered on the child_hostgroups association
+          ordered_hostgroups    = deployment.child_hostgroups
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
         end
