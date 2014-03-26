@@ -1,4 +1,4 @@
-module Staypuft::HostgroupExtensions
+module Staypuft::Concerns::HostgroupExtensions
   extend ActiveSupport::Concern
 
   included do
