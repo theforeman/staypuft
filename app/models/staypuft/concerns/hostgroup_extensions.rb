@@ -17,6 +17,10 @@ module Staypuft::Concerns::HostgroupExtensions
         end
       end
     end
+
+    def own_and_free_hosts
+      Host.where("hostgroup_id = ? OR hostgroup_id IS NULL", id)
+    end
   end
 
   module ClassMethods
