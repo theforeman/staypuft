@@ -52,7 +52,7 @@ module Actions
         def host_ready?(host_id)
           host = ::Host.find(host_id)
           host.reports.order('reported_at DESC').any? do |report|
-            check_for_failures(report)
+            check_for_failures(report, host.id)
             report_change?(report)
           end
         end
@@ -61,9 +61,9 @@ module Actions
           report.status['applied'] > 0
         end
 
-        def check_for_failures(report)
+        def check_for_failures(report, id)
           if report.status['failed'] > 0
-            fail(::Staypuft::Exception, "Latest Puppet Run Contains Failures for Host: #{host.id}")
+            fail(::Staypuft::Exception, "Latest Puppet Run Contains Failures for Host: #{id}")
           end
         end
       end
