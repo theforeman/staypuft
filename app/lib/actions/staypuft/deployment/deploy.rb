@@ -23,9 +23,19 @@ module Actions
 
           # already ordered on the child_hostgroups association
           ordered_hostgroups    = deployment.child_hostgroups
+          input.update id: deployment.id, name: deployment.name
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
         end
+
+        def humanized_input
+          input[:name]
+        end
+
+        def humanized_output
+          planned_actions.map(&:humanized_output).join("\n")
+        end
+
       end
     end
   end
