@@ -24,29 +24,9 @@ module Staypuft
       when :deployment_settings
         @layouts = Layout.all
 
-        @deployment.update_attributes(params[:staypuft_deployment])
-
-        @deployment.hostgroup.name = @deployment.name
-        @deployment.hostgroup.save!
-
-        @deployment.layout.roles.each do |role|
-          role_hostgroup = Hostgroup.
-              joins(:deployment_role_hostgroup, :hostgroup_role).
-              where(DeploymentRoleHostgroup.table_name => { deployment_id: @deployment },
-                    HostgroupRole.table_name           => { role_id: role }).
-              first
-
-          role_hostgroup ||= Hostgroup.nest("#{role.name}", @deployment.hostgroup).tap do |hostgroup|
-            hostgroup.build_deployment_role_hostgroup deployment: @deployment
-            hostgroup.build_hostgroup_role role: role
-          end
-
-          role.puppetclasses.each do |puppetclass|
-            unless role_hostgroup.puppetclasses.include?(puppetclass)
-              role_hostgroup.puppetclasses << puppetclass
-            end
-          end
-          role_hostgroup.save!
+        Deployment.transaction do
+          @deployment.update_attributes(params[:staypuft_deployment])
+          @deployment.update_hostgroup_list
         end
       end
 
