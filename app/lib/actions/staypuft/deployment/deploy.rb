@@ -21,8 +21,8 @@ module Actions
         def plan(deployment)
           Type! deployment, ::Staypuft::Deployment
 
-          # already ordered on the child_hostgroups association
-          ordered_hostgroups    = deployment.child_hostgroups
+          ordered_hostgroups    = deployment.child_hostgroups.
+            reorder("staypuft_deployment_role_hostgroups.deploy_order")
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
         end
