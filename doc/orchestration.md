@@ -30,16 +30,13 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 
 -   Working provisioning setup.
 -   Running Dynflow executor.
--   Defined two `Hostgroup`s which are able to provision `Host`s by setting just name, hostgroup, and compute_resource (tested with libvirt).
-
-        compute_resource = ComputeResource.find_by_name!(ENV['COMPUTE_RESOURCE'] || 'Libvirt')
-        hostgroup1       = ::Hostgroup.find_by_name!(ENV['HOSTGROUP1'] || 'integration-test-1')
-        hostgroup2       = ::Hostgroup.find_by_name!(ENV['HOSTGROUP2'] || 'integration-test-2')
+-   Created `Deployment` model
 
 ### Run
 
-Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
-Run `rails runner ../staypuft/script/orchestration_poc.rb` to run the POC. Use environment variables `TEST=simple` or `TEST=complex` to choose which test to run.
+-   Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
+-   Run `rails runner ../staypuft/script/populate_deployment.rb` to populate the configured `Hostgroup`s of the deployment with `Host`s.
+-   Run `rails runner ../staypuft/script/deploy.rb` to trigger the deployment itself.
 
 The progress of the deployment can be mointored at:
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>
