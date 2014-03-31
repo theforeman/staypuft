@@ -6,10 +6,10 @@ module Staypuft
     belongs_to :layout
     belongs_to :hostgroup, :dependent => :destroy
 
-    has_many :deployment_role_hostgroups, :dependent => :destroy, :order => "staypuft_deployment_role_hostgroups.deploy_order ASC"
+    has_many :deployment_role_hostgroups, :dependent => :destroy
     has_many :child_hostgroups, :through => :deployment_role_hostgroups, :class_name => 'Hostgroup',
-                                :source => :hostgroup, :order => "staypuft_deployment_role_hostgroups.deploy_order ASC"
-    has_many :roles, :through => :deployment_role_hostgroups, :order => "staypuft_deployment_role_hostgroups.deploy_order ASC"
+                                :source => :hostgroup
+    has_many :roles, :through => :deployment_role_hostgroups
 
     validates  :name, :presence => true, :uniqueness => true
 
