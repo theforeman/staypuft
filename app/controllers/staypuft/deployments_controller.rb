@@ -39,5 +39,10 @@ module Staypuft
       process_success
     end
 
+    def deploy
+      task = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Deploy, Deployment.first
+      redirect_to foreman_tasks_task_url(id: task)
+    end
+
   end
 end

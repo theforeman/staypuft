@@ -13,7 +13,6 @@
 module Actions
   module Staypuft
     module Deployment
-      # just a mock, models and seeds are not ready yet
       class Deploy < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser

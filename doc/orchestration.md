@@ -30,13 +30,14 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 
 -   Working provisioning setup.
 -   Running Dynflow executor.
--   Created `Deployment` model
 
 ### Run
 
 -   Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
+-   Create `Deployment` instance.
 -   Run `rails runner ../staypuft/script/populate_deployment.rb` to populate the configured `Hostgroup`s of the deployment with `Host`s.
--   Run `rails runner ../staypuft/script/deploy.rb` to trigger the deployment itself.
+-   Click *Deploy* button in the `Deployment` show page.
+-   It will redirect to show progress of the executing deploy task.
 
 The progress of the deployment can be mointored at:
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>

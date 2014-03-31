@@ -1,5 +1,5 @@
 <% title Staypuft::Deployment.first.name %>
-<% title_actions display_link_if_authorized(_("Deploy changes"), hash_for_deployment_steps_path, :class => 'btn-success'), help_path %>
+<% title_actions display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn-success'), help_path %>
 
 <div class="row tabbed_side_nav_table">
   <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">
@@ -77,3 +77,4 @@
     </div>
   </div>
 </div>
+

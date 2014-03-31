@@ -4,7 +4,9 @@ Rails.application.routes.draw do
       collection do
         get 'auto_complete_search'
       end
-
+      member do
+        get 'deploy'
+      end
     end
 
     resources :deployment_steps
