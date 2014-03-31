@@ -7,6 +7,12 @@ module Staypuft
     end
 
     def new
+      if Deployment.first
+        flash[:warning] = _('Deployment already exists.')
+        redirect_to deployments_url
+        return
+      end
+
       # TODO get the hostgroup base id from settings
       base_hostgroup = Hostgroup.where(:name => 'base_hostgroup').first or
           raise 'missing base_hostgroup'
