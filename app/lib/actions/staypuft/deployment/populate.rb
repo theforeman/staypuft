@@ -19,16 +19,21 @@ module Actions
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
         def plan(deployment, options = {})
-          compute_resource = options[:compute_resource] ||= ComputeResource.find_by_name!('Libvirt')
-          fake             = options[:fake].nil? ? false : options[:fake]
-
           Type! deployment, ::Staypuft::Deployment
-          Type! compute_resource, ComputeResource
+
+          fake = options[:fake].nil? ? false : options[:fake]
           Type! fake, TrueClass, FalseClass
+
+          compute_resource = if fake
+                               nil
+                             else
+                               options[:compute_resource] ||= ComputeResource.find_by_name!('Libvirt')
+                             end
+          Type! compute_resource, ComputeResource, NilClass
+
 
           sequence do
             plan_self deployment_id:       deployment.id,
-                      compute_resource_id: compute_resource.id,
                       deployment_name:     deployment.name,
                       fake:                fake
 

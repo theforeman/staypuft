@@ -19,23 +19,27 @@ module Actions
 
         def plan(name, hostgroup, compute_resource, options = {})
           Type! hostgroup, ::Hostgroup
-          Type! compute_resource, ComputeResource
-
-          compute_attributes = hostgroup.
-              compute_profile.
-              compute_attributes.
-              where(compute_resource_id: compute_resource.id).
-              first.
-              vm_attrs
+          Type! compute_resource, ComputeResource, NilClass
 
           options = { start: true, assign: true, fake: false }.merge options
 
-          plan_self name:                name,
-                    hostgroup_id:        hostgroup.id,
-                    compute_resource_id: compute_resource.id,
-                    compute_attributes:  compute_attributes,
-                    options:             options
+          compute_attributes = if options[:fake]
+                                 {}
+                               else
+                                 hostgroup.
+                                     compute_profile.
+                                     compute_attributes.
+                                     where(compute_resource_id: compute_resource.id).
+                                     first.
+                                     vm_attrs
+                               end
 
+
+          plan_self name:               name,
+                    hostgroup_id:       hostgroup.id,
+                    compute_attributes: compute_attributes,
+                    options:            options
+          input.update compute_resource_id: compute_resource.id if compute_resource
         end
 
         def run
@@ -58,7 +62,7 @@ module Actions
                        build:               false,
                        managed:             true,
                        enabled:             true,
-                       compute_resource_id: input[:compute_resource_id],
+                       compute_resource_id: input.fetch(:compute_resource_id),
                        compute_attributes:  input[:compute_attributes])
                  end
 
