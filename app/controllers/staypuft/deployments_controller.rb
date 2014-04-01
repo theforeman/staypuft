@@ -44,5 +44,11 @@ module Staypuft
       redirect_to foreman_tasks_task_url(id: task)
     end
 
+    # TODO remove, it's temporary
+    def populate
+      task = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Populate, Deployment.first, fake: !!params[:fake]
+      redirect_to foreman_tasks_task_url(id: task)
+    end
+
   end
 end

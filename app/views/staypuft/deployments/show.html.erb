@@ -1,5 +1,24 @@
-<% title Staypuft::Deployment.first.name %>
-<% title_actions display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn-success'), help_path %>
+<% title @deployment.name %>
+
+<% content_for(:title_actions) do %>
+  <!--# TODO remove, it's temporary-->
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      Populate with<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <%= display_link_if_authorized(_("real Hosts"), hash_for_populate_deployment_path) %>
+      </li>
+      <li>
+        <%= display_link_if_authorized(_("fake Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+      </li>
+    </ul>
+  </div>
+
+  <%= display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn-success') %>
+  <%= help_path %>
+<% end %>
 
 <div class="row tabbed_side_nav_table">
   <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">

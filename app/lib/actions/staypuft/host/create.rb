@@ -18,9 +18,6 @@ module Actions
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
         def plan(name, hostgroup, compute_resource, options = {})
-          # TODO: set action_subject
-          # TODO: compute_resource or mac
-
           Type! hostgroup, ::Hostgroup
           Type! compute_resource, ComputeResource
 
@@ -31,7 +28,7 @@ module Actions
               first.
               vm_attrs
 
-          options = { :start => true }.merge options
+          options = { start: true, assign: true, fake: false }.merge options
 
           plan_self name:                name,
                     hostgroup_id:        hostgroup.id,
@@ -42,17 +39,38 @@ module Actions
         end
 
         def run
-          #noinspecti on RubyArgCount
-          host = ::Host::Managed.new(
-              name:                input[:name],
-              hostgroup_id:        input[:hostgroup_id],
-              compute_resource_id: input[:compute_resource_id],
-              compute_attributes:  input[:compute_attributes],
-              build:               false,
-              managed:             true,
-              enabled:             true)
+          fake   = input.fetch(:options).fetch(:fake)
+          assign = input.fetch(:options).fetch(:assign)
+
+          host = if fake
+                   raise if assign
+                   ::Host::Managed.new(
+                       name:         input[:name],
+                       hostgroup_id: input[:hostgroup_id],
+                       build:        false,
+                       managed:      true,
+                       enabled:      true,
+                       mac:          '0a:' + Array.new(5).map { format '%0.2X', rand(256) }.join(':'))
+                 else
+                   ::Host::Managed.new(
+                       name:                input[:name],
+                       hostgroup_id:        input[:hostgroup_id],
+                       build:               false,
+                       managed:             true,
+                       enabled:             true,
+                       compute_resource_id: input[:compute_resource_id],
+                       compute_attributes:  input[:compute_attributes])
+                 end
+
           host.save!
-          host.power.start if input[:options][:start]
+          host.power.start if input.fetch(:options).fetch(:start)
+
+          unless assign
+            host.reload
+            host.hostgroup = nil
+            host.save!
+          end
+
           output.update host: { id:   host.id,
                                 name: host.name,
                                 ip:   host.ip,

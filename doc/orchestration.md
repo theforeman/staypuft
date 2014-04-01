@@ -29,13 +29,11 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 ### Requirements
 
 -   Working provisioning setup.
--   Running Dynflow executor.
 
 ### Run
 
--   Run `rake foreman_tasks:dynflow:executor` to run Dynflow executor.
 -   Create `Deployment` instance.
--   Run `rails runner ../staypuft/script/populate_deployment.rb` to populate the configured `Hostgroup`s of the deployment with `Host`s.
+-   Click *Populate* button, use fake or real hosts depending on not/working provisioning
 -   Click *Deploy* button in the `Deployment` show page.
 -   It will redirect to show progress of the executing deploy task.
 
