@@ -29,6 +29,7 @@ module Actions
           sequence do
             plan_self deployment_id:       deployment.id,
                       compute_resource_id: compute_resource.id,
+                      deployment_name:     deployment.name,
                       fake:                fake
 
             hostgroups = deployment.child_hostgroups
@@ -52,6 +53,10 @@ module Actions
               host.destroy # TODO make action for it
             end
           end
+        end
+
+        def humanized_input
+          "#{input[:deployment_name]} #{input[:fake] ? 'fake' : 'real'}"
         end
 
       end
