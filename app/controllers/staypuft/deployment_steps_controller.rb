@@ -9,6 +9,9 @@ module Staypuft
       case step
       when :deployment_settings
         @layouts = Layout.all
+      when :services_configuration
+        # Collect services across all deployment's roles
+        @services = @deployment.roles(:services).map(&:services).flatten.uniq
       end
 
       render_wizard
@@ -28,6 +31,9 @@ module Staypuft
           @deployment.update_attributes(params[:staypuft_deployment])
           @deployment.update_hostgroup_list
         end
+      when :services_configuration
+        # Collect services across all deployment's roles
+        @services = @deployment.roles(:services).map(&:services).flatten.uniq
       end
 
       render_wizard @deployment
