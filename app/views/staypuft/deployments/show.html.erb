@@ -37,7 +37,7 @@
               <% child_hostgroup.own_and_free_hosts.each do |host| %>
                 <tr>
                   <td>
-                    <%= check_box_tag "hostgroup[host_ids][]", host.id, true , :id => "hostgroup_host_ids_#{host.id}" %>
+                    <%= check_box_tag "hostgroup[host_ids][]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "hostgroup_host_ids_#{host.id}" %>
                   </td>
                   <td><%= host.mac %></td>
                   <td><%= host.ip %></td>
