@@ -17,6 +17,30 @@ module Staypuft::Concerns::HostgroupExtensions
         end
       end
     end
+
+    def current_param_value(key)
+      if(v = LookupValue.where(:lookup_key_id => key.id, :id => lookup_values).first)
+        return v.value, to_label
+      end
+      return inherited_lookup_value(key)
+    end
+
+    def current_param_value_str(key)
+      val = current_param_value(key)[0]
+      val.is_a?(Array) ? val.join(", ") : val
+    end
+
+    def set_param_value_if_changed(puppetclass, key, value)
+      lookup_key = puppetclass.class_params.where(:key=>key).first
+      current_value = current_param_value(lookup_key)[0]
+      new_value = current_value.is_a?(Array) ? value.split(", ") : value
+      unless current_value == new_value
+        lookup = LookupValue.where(:match => hostgroup.send(:lookup_value_match),
+                                   :lookup_key_id => lookup_key.id).first_or_initialize
+        lookup.value = new_value
+        lookup.save!
+      end
+    end
   end
 
   module ClassMethods

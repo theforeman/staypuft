@@ -19,8 +19,12 @@
         <% @services.each_with_index do |service, i| %>
           <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
             <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-            <%= text_f f, :name %><br />
-            <%= text_f f, :description %><br />
+	    <% service.ui_params_for_form.each do |param_hash| %>
+              <%= label_tag param_hash[:param_key].key %>
+              <%= text_field_tag "staypuft_deployment[hostgroup_params][#{param_hash[:hostgroup].id}][puppetclass_params][#{param_hash[:puppetclass].id}][#{param_hash[:param_key].key}]", param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]) %><br />	    
+            <% end %>
+            <p/>
+            <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
           </div>
         <% end %>
       </div>

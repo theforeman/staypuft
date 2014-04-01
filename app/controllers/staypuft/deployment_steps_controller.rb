@@ -34,6 +34,17 @@ module Staypuft
       when :services_configuration
         # Collect services across all deployment's roles
         @services = @deployment.roles(:services).map(&:services).flatten.uniq
+        param_data = params[:staypuft_deployment][:hostgroup_params]
+        diffs = []
+        param_data.each do |hostgroup_id, hostgroup_params|
+          hostgroup = Hostgroup.find(hostgroup_id)
+          hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
+            puppetclass = Puppetclass.find(puppetclass_id)
+            puppetclass_params.each do |param_name, param_value|
+              hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
+            end
+          end
+        end
       end
 
       render_wizard @deployment
