@@ -5,7 +5,7 @@
   <%# TODO remove Populate dropdown, it's temporary %>
   <div class="btn-group">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      Populate with<span class="caret"></span>
+      <%= _('Populate with') %><span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
       <li>
@@ -16,6 +16,7 @@
       </li>
     </ul>
   </div>
+
 
   <%= display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn-success') %>
   <%= help_path %>
