@@ -31,7 +31,7 @@ module Staypuft
     end
 
     def show
-      @hostgroups = Hostgroup.all
+      @deployment = Deployment.find(params[:id])
     end
 
     def destroy
