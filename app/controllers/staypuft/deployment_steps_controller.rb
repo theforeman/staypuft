@@ -53,6 +53,7 @@ module Staypuft
     private
     def get_deployment
       @deployment = Deployment.first
+      @deployment.name = nil if @deployment.name.starts_with?(Deployment::NEW_NAME_PREFIX)
     end
 
     def redirect_to_finish_wizard(options = {})

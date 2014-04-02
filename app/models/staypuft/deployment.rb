@@ -1,5 +1,8 @@
 module Staypuft
   class Deployment < ActiveRecord::Base
+
+    NEW_NAME_PREFIX="uninitialized_"
+
     attr_accessible :description, :name, :layout_id, :layout
     after_save :update_hostgroup_name
 
