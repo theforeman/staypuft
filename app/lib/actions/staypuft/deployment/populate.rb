@@ -24,18 +24,13 @@ module Actions
           fake = options[:fake].nil? ? false : options[:fake]
           Type! fake, TrueClass, FalseClass
 
-          compute_resource = if fake
-                               nil
-                             else
-                               options[:compute_resource] ||= ComputeResource.find_by_name!('Libvirt')
-                             end
-          Type! compute_resource, ComputeResource, NilClass
-
+          compute_resource = options[:compute_resource] ||= ::Foreman::Model::Libvirt.first
+          Type! compute_resource, *[ComputeResource, (NilClass if fake)].compact
 
           sequence do
-            plan_self deployment_id:       deployment.id,
-                      deployment_name:     deployment.name,
-                      fake:                fake
+            plan_self deployment_id:   deployment.id,
+                      deployment_name: deployment.name,
+                      fake:            fake
 
             hostgroups = deployment.child_hostgroups
             hostgroups.each do |hostgroup|
