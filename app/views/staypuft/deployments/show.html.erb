@@ -54,6 +54,7 @@
                 </th>
                 <th><%= sort :label, :as => _('Host MAC Address') %></th>
                 <th><%= sort :label, :as => _('Host IP Address') %></th>
+                <th><%= _('Type') %></th>
               </tr>
               <% child_hostgroup.own_and_free_hosts.each do |host| %>
                 <tr>
@@ -62,6 +63,7 @@
                   </td>
                   <td><%= host.mac %></td>
                   <td><%= host.ip %></td>
+                  <td><%= host.type %></td>
                 </tr>
               <% end %>
             </table>
