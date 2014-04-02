@@ -19,11 +19,21 @@
         <% @services.each_with_index do |service, i| %>
           <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
             <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-	    <% service.ui_params_for_form.each do |param_hash| %>
-              <%= label_tag param_hash[:param_key].key %>
-              <%= text_field_tag "staypuft_deployment[hostgroup_params][#{param_hash[:hostgroup].id}][puppetclass_params][#{param_hash[:puppetclass].id}][#{param_hash[:param_key].key}]", param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]) %><br />	    
+            <% if (params_hash = service.ui_params_for_form).size > 0 %>
+              <% params_hash.each do |param_hash| %>
+              <div class="row">
+                <div class="col-md-4 control-label">
+                  <%= label_tag param_hash[:param_key].key %>
+                </div>
+                <div class="col-md-5">
+                  <%= text_field_tag "staypuft_deployment[hostgroup_params][#{param_hash[:hostgroup].id}][puppetclass_params][#{param_hash[:puppetclass].id}][#{param_hash[:param_key].key}]", param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]), :class=>"form-control", :size=>"45"%>
+                </div>
+              </div>
+              <br/>
+              <% end %>
+            <% else %>
+              <p><%= _("No configuration needed for this service.") %></p>
             <% end %>
-            <p/>
             <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
           </div>
         <% end %>
