@@ -16,9 +16,7 @@ _All action constants are in `Actions::Staypuft` namespace, omitting._
 
 There is a `Hostgroup::OrderedDeploy` action which takes array of `Hostgroup`s as input and deploys (provisions and configures) all its `Host`s. This combined with the assumptions should serve as an implementation of the magic Deploy button.
 
-There is also `Deployment::Deploy` action mock which wraps `Hostgroup::OrderedDeploy` further allowing to provide just `Staypuft::Deployment` object to the action.
-
-_For now, tested just in my environment. Opening PR for comments and suggestions._
+There is also `Deployment::Deploy` action which wraps `Hostgroup::OrderedDeploy` further allowing to provide just `Staypuft::Deployment` object to the action.
 
 ### Order of actions
 
@@ -32,12 +30,12 @@ Deploys all `Host`s in first given `Hostgroup` when all the `Host`s are deployed
 
 ### Run
 
--   Create `Deployment` instance.
+-   Create `Staypuft::Deployment` instance.
 -   Click *Populate* button, use fake or real hosts depending on not/working provisioning
--   Click *Deploy* button in the `Deployment` show page.
+-   Click *Deploy* button to trigger the deploy of OpenStack.
 -   It will redirect to show progress of the executing deploy task.
 
 The progress of the deployment can be mointored at:
+
 -   ForemanTasks web UI <http://foreman.example.com/foreman_tasks/tasks>
 -   Dynflow console <http://foreman.example.com/foreman_tasks/dynflow/>
-
