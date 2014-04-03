@@ -1,5 +1,6 @@
-<%= stylesheet "staypuft/staypuft" %>
-
+<%= content_for(:stylesheets) do %>
+  <%= stylesheet "staypuft/staypuft" %>
+<% end %>
 
 <%= content_for(:javascripts) do %>
   <%= javascript "staypuft/staypuft" %>
