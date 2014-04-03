@@ -5,14 +5,18 @@
   <%# TODO remove Populate dropdown, it's temporary %>
   <div class="btn-group">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      <%= _('Populate with') %><span class="caret"></span>
+      <%= _('Populate with') %>
+      <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
       <li>
-        <%= display_link_if_authorized(_("real Hosts"), hash_for_populate_deployment_path) %>
+        <%= display_link_if_authorized(_("real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
       </li>
       <li>
-        <%= display_link_if_authorized(_("fake Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+        <%= display_link_if_authorized(_("real unassigned Hosts"), hash_for_populate_deployment_path) %>
+      </li>
+      <li>
+        <%= display_link_if_authorized(_("fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
       </li>
     </ul>
   </div>

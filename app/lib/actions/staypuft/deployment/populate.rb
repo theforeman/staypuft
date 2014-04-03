@@ -21,7 +21,8 @@ module Actions
         def plan(deployment, options = {})
           Type! deployment, ::Staypuft::Deployment
 
-          fake = options[:fake].nil? ? false : options[:fake]
+          fake   = options[:fake].nil? ? false : options[:fake]
+          assign = options[:assign].nil? ? false : options[:assign]
           Type! fake, TrueClass, FalseClass
 
           compute_resource = options[:compute_resource] ||= ::Foreman::Model::Libvirt.first
@@ -30,7 +31,8 @@ module Actions
           sequence do
             plan_self deployment_id:   deployment.id,
                       deployment_name: deployment.name,
-                      fake:            fake
+                      fake:            fake,
+                      assign:          assign
 
             hostgroups = deployment.child_hostgroups
             hostgroups.each do |hostgroup|
@@ -39,7 +41,7 @@ module Actions
                           hostgroup,
                           compute_resource,
                           start:  false,
-                          assign: false,
+                          assign: assign,
                           fake:   fake
             end
           end
