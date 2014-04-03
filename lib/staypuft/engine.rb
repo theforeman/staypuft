@@ -38,6 +38,10 @@ module Staypuft
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
     end
 
+    initializer "staypuft.assets.precompile" do |app|
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js)
+    end
+
   end
 
   def table_name_prefix
