@@ -5,14 +5,18 @@
   <%# TODO remove Populate dropdown, it's temporary %>
   <div class="btn-group">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      <%= _('Populate with') %><span class="caret"></span>
+      <%= _('Populate with') %>
+      <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
       <li>
-        <%= display_link_if_authorized(_("real Hosts"), hash_for_populate_deployment_path) %>
+        <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
       </li>
       <li>
-        <%= display_link_if_authorized(_("fake Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+        <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
+      </li>
+      <li>
+        <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
       </li>
     </ul>
   </div>
@@ -42,32 +46,31 @@
     <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
       <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= child_hostgroup.name.parameterize.underscore %>">
         <h3><%= _("Hosts") %></h3>
-        <%= form_for(child_hostgroup) do |f| %>
+        <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well') do |f| %>
           <p>
-            <%= f.submit _("Apply"), :class => "btn btn-primary btn-sm" %>
+            <%= submit_tag _("Apply"), :class => "btn btn-primary btn-sm" %>
           </p>
-          <%= f.fields_for :hosts do |host_form| %>
-            <table class="table table-bordered table-striped table-condensed">
+          <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
+          <table class="table table-bordered table-striped table-condensed">
+            <tr>
+              <th>
+                <%= check_box_tag :check_all %>
+              </th>
+              <th><%= sort :label, :as => _('Host MAC Address') %></th>
+              <th><%= sort :label, :as => _('Host IP Address') %></th>
+              <th><%= _('Type') %></th>
+            </tr>
+            <% child_hostgroup.own_and_free_hosts.each do |host| %>
               <tr>
-                <th>
-                  <%= check_box_tag :check_all %>
-                </th>
-                <th><%= sort :label, :as => _('Host MAC Address') %></th>
-                <th><%= sort :label, :as => _('Host IP Address') %></th>
-                <th><%= _('Type') %></th>
+                <td>
+                  <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
+                </td>
+                <td><%= host.mac %></td>
+                <td><%= host.ip %></td>
+                <td><%= host.type %></td>
               </tr>
-              <% child_hostgroup.own_and_free_hosts.each do |host| %>
-                <tr>
-                  <td>
-                    <%= check_box_tag "hostgroup[host_ids][]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "hostgroup_host_ids_#{host.id}" %>
-                  </td>
-                  <td><%= host.mac %></td>
-                  <td><%= host.ip %></td>
-                  <td><%= host.type %></td>
-                </tr>
-              <% end %>
-            </table>
-          <% end %>
+            <% end %>
+          </table>
         <% end %>
       </div>
     <% end %>
