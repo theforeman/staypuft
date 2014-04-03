@@ -21,7 +21,7 @@ module Actions
           Type! deployment, ::Staypuft::Deployment
 
           ordered_hostgroups = deployment.child_hostgroups.
-              reorder("#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order")
+              reorder("#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order").to_a
           input.update id: deployment.id, name: deployment.name
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
