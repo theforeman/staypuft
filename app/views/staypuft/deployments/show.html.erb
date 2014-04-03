@@ -10,13 +10,13 @@
     </button>
     <ul class="dropdown-menu" role="menu">
       <li>
-        <%= display_link_if_authorized(_("real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
+        <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
       </li>
       <li>
-        <%= display_link_if_authorized(_("real unassigned Hosts"), hash_for_populate_deployment_path) %>
+        <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
       </li>
       <li>
-        <%= display_link_if_authorized(_("fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+        <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
       </li>
     </ul>
   </div>
