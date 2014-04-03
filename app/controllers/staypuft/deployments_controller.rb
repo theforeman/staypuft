@@ -52,5 +52,19 @@ module Staypuft
       redirect_to foreman_tasks_task_url(id: task)
     end
 
+    def associate_host
+      hostgroup = ::Hostgroup.find params[:hostgroup_id]
+      hosts     = Array(::Host::Base.find *params[:host_ids])
+      hosts.each do |host|
+        host           = host.becomes(::Host::Managed)
+        host.type      = 'Host::Managed'
+        host.managed   = true
+        host.build     = false
+        host.hostgroup = hostgroup
+        host.save!
+      end
+      redirect_to deployment_path(id: ::Staypuft::Deployment.first)
+    end
+
   end
 end

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     resources :deployments do
       collection do
         get 'auto_complete_search'
+        post 'associate_host'
       end
       member do
         get 'deploy'
