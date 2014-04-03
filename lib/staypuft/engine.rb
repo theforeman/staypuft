@@ -36,7 +36,6 @@ module Staypuft
       ForemanTasks.dynflow.require!
       action_paths = %W[#{Staypuft::Engine.root}/app/lib/actions]
       ForemanTasks.dynflow.config.eager_load_paths.concat(action_paths)
-      ForemanTasks.dynflow.config.remote = true
     end
 
   end

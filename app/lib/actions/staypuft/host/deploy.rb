@@ -30,7 +30,7 @@ module Actions
         def humanized_output
           # TODO: fix dynflow to allow better progress getting
           steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
-          progress = steps.map(&:progress).map(&:first).reduce(&:+) / steps.size
+          progress = steps.map(&:progress_done).reduce(&:+) / steps.size
           format '%3d%% Host: %s', progress * 100, input[:host][:name]
         end
 

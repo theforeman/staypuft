@@ -13,7 +13,6 @@
 module Actions
   module Staypuft
     module Deployment
-      # just a mock, models and seeds are not ready yet
       class Deploy < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
@@ -21,11 +20,21 @@ module Actions
         def plan(deployment)
           Type! deployment, ::Staypuft::Deployment
 
-          ordered_hostgroups    = deployment.child_hostgroups.
-            reorder("staypuft_deployment_role_hostgroups.deploy_order")
+          ordered_hostgroups = deployment.child_hostgroups.
+              reorder("#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order")
+          input.update id: deployment.id, name: deployment.name
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
         end
+
+        def humanized_input
+          input[:name]
+        end
+
+        def humanized_output
+          planned_actions.map(&:humanized_output).join("\n")
+        end
+
       end
     end
   end

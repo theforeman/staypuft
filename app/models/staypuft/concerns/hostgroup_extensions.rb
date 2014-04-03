@@ -19,7 +19,7 @@ module Staypuft::Concerns::HostgroupExtensions
     end
 
     def current_param_value(key)
-      if(v = LookupValue.where(:lookup_key_id => key.id, :id => lookup_values).first)
+      if (v = LookupValue.where(:lookup_key_id => key.id, :id => lookup_values).first)
         return v.value, to_label
       end
       return inherited_lookup_value(key)
@@ -31,15 +31,20 @@ module Staypuft::Concerns::HostgroupExtensions
     end
 
     def set_param_value_if_changed(puppetclass, key, value)
-      lookup_key = puppetclass.class_params.where(:key=>key).first
+      lookup_key    = puppetclass.class_params.where(:key => key).first
       current_value = current_param_value(lookup_key)[0]
-      new_value = current_value.is_a?(Array) ? value.split(", ") : value
+      new_value     = current_value.is_a?(Array) ? value.split(", ") : value
       unless current_value == new_value
-        lookup = LookupValue.where(:match => hostgroup.send(:lookup_value_match),
-                                   :lookup_key_id => lookup_key.id).first_or_initialize
+        lookup       = LookupValue.where(:match         => hostgroup.send(:lookup_value_match),
+                                         :lookup_key_id => lookup_key.id).first_or_initialize
         lookup.value = new_value
         lookup.save!
       end
+    end
+
+    def own_and_free_hosts
+      # TODO update to Discovered
+      Host::Base.where("hostgroup_id = ? OR hostgroup_id IS NULL", id)
     end
   end
 
