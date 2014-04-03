@@ -198,17 +198,45 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
     -   provisioning: Kickstart OpenStack
     -   Override parrameters with the controller IP: `controller_admin_host`, `controller_priv_hos`, `controller_pub_host`, `mysql_host`, `qpid_host`
 
-## Puppetssh setup
+## Enabling Puppet SSH
 
-_in progress_ 
+This is required for invoking puppet runs on remote machines.
+This will be needed in Staypuft for orchestration tasks.
 
--   enable `puppetrun` option in Foreman settings (no difference on foreman side, only different executing backends on proxy)
--   add following to your `/etc/foreman-proxy/settings.yml` to enable puppetrun via ssh 
-    (see     <http://projects.theforeman.org/projects/smart-proxy/repository/revisions/13ed47120944776d31a63386b650bb796462f896/diff/config/settings.yml.example>)
+-   Enable Puppet Run (Based on Foreman 1.4.1)
+    -   Go to the foreman web UI.
+        Administer -> Settings -> Puppet
+    -   Set Puppet Run to 'true'
 
-        :puppet_provider: puppetssh
-        :puppetssh_user: root
-        :puppetssh_keyfile: /etc/foreman-proxy/id_rsa
+-   Configure Foreman Proxy
+    -   Add the following lines to the foreman proxy settings.yml
 
--   add the key and distribute to hosts (haven't done it yet)
+            :puppet_provider: puppetssh
+            :puppetssh_sudo: false
+            :puppetssh_user: root
+            :puppetssh_keyfile: /etc/foreman-proxy/id_rsa
+            :puppetssh_command: /usr/bin/puppet agent --onetime --no-usecacheonfailure
+
+        Taken from <http://projects.theforeman.org/projects/smart-proxy/repository/revisions/13ed47120944776d31a63386b650bb796462f896/diff/config/settings.yml.example>.
+
+-   Create SSH Key fore foreman-proxy
+
+        # Create SSH Key using ssh-keygen
+        # cp private key to /etc/foreman-proxy/
+        chown foreman-proxy /etc/foreman-proxy/id_rsa
+        chmod 600 /etc/foreman-proxy/id_rsa
+
+-   Turn off StrictHostChecking for the foreman-proxy user
+    -   Create the following file: `<foreman HOME directory>/.ssh/config`
+
+            Host *
+                StrictHostKeyChecking no
+
+    -   _This is a temporary solution.  We are tracking this issue here: <http://projects.theforeman.org/issues/4543>_
+
+-   Distribute Foreman Public Key to Hosts
+    -   Add the id_rsa.pub public key to .ssh/authorized_keys file for user root on all Hosts
+    -   _This is a temporary solution. We are tracking this issue here: <http://projects.theforeman.org/issues/4542>_
+
+-   Restart foreman-proxy, `sudo service foreman-proxy restart`
 
