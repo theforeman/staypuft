@@ -39,6 +39,7 @@ params = {
   "neutron_user_password"         => SecureRandom.hex,
   "nova_db_password"              => SecureRandom.hex,
   "nova_user_password"            => SecureRandom.hex,
+  "nova_default_floating_pool"    => "nova",
   "swift_admin_password"          => SecureRandom.hex,
   "swift_shared_secret"           => SecureRandom.hex,
   "swift_all_ips"                 => ['192.168.203.1', '192.168.203.2', '192.168.203.3', '192.168.203.4'],
