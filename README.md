@@ -13,7 +13,7 @@ Symlink `config/staypuft.local.rb` to yours Foreman `bundle.d`.
 
 ## Development setup
 
-See [this](docs/setup.md) document.
+See [this](doc/setup.md) document.
 
 ## TODO
 
