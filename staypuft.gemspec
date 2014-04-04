@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.date        = Date.today.to_s
   s.authors     = ['Staypuft team']
   s.email       = ['foreman-dev+staypuft@googlegroups.com']
-  s.homepage    = 'https://github.com/theforeman/OFI'
+  s.homepage    = 'https://github.com/theforeman/staypuft'
   s.summary     = 'OpenStack Foreman Installer'
   s.description = 'OpenStack Foreman Installer'
 
