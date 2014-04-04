@@ -17,5 +17,10 @@ $(function() {
   $('#check_all').on('change', function(e) {
     var table = $(e.target).closest('table');
     $('td input:checkbox', table).attr('checked', e.target.checked);
+    $('td input:checkbox', table).closest("tr").toggleClass("info", this.checked);
+  });
+
+  $("tr.checkbox_highlight input:checkbox").on('change', function(e) {
+    $(this).closest("tr").toggleClass("info", this.checked);
   });
 });
