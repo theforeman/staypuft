@@ -50,7 +50,7 @@ module Staypuft::Concerns::HostgroupExtensions
 
   module ClassMethods
     Gem::Version.new(SETTINGS[:version].to_s.gsub(/-develop$/, '')) < Gem::Version.new('1.5') or
-        raise 'remove nest method, nesting Hostgroups is fixed in Foreman 1.5, use just parent_id'
+        Rails.logger.warn 'remove nest method, nesting Hostgroups is fixed in Foreman 1.5, use just parent_id'
 
     def nest(name, parent)
       new           = parent.dup
