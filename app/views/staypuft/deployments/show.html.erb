@@ -2,24 +2,25 @@
 
 <% content_for(:title_actions) do %>
 
-  <%# TODO remove Populate dropdown, it's temporary %>
-  <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      <%= _('Populate with') %>
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li>
-        <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
-      </li>
-      <li>
-        <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
-      </li>
-      <li>
-        <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
-      </li>
-    </ul>
-  </div>
+  <% if Rails.env.development? %>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <%= _('Populate with') %>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
+        </li>
+        <li>
+          <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
+        </li>
+        <li>
+          <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+        </li>
+      </ul>
+    </div>
+  <% end %>
 
 
   <%= display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn-success') %>
