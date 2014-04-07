@@ -33,7 +33,7 @@
     <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
       <li class="<%= 'active' if i == 0 %>">
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
-          <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-ok"></span><span>0</span></div>
+          <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-ok"></span><span><%= child_hostgroup.hosts.count %></span></div>
           <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-warning-sign"></span><span>0</span></div>
           <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-time"></span><span>0</span></div>
           <div class="col-xs-6"><%= child_hostgroup.name %></div>
@@ -53,24 +53,28 @@
           </p>
           <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
           <table class="table table-bordered table-striped table-condensed">
-            <tr>
-              <th>
-                <%= check_box_tag :check_all %>
-              </th>
-              <th><%= sort :label, :as => _('Host MAC Address') %></th>
-              <th><%= sort :label, :as => _('Host IP Address') %></th>
-              <th><%= _('Type') %></th>
-            </tr>
-            <% child_hostgroup.own_and_free_hosts.each do |host| %>
+            <thead>
               <tr>
-                <td>
-                  <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
-                </td>
-                <td><%= host.mac %></td>
-                <td><%= host.ip %></td>
-                <td><%= host.type %></td>
+                <th class="ca">
+                  <%= check_box_tag :check_all %>
+                </th>
+                <th><%= sort :name, :as => _('Name') %></th>
+                <th class="hidden-s hidden-xs"><%= sort :mac, :as => _('MAC Address') %></th>
+                <th class="hidden-s hidden-xs"><%= sort :type, :as => _('Type') %></th>
               </tr>
-            <% end %>
+            </thead>
+            <tbody>
+              <% child_hostgroup.own_and_free_hosts.each do |host| %>
+                <tr class="checkbox_highlight <%= "success" if child_hostgroup.host_ids.include?(host.id) %>">
+                  <td class="ca">
+                    <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
+                  </td>
+                  <td class="ellipsis"><%= host.name %></td>
+                  <td class="hidden-s hidden-xs"><%= host.mac %></td>
+                  <td class="hidden-s hidden-xs"><%= host.type %></td>
+                </tr>
+              <% end %>
+            </tbody>
           </table>
         <% end %>
       </div>
