@@ -24,7 +24,10 @@ module Staypuft
                              "controller_admin_host", "controller_priv_host",
                              "controller_pub_host", "freeipa", "horizon_ca",
                              "horizon_cert", "horizon_key", "horizon_secret_key",
-                             "nova_db_password", "nova_user_password", "ssl"],
+                             "nova_db_password", "nova_user_password", "ssl",
+                             "swift_admin_password", "swift_ringserver_ip",
+                             "swift_shared_secret", "swift_storage_device",
+                             "swift_storage_ips"],
       "Neutron (Controller)" => ["admin_email", "admin_password",
                                  "cisco_nexus_plugin", "cisco_vswitch_plugin",
                                  "controller_admin_host", "controller_priv_host",
@@ -42,7 +45,10 @@ module Staypuft
                                  "nova_user_password", "ovs_vlan_ranges",
                                  "provider_vlan_auto_create", "provider_vlan_auto_trunk",
                                  "ssl", "tenant_network_type", "tunnel_id_ranges",
-                                 "verbose"],
+                                 "verbose",
+                                 "swift_admin_password", "swift_ringserver_ip",
+                                 "swift_shared_secret", "swift_storage_device",
+                                 "swift_storage_ips"],
       "Glance"=> ["glance_db_password", "glance_user_password"],
       "Cinder"=> ["cinder_backend_gluster", "cinder_backend_iscsi",
                   "cinder_db_password", "cinder_gluster_servers",
@@ -50,9 +56,17 @@ module Staypuft
       "Heat"=> ["heat_cfn", "heat_cloudwatch", "heat_db_password", "heat_user_password"],
       "Ceilometer"=> ["ceilometer_metering_secret", "ceilometer_user_password"
                      ],
-      "Neutron - L3" => [],
+      "Neutron - L3" => ["controller_priv_host", "enable_tunneling",
+                         "external_network_bridge", "fixed_network_range",
+                         "mysql_ca", "mysql_host", "neutron_db_password",
+                         "neutron_metadata_proxy_secret", "neutron_user_password",
+                         "nova_db_password", "nova_user_password",
+                         "qpid_host", "ssl",
+                         "tenant_network_type", "tunnel_id_ranges", "verbose"],
       "DHCP" => [],
-      "OVS" => [],
+      "OVS" => ["ovs_bridge_mappings", "ovs_bridge_uplinks",
+                "ovs_tunnel_iface", "ovs_tunnel_types", "ovs_vlan_ranges",
+                "ovs_vxlan_udp_port" ],
       "Nova-compute" => ["admin_password", "auto_assign_floating_ip",
                          "ceilometer_metering_secret", "ceilometer_user_password",
                          "cinder_backend_gluster", "controller_priv_host",
@@ -73,9 +87,9 @@ module Staypuft
                             "ovs_vxlan_udp_port", "qpid_host", "ssl",
                             "tenant_network_type", "tunnel_id_ranges", "verbose"],
       "Neutron-ovs-agent"=> [],
-      "Swift" => ["swift_admin_password", "swift_ringserver_ip",
-                  "swift_shared_secret", "swift_storage_device",
-                  "swift_storage_ips"]
+      "Swift" => ["swift_all_ips", "swift_ext4_device", "swift_local_interface",
+                  "swift_loopback", "swift_ring_server", "swift_shared_secret"] 
+
     }
 
     def ui_params_for_form(hostgroup = self.hostgroups.first)

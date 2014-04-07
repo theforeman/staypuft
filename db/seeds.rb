@@ -62,7 +62,7 @@ params = {
   "mysql_resource_group_name"     => 'mysqlgrp',
   "mysql_clu_member_addrs"        => '192.168.203.11 192.168.203.12 192.168.203.13',
   "qpid_host"                     => '172.16.0.1',
-  "admin_email"                   => "admin@#{Facter.domain}",
+  "admin_email"                   => "admin@#{Facter.value(:domain)}",
   "neutron_metadata_proxy_secret" => SecureRandom.hex,
   "enable_ovs_agent"              => "true",
   "ovs_vlan_ranges"               => '',
@@ -193,7 +193,7 @@ roles = [
      :services=>[:neutron_compute, :neutron_ovs_agent]},
     {:name=>"Neutron Networker",
      :class=>"quickstack::neutron::networker",
-     :layouts=>[[:ha_neutron, 2]],
+     :layouts=>[[:ha_neutron, 2], [:non_ha_neutron, 2]],
      :services=>[:neutron_l3, :dhcp, :ovs]},
     {:name=>"LVM Block Storage",
      :class=>"quickstack::storage_backend::lvm_cinder",
@@ -202,7 +202,11 @@ roles = [
     {:name=>"Load Balancer",
      :class=>"quickstack::load_balancer",
      :layouts=>[[:ha_nova, 4], [:ha_neutron, 4]],
-     :services=>[]}
+     :services=>[]},
+    {:name=>"Swift Storage Node",
+     :class=>"quickstack::swift::storage",
+     :layouts=>[[:non_ha_nova, 5], [:non_ha_neutron, 5]],
+     :services=>[:swift]}
         ]
 
 roles.each do |r|
@@ -228,11 +232,6 @@ roles.each do |r|
 
   role.description = r[:description]
   r[:services].each do |key|
-    role.id
-    services[key]
-    services[key][:obj]
-    services[key][:obj].id
-    Staypuft::RoleService.where(:role_id => role.id, :service_id => services[key][:obj].id).first
     Staypuft::RoleService.where(:role_id => role.id, :service_id => services[key][:obj].id).first_or_create!
   end
   role.save!
