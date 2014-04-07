@@ -42,6 +42,12 @@ module Staypuft
       app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js)
     end
 
+    initializer "load default settings" do |app|
+      if (Setting.table_exists? rescue(false))
+        Setting::StaypuftProvisioning.load_defaults
+      end
+    end
+
   end
 
   def table_name_prefix

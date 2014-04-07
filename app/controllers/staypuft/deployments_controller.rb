@@ -13,8 +13,7 @@ module Staypuft
         return
       end
 
-      # TODO get the hostgroup base id from settings
-      base_hostgroup = Hostgroup.where(:name => 'base_hostgroup').first or
+      base_hostgroup = Hostgroup.where(:name => Setting[:base_hostgroup]).first or
           raise 'missing base_hostgroup'
 
       deployment             = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
