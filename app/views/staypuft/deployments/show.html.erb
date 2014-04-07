@@ -46,7 +46,7 @@
     <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
       <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= child_hostgroup.name.parameterize.underscore %>">
         <h3><%= _("Hosts") %></h3>
-        <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well') do |f| %>
+        <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well association') do |f| %>
           <p>
             <%= submit_tag _("Apply"), :class => "btn btn-primary btn-sm" %>
           </p>
