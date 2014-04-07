@@ -14,7 +14,7 @@ module Staypuft
                                 :source => :hostgroup
     has_many :roles, :through => :deployment_role_hostgroups
 
-    validates  :name, :presence => true, :uniqueness => true
+    validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
@@ -35,8 +35,8 @@ module Staypuft
     def update_hostgroup_list
       old_role_hostgroups_arr = deployment_role_hostgroups.to_a
       layout.layout_roles.each do |layout_role|
-        role_hostgroup = deployment_role_hostgroups.where(:role_id=>layout_role.role).first_or_initialize do |drh|
-          drh.hostgroup = Hostgroup.nest(layout_role.role.name, hostgroup)
+        role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
+          drh.hostgroup = Hostgroup.new(name: layout_role.role.name, parent: hostgroup)
         end
 
         role_hostgroup.hostgroup.add_puppetclasses_from_resource(layout_role.role)

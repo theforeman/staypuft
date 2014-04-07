@@ -16,10 +16,10 @@ module Staypuft
       base_hostgroup = Hostgroup.where(:name => Setting[:base_hostgroup]).first or
           raise 'missing base_hostgroup'
 
-      deployment             = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
-      deployment.layout      = Layout.where(:name       => "Distributed",
-                                            :networking => "neutron").first
-      deployment_hostgroup   = ::Hostgroup.nest deployment.name, base_hostgroup
+      deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
+      deployment.layout    = Layout.where(:name       => "Distributed",
+                                          :networking => "neutron").first
+      deployment_hostgroup = ::Hostgroup.new name: deployment.name, parent: base_hostgroup
       deployment_hostgroup.save!
 
       deployment.hostgroup = deployment_hostgroup
