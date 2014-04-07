@@ -15,9 +15,8 @@ Gem::Specification.new do |s|
   s.test_files = Dir['test/**/*']
 
   s.add_dependency 'foreman-tasks'
+  s.add_dependency 'dynflow', '~> 0.6.1'
   s.add_dependency 'wicked'
 
-  # standard json does not deserialize data correctly
-  s.add_dependency 'oj'
   s.add_dependency 'foreman_discovery'
 end
