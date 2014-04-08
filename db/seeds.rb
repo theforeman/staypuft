@@ -68,6 +68,7 @@ params = {
   "ovs_vlan_ranges"               => '',
   "ovs_bridge_mappings"           => [],
   "ovs_bridge_uplinks"            => [],
+  "ovs_tunnel_iface"              => 'eth0',
   "tenant_network_type"           => 'gre',
   "enable_tunneling"              => 'True',
   "ovs_vxlan_udp_port"            => '4789',
