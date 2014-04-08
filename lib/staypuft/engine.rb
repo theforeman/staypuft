@@ -1,6 +1,7 @@
 module Staypuft
   ENGINE_NAME = "staypuft"
   class Engine < ::Rails::Engine
+    engine_name Staypuft::ENGINE_NAME
 
     config.autoload_paths += Dir["#{config.root}/app/lib"]
 
@@ -46,6 +47,17 @@ module Staypuft
       if (Setting.table_exists? rescue(false))
         Setting::StaypuftProvisioning.load_defaults
       end
+    end
+
+    initializer 'staypuft.configure_assets', :group => :assets do
+      SETTINGS[:staypuft] = {
+        :assets => {
+          :precompile => [
+            'staypuft/staypuft.js',
+            'staypuft/staypuft.css'
+          ],
+        }
+      }
     end
 
   end
