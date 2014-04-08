@@ -52,18 +52,30 @@ module Staypuft
     end
 
     def associate_host
-      hostgroup = ::Hostgroup.find params[:hostgroup_id]
-      hosts     = Array(::Host::Base.find *params[:host_ids])
-      hosts.each do |host|
-        host           = host.becomes(::Host::Managed)
+      hostgroup        = ::Hostgroup.find params[:hostgroup_id]
+      discovered_hosts = Array(::Host::Base.find *params[:host_ids])
+      discovered_hosts.each do |discovered_host|
+        host           = discovered_host.becomes(::Host::Managed)
         host.type      = 'Host::Managed'
         host.managed   = true
         host.build     = false
         host.hostgroup = hostgroup
+
+        # root_pass is not copied for some reason
+        host.root_pass = hostgroup.root_pass
+
+        # I do not why but the final save! adds following condytion to the update SQL command
+        # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
+        # which will not find the record since it's still Host::Discovered.
+        # Using #update_column to change it directly in DB
+        # (discovered_host is used to avoid same WHERE condition problem here).
+        # FIXME this is definitely ugly, needs to be properly fixed
+        discovered_host.update_column :type, 'Host::Managed'
+
         host.save!
       end
       redirect_to deployment_path(id: ::Staypuft::Deployment.first)
     end
-
   end
+
 end
