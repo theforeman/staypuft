@@ -47,35 +47,44 @@
     <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
       <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= child_hostgroup.name.parameterize.underscore %>">
         <h3><%= _("Hosts") %></h3>
-        <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well association') do |f| %>
-          <p>
-            <%= submit_tag _("Apply"), :class => "btn btn-primary btn-sm" %>
-          </p>
-          <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
-          <table class="table table-bordered table-striped table-condensed">
-            <thead>
-              <tr>
-                <th class="ca">
-                  <%= check_box_tag :check_all %>
-                </th>
-                <th><%= sort :name, :as => _('Name') %></th>
-                <th class="hidden-s hidden-xs"><%= sort :mac, :as => _('MAC Address') %></th>
-                <th class="hidden-s hidden-xs"><%= sort :type, :as => _('Type') %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <% child_hostgroup.own_and_free_hosts.each do |host| %>
-                <tr class="checkbox_highlight <%= "success" if child_hostgroup.host_ids.include?(host.id) %>">
-                  <td class="ca">
-                    <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
-                  </td>
-                  <td class="ellipsis"><%= host.name %></td>
-                  <td class="hidden-s hidden-xs"><%= host.mac %></td>
-                  <td class="hidden-s hidden-xs"><%= host.type %></td>
+        <% if child_hostgroup.own_and_free_hosts.present? %>
+          <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well association') do |f| %>
+            <p>
+              <%= submit_tag _("Apply"), :class => "btn btn-primary btn-sm" %>
+            </p>
+            <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
+            <table class="table table-bordered table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th class="ca">
+                    <%= check_box_tag :check_all %>
+                  </th>
+                  <th><%= sort :name, :as => _('Name') %></th>
+                  <th class="hidden-s hidden-xs"><%= sort :mac, :as => _('MAC Address') %></th>
+                  <th class="hidden-s hidden-xs"><%= sort :type, :as => _('Type') %></th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% child_hostgroup.own_and_free_hosts.each do |host| %>
+                  <tr class="checkbox_highlight <%= "success" if child_hostgroup.host_ids.include?(host.id) %>">
+                    <td class="ca">
+                      <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
+                    </td>
+                    <td class="ellipsis"><%= host.name %></td>
+                    <td class="hidden-s hidden-xs"><%= host.mac %></td>
+                    <td class="hidden-s hidden-xs"><%= host.type %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% end %>
+        <% else %>
+          <div class="well association">
+            <div class="alert alert-warning">
+              <span class="glyphicon glyphicon-warning-sign">&nbsp;</span>
+              <%= _("All available hosts have been already assigned.") %>
+            </div>
+          </div>
         <% end %>
       </div>
     <% end %>
