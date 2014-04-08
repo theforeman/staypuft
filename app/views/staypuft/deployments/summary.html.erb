@@ -1,1 +1,24 @@
-<% title @deployment.name + " #{_('Summary')}" %>
+<h1><small><%= link_to _("Deployment"), deployment_path(@deployment.id) %></small> &raquo; <%= @deployment.name + " #{_('Summary')}" %></h1>
+
+<div class="tab-content col-md-9">
+  <% @services.each_with_index do |service, i| %>
+    <div class="<%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
+      <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
+      <% if (params_hash = service.ui_params_for_form).size > 0 %>
+        <% params_hash.each do |param_hash| %>
+        <div class="row">
+          <div class="col-md-4 text-right">
+            <%= label_tag param_hash[:param_key].key %>
+          </div>
+          <div class="col-md-8">
+            <%= content_tag "staypuft_deployment[hostgroup_params][#{param_hash[:hostgroup].id}][puppetclass_params][#{param_hash[:puppetclass].id}][#{param_hash[:param_key].key}]", param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]), :class=>"" %>
+          </div>
+        </div>
+        <br/>
+        <% end %>
+      <% else %>
+        <p><%= _("No configuration for this service.") %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

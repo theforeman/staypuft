@@ -1,6 +1,7 @@
 module Staypuft
   class DeploymentsController < ApplicationController
     include Foreman::Controller::AutoCompleteSearch
+    include ApplicationHelper
 
     def index
       @deployments = Deployment.search_for(params[:search], :order => params[:order]).paginate(:page => params[:page]) || nil
@@ -34,6 +35,7 @@ module Staypuft
 
     def summary
       @deployment = Deployment.find(params[:id])
+      services_collection
     end
 
     def destroy

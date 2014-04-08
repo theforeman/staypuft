@@ -2,6 +2,8 @@
 
 <% content_for(:title_actions) do %>
 
+  <%= link_to(_("Summary"), summary_deployment_path(@deployment.id), :class => '') %>
+
   <% if Rails.env.development? %>
     <div class="btn-group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">

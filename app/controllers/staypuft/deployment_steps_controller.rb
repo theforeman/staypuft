@@ -1,5 +1,6 @@
 module Staypuft
   class DeploymentStepsController < ApplicationController
+    include ApplicationHelper
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
@@ -10,8 +11,7 @@ module Staypuft
       when :deployment_settings
         @layouts = Layout.all
       when :services_configuration
-        # Collect services across all deployment's roles
-        @services = @deployment.roles(:services).map(&:services).flatten.uniq
+        services_collection
       end
 
       render_wizard
