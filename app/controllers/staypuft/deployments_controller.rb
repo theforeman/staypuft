@@ -52,9 +52,14 @@ module Staypuft
     end
 
     def associate_host
-      hostgroup        = ::Hostgroup.find params[:hostgroup_id]
-      discovered_hosts = Array(::Host::Base.find *params[:host_ids])
-      discovered_hosts.each do |discovered_host|
+      hostgroup = ::Hostgroup.find params[:hostgroup_id]
+
+      targeted_hosts  = Array(::Host::Base.find *params[:host_ids])
+      assigned_hosts  = hostgroup.hosts
+      hosts_to_assign = targeted_hosts - assigned_hosts
+      hosts_to_remove = assigned_hosts - targeted_hosts
+
+      hosts_to_assign.each do |discovered_host|
         host           = discovered_host.becomes(::Host::Managed)
         host.type      = 'Host::Managed'
         host.managed   = true
@@ -74,6 +79,12 @@ module Staypuft
 
         host.save!
       end
+
+      hosts_to_remove.each do |host|
+        host.hostgroup = nil
+        host.save!
+      end
+
       redirect_to deployment_path(id: ::Staypuft::Deployment.first)
     end
   end
