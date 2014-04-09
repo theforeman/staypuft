@@ -15,11 +15,11 @@ module Staypuft
     # for a param name, an array of [param_name, puppetclass] in the case where
     # there are possibly multiple puppetclass matches. without this, we'll
     # just grab the first puppetclass from the matching hostgroup
-    UI_PARAMS = {
-      "qpid"=> ["qpid_ca", "qpid_cert", "qpid_host", "qpid_key", "qpid_nssdb_password"],
+    UI_PARAMS = { 
+      "qpid (non-HA)"=> ["qpid_ca", "qpid_cert", "qpid_host", "qpid_key", "qpid_nssdb_password"],
       "MySQL"=> ["mysql_ca", "mysql_cert", "mysql_host", "mysql_key",
                  "mysql_root_password"],
-      "Keystone"=> ["keystone_admin_token", "keystone_db_password"],
+      "Keystone (non-HA)"=> ["keystone_admin_token", "keystone_db_password"],
       "Nova (Controller)"=> ["admin_email", "admin_password", "auto_assign_floating_ip",
                              "controller_admin_host", "controller_priv_host",
                              "controller_pub_host", "freeipa", "horizon_ca",
@@ -49,7 +49,7 @@ module Staypuft
                                  "swift_admin_password", "swift_ringserver_ip",
                                  "swift_shared_secret", "swift_storage_device",
                                  "swift_storage_ips"],
-      "Glance"=> ["glance_db_password", "glance_user_password"],
+      "Glance (non-HA)"=> ["glance_db_password", "glance_user_password"],
       "Cinder"=> ["cinder_backend_gluster", "cinder_backend_iscsi",
                   "cinder_db_password", "cinder_gluster_servers",
                   "cinder_gluster_volume", "cinder_user_password"],
@@ -93,22 +93,31 @@ module Staypuft
     }
 
     def ui_params_for_form(hostgroup = self.hostgroups.first)
-      return [] if (hostgroup.nil? || hostgroup.puppetclasses.blank?)
-      puppetclass = hostgroup.puppetclasses.first
-      # nil puppetclass means grab the first one from matching hostgroup
-      UI_PARAMS[self.name].collect do |param_key|
-        if param_key.is_a?(Array)
-          param_name = param_key[0]
-          param_puppetclass = param_key[1]
-        else
-          param_name = param_key
-          param_puppetclass = puppetclass
+      return [] if (hostgroup.nil?)
+      if hostgroup.puppetclasses.blank?
+        params_from_hash = []
+      else
+        puppetclass = hostgroup.puppetclasses.first
+        params_from_hash = UI_PARAMS.fetch(self.name,[]).collect do |param_key|
+          if param_key.is_a?(Array)
+            param_name = param_key[0]
+            param_puppetclass = Puppetclass.find_by_name(param_key[1])
+          else
+            param_name = param_key
+            param_puppetclass = puppetclass
+          end
+          param_lookup_key = param_puppetclass.class_params.where(:key=>param_key).first
+          param_lookup_key.nil? ? nil : {:hostgroup => hostgroup,
+                                         :puppetclass => param_puppetclass,
+                                         :param_key => param_lookup_key}
+        end.compact
+      end
+      params_from_service = self.puppetclasses.collect do |pclass|
+        pclass.class_params.collect do |class_param|
+          {:hostgroup => hostgroup, :puppetclass => pclass, :param_key => class_param}
         end
-        param_lookup_key = param_puppetclass.class_params.where(:key=>param_key).first
-        param_lookup_key.nil? ? nil : {:hostgroup => hostgroup,
-                                       :puppetclass => param_puppetclass,
-                                       :param_key => param_lookup_key}
-      end.compact
+      end.flatten
+      params_from_hash + params_from_service
     end
   end
 end
