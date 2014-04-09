@@ -9,10 +9,5 @@ module Staypuft
         end
       end
     end
-
-    def services_collection
-        # Collect services across all deployment's roles
-        @services = @deployment.roles(:services).map(&:services).flatten.uniq
-    end
   end
 end

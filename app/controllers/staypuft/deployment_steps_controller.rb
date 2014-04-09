@@ -1,6 +1,5 @@
 module Staypuft
   class DeploymentStepsController < ApplicationController
-    include ApplicationHelper
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
@@ -11,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = Layout.all
       when :services_configuration
-        services_collection
+        @services = @deployment.services
       end
 
       render_wizard
