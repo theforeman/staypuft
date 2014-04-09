@@ -15,7 +15,7 @@ module Staypuft
     # for a param name, an array of [param_name, puppetclass] in the case where
     # there are possibly multiple puppetclass matches. without this, we'll
     # just grab the first puppetclass from the matching hostgroup
-    UI_PARAMS = { 
+    UI_PARAMS = {
       "qpid"=> ["qpid_ca", "qpid_cert", "qpid_host", "qpid_key", "qpid_nssdb_password"],
       "MySQL"=> ["mysql_ca", "mysql_cert", "mysql_host", "mysql_key",
                  "mysql_root_password"],
@@ -88,12 +88,12 @@ module Staypuft
                             "tenant_network_type", "tunnel_id_ranges", "verbose"],
       "Neutron-ovs-agent"=> [],
       "Swift" => ["swift_all_ips", "swift_ext4_device", "swift_local_interface",
-                  "swift_loopback", "swift_ring_server", "swift_shared_secret"] 
+                  "swift_loopback", "swift_ring_server", "swift_shared_secret"]
 
     }
 
     def ui_params_for_form(hostgroup = self.hostgroups.first)
-      return [] if (hostgroup.nil? || hostgroup.puppetclasses.nil?)
+      return [] if (hostgroup.nil? || hostgroup.puppetclasses.blank?)
       puppetclass = hostgroup.puppetclasses.first
       # nil puppetclass means grab the first one from matching hostgroup
       UI_PARAMS[self.name].collect do |param_key|
