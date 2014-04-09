@@ -44,20 +44,15 @@ module Staypuft
     end
 
     initializer "load default settings" do |app|
-      if (Setting.table_exists? rescue(false))
+      if (Setting.table_exists? rescue false)
         Setting::StaypuftProvisioning.load_defaults
       end
     end
 
     initializer 'staypuft.configure_assets', :group => :assets do
-      SETTINGS[:staypuft] = {
-        :assets => {
-          :precompile => [
-            'staypuft/staypuft.js',
-            'staypuft/staypuft.css'
-          ],
-        }
-      }
+      SETTINGS[:staypuft] =
+          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css) } }
+    end
     end
 
   end
