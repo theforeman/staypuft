@@ -1,4 +1,5 @@
-<h1><small><%= link_to _("Back to Deployment"), deployment_path(@deployment.id) %></small> &raquo; <%= @deployment.name + " #{_('Summary')}" %></h1>
+<% title_actions link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
+<% title _("%s Summary") % @deployment.name %>
 
 <div class="col-md-12">
   <% @services.each_with_index do |service, i| %>
