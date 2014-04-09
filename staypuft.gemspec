@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
   s.summary     = 'OpenStack Foreman Installer'
   s.description = 'OpenStack Foreman Installer'
 
-  s.files = Dir['{app,config,db,lib}/**/*'] + %w(LICENSE Rakefile README.md)
+  s.files      = (Dir['{app,config,db,lib, doc}/**/*'] + %w(LICENSE Rakefile README.md)) &
+      `git ls-files`.split
   s.test_files = Dir['test/**/*']
 
   s.add_dependency 'foreman-tasks'
