@@ -53,7 +53,6 @@ module Staypuft
       SETTINGS[:staypuft] =
           { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css) } }
     end
-    end
 
   end
 
