@@ -36,7 +36,7 @@ module Actions
           power_management = begin
             host.power
           rescue Foreman::Exception => e
-            if e.code == 'ERF42-9958'
+            if e.code == 'ERF42-9958' # Unknown power management support
               nil
             else
               raise e
