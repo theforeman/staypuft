@@ -38,7 +38,11 @@ module Actions
 
         def humanized_output
           format "Hostgroup: %s\n%s", input[:name],
-                 planned_actions.map(&:humanized_output).map { |l| '  ' + l }.join("\n")
+                 planned_actions.
+                     map(&:humanized_output).
+                     tap { |lines| lines << '-' if lines.empty? }.
+                     map { |l| '  ' + l }.
+                     join("\n")
         end
 
       end
