@@ -14,6 +14,8 @@ module Staypuft
                                 :source => :hostgroup
     has_many :roles, :through => :deployment_role_hostgroups
 
+    has_many :services, :through => :roles
+
     validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true

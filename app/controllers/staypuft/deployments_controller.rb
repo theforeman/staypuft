@@ -32,6 +32,11 @@ module Staypuft
       @deployment = Deployment.find(params[:id])
     end
 
+    def summary
+      @deployment = Deployment.find(params[:id])
+      @services = @deployment.services
+    end
+
     def destroy
       Deployment.find(params[:id]).destroy
       process_success

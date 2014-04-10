@@ -10,8 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = Layout.all
       when :services_configuration
-        # Collect services across all deployment's roles
-        @services = @deployment.roles(:services).map(&:services).flatten.uniq
+        @services = @deployment.services
       end
 
       render_wizard

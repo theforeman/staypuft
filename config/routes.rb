@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       member do
         get 'deploy'
         get 'populate'
+        get 'summary'
       end
     end
 
