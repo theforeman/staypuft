@@ -54,7 +54,7 @@ module Staypuft
     def associate_host
       hostgroup = ::Hostgroup.find params[:hostgroup_id]
 
-      targeted_hosts  = Array(::Host::Base.find *params[:host_ids])
+      targeted_hosts  = ::Host::Base.find Array(params[:host_ids])
       assigned_hosts  = hostgroup.hosts
       hosts_to_assign = targeted_hosts - assigned_hosts
       hosts_to_remove = assigned_hosts - targeted_hosts
