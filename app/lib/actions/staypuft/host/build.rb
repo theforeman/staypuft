@@ -33,7 +33,16 @@ module Actions
         private
 
         def restart(host)
-          power_management = host.power rescue nil
+          power_management = begin
+            host.power
+          rescue Foreman::Exception => e
+            if e.code == 'ERF42-9958'
+              nil
+            else
+              raise e
+            end
+          end
+
           if power_management
             restart_with_power_management power_management
           else
