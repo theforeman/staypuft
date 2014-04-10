@@ -25,6 +25,7 @@ module Staypuft
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
+      ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
     end
 
     rake_tasks do

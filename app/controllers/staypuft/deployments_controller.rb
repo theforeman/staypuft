@@ -60,14 +60,17 @@ module Staypuft
       hosts_to_remove = assigned_hosts - targeted_hosts
 
       hosts_to_assign.each do |discovered_host|
-        host           = discovered_host.becomes(::Host::Managed)
-        host.type      = 'Host::Managed'
-        host.managed   = true
-        host.build     = false
-        host.hostgroup = hostgroup
+        host         = discovered_host.becomes(::Host::Managed)
+        host.type    = 'Host::Managed'
+        host.managed = true
+        host.build   = true
+
+        host.hostgroup   = hostgroup
+        # set discovery environment to keep booting discovery image
+        host.environment = Environment.get_discovery
 
         # root_pass is not copied for some reason
-        host.root_pass = hostgroup.root_pass
+        host.root_pass   = hostgroup.root_pass
 
         # I do not why but the final save! adds following condytion to the update SQL command
         # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
