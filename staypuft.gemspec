@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'dynflow', '~> 0.6.1'
   s.add_dependency 'wicked'
 
-  s.add_dependency 'foreman_discovery'
+  s.add_dependency 'foreman_discovery', '~> 1.3.0.rc1'
 end

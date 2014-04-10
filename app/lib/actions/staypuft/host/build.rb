@@ -22,27 +22,53 @@ module Actions
         end
 
         def run
-          host = ::Host.find(input[:host_id])
-          host.setBuild or fail(::Staypuft::Exception, 'Setting Build Flag Failed')
+          host             = ::Host.find(input[:host_id])
+          # return back to hostgroup's environment
+          host.environment = nil
+          host.save!
+          host.send :setTFTP
+          restart(host)
+        end
 
-          check_expected_state(host.power.state)
-          if %w(running on).include?(host.power.state)
-            if !host.power.reset
+        private
+
+        def restart(host)
+          power_management = begin
+            host.power
+          rescue Foreman::Exception => e
+            if e.code == 'ERF42-9958'
+              nil
+            else
+              raise e
+            end
+          end
+
+          if power_management
+            restart_with_power_management power_management
+          else
+            restart_with_foreman_proxy host
+          end
+        end
+
+        def restart_with_foreman_proxy(host)
+          host.setReboot # FIXME detect failures
+        end
+
+        def restart_with_power_management(power)
+          check_expected_state(power.state)
+          if %w(running on).include?(power.state)
+            if !power.reset
               fail(::Staypuft::Exception, 'Resetting Host Failed')
             end
           end
 
-          # FIXME host.power.reset leaves the host in "shutdown" state for 
-          # libvirt not tested in BMC.  The following code makes sure the host
-          # starts again
-          check_expected_state(host.power.state)
-          if %w(shutoff off).include?(host.power.state)
-            host.power.start or fail(::Staypuft::Exception, 'Starting Host Failed')
+          # FIXME host.power.reset leaves the host in "shutdown" state for
+          # libvirt not tested in BMC. The following code makes sure the host starts again
+          check_expected_state(power.state)
+          if %w(shutoff off).include?(power.state)
+            power.start or fail(::Staypuft::Exception, 'Starting Host Failed')
           end
-
         end
-
-        private
 
         def check_expected_state(state)
           if !%w(running on cycle shutoff off).include?(state.downcase)
