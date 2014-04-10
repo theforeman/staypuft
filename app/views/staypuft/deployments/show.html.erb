@@ -52,7 +52,7 @@
         <% if child_hostgroup.own_and_free_hosts.present? %>
           <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well association') do |f| %>
             <p>
-              <%= submit_tag _("Apply"), :class => "btn btn-primary btn-sm" %>
+              <%= submit_tag _("Assign"), :class => "btn btn-primary btn-sm" %>
             </p>
             <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
             <table class="table table-bordered table-striped table-condensed">
