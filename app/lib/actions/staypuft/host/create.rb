@@ -51,17 +51,19 @@ module Actions
                    ::Host::Managed.new(
                        name:         input[:name],
                        hostgroup_id: input[:hostgroup_id],
-                       build:        false,
+                       build:        true,
                        managed:      true,
                        enabled:      true,
+                       environment:  Environment.get_discovery,
                        mac:          '0a:' + Array.new(5).map { format '%0.2X', rand(256) }.join(':'))
                  else
                    ::Host::Managed.new(
                        name:                input[:name],
                        hostgroup_id:        input[:hostgroup_id],
-                       build:               false,
+                       build:               true,
                        managed:             true,
                        enabled:             true,
+                       environment:         Environment.get_discovery,
                        compute_resource_id: input.fetch(:compute_resource_id),
                        compute_attributes:  input[:compute_attributes])
                  end
