@@ -24,7 +24,18 @@
     </div>
   <% end %>
 
-  <%= link_to(_("Deploy"), "", :class => 'btn btn-success', :'data-toggle' => "modal", :'data-target' => "#deploy_modal") %>
+  <% if ForemanTasks::Lock.locked? @deployment, nil %>
+    <%= display_link_if_authorized(
+            _('Deploy in progress'),
+            hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
+            :class => 'btn-info') %>
+  <% else %>
+    <%= link_to(_("Deploy"),
+                "",
+                :class => %w(btn btn-success),
+                :'data-toggle' => "modal",
+                :'data-target' => "#deploy_modal") %>
+  <% end %>
   <%= help_path %>
 <% end %>
 

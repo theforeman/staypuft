@@ -51,7 +51,7 @@ module Actions
         end
 
         def restart_with_foreman_proxy(host)
-          host.setReboot # FIXME detect failures
+          host.setReboot
         end
 
         def restart_with_power_management(power)
