@@ -35,7 +35,7 @@ module Actions
         def restart(host)
           power_management = begin
             host.power
-          rescue Foreman::Exception => e
+          rescue ::Foreman::Exception => e
             if e.code == 'ERF42-9958' # Unknown power management support
               nil
             else
