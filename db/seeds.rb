@@ -159,6 +159,7 @@ services = {
                                                       "qpid::server"]},
   :glance_ha             => {:name => "Glance (HA)", :class => ["quickstack::pacemaker::glance"]},
   :nova_ha               => {:name => "Nova (HA)", :class => ["quickstack::pacemaker::nova"]},
+  :cinder_ha             => {:name => "Cinder (HA)", :class => ["quickstack::pacemaker::cinder"]},
   :ha_db_temp            => {:name => "Database (HA -- temp)", :class => ["quickstack::hamysql::singlenodetest"]}
 }
 services.each do |skey, svalue|
@@ -224,7 +225,7 @@ roles = [
     {:name=>"HA Controller (Nova)",
      :class=>[],
      :layouts=>[[:ha_nova, 3]],
-     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha]},
+     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha, :cinder_ha]},
     {:name=>"HA Controller (Neutron)",
      :class=>[],
      :layouts=>[[:ha_neutron, 2]],
