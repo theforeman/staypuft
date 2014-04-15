@@ -2,6 +2,7 @@
 
 <% content_for(:title_actions) do %>
 
+  <%= link_to(_("Edit"), deployment_steps_path) %>
   <%= link_to(_("Configuration Summary"), summary_deployment_path(@deployment.id), :class => '') %>
 
   <% if Rails.env.development? %>
@@ -46,15 +47,15 @@
       <li class="<%= 'active' if i == 0 %>">
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
           <div class="col-xs-2 text-center">
-            <span class="glyphicon glyphicon-ok"></span>
+            <i class="glyphicon glyphicon-ok"></i>
             <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && !h.error? }.count %></span>
           </div>
           <div class="col-xs-2 text-center">
-            <span class="glyphicon glyphicon-warning-sign"></span>
+            <i class="glyphicon glyphicon-warning-sign"></i>
             <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && h.error? }.count %></span>
           </div>
           <div class="col-xs-2 text-center">
-            <span class="glyphicon glyphicon-time"></span>
+            <i class="glyphicon glyphicon-time"></i>
             <span><%= child_hostgroup.hosts.select { |h| !h.open_stack_deployed? }.count %></span>
           </div>
           <div class="col-xs-6"><%= child_hostgroup.name %></div>
