@@ -34,9 +34,18 @@
     <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
       <li class="<%= 'active' if i == 0 %>">
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
-          <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-ok"></span><span><%= child_hostgroup.hosts.count %></span></div>
-          <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-warning-sign"></span><span>0</span></div>
-          <div class="col-xs-2 text-center"><span class="glyphicon glyphicon-time"></span><span>0</span></div>
+          <div class="col-xs-2 text-center">
+            <span class="glyphicon glyphicon-ok"></span>
+            <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && !h.error? }.count %></span>
+          </div>
+          <div class="col-xs-2 text-center">
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && h.error? }.count %></span>
+          </div>
+          <div class="col-xs-2 text-center">
+            <span class="glyphicon glyphicon-time"></span>
+            <span><%= child_hostgroup.hosts.select { |h| !h.open_stack_deployed? }.count %></span>
+          </div>
           <div class="col-xs-6"><%= child_hostgroup.name %></div>
           <span class="clearfix"></span>
         </a>
@@ -97,7 +106,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h2 class="modal-title" id="deploy_modal_label"><span class="glyphicon glyphicon-cloud-upload"></span> <%= _("Deploy") %></h2>
+        <h2 class="modal-title" id="deploy_modal_label">
+          <span class="glyphicon glyphicon-cloud-upload">
+          </span> <%= _("Deploy") %>
+        </h2>
       </div>
       <div class="modal-body">
         <%= (_("This action will initiate the deployment of %s ") % "<strong>#{@deployment.name}</strong>").html_safe %>

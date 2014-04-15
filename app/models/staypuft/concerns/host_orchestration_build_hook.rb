@@ -18,6 +18,7 @@ module Staypuft
       def self.cache_id(host_id)
         "host.#{host_id}.wake_up_orchestration"
       end
+
     end
   end
 end

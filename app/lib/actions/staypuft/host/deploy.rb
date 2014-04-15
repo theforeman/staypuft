@@ -20,7 +20,7 @@ module Actions
 
           input.update host: { id: host.id, name: host.name }
 
-          if host.environment == Environment.get_discovery
+          unless host.open_stack_deployed?
             sequence do
               plan_action Host::Build, host.id
               plan_action Host::WaitUntilInstalled, host.id

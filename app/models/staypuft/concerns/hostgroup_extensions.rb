@@ -48,6 +48,12 @@ module Staypuft::Concerns::HostgroupExtensions
     Host::Base.where('hostgroup_id = ? OR hostgroup_id IS NULL', id)
   end
 
+  module ClassMethods
+    def get_base_hostgroup
+      Hostgroup.where(:name => Setting[:base_hostgroup]).first or raise 'missing base_hostgroup'
+    end
+  end
+
   Gem::Version.new(SETTINGS[:version].to_s.gsub(/-develop$/, '')) < Gem::Version.new('1.5') and
       Rails.logger.warn 'Foreman 1.5 is required for nesting of Hostgroups to work properly,' +
                             "please upgrade or expect failures.\n#{__FILE__}:#{__LINE__}"
