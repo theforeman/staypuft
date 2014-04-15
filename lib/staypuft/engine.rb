@@ -23,6 +23,8 @@ module Staypuft
 
     config.to_prepare do
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
+      ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
+      ::Host::Discovered.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions

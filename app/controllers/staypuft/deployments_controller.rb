@@ -13,8 +13,7 @@ module Staypuft
         return
       end
 
-      base_hostgroup = Hostgroup.where(:name => Setting[:base_hostgroup]).first or
-          raise 'missing base_hostgroup'
+      base_hostgroup = Hostgroup.get_base_hostgroup
 
       deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
       deployment.layout    = Layout.where(:name       => "Distributed",

@@ -20,18 +20,26 @@ module Actions
 
           input.update host: { id: host.id, name: host.name }
 
-          sequence do
-            plan_action Host::Build, host.id
-            plan_action Host::WaitUntilInstalled, host.id
-            plan_action Host::WaitUntilHostReady, host.id
+          unless host.open_stack_deployed?
+            sequence do
+              plan_action Host::Build, host.id
+              plan_action Host::WaitUntilInstalled, host.id
+              plan_action Host::WaitUntilHostReady, host.id
+            end
+          else
+            # it is already deployed
           end
         end
 
         def humanized_output
           # TODO: fix dynflow to allow better progress getting
           steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
-          progress = steps.map(&:progress_done).reduce(&:+) / steps.size
-          format '%3d%% Host: %s', progress * 100, input[:host][:name]
+          progress = if steps.empty?
+                       'done'
+                     else
+                       format '%3d%%', steps.map(&:progress_done).reduce(&:+) / steps.size * 100
+                     end
+          format '%s Host: %s', progress, input[:host][:name]
         end
 
       end
