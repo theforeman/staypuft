@@ -94,10 +94,6 @@ module Staypuft
 
       redirect_to deployment_path(id: ::Staypuft::Deployment.first)
     end
-
-    def jump_to_beginning
-      jump_to(:deployment_settings)
-    end
   end
 
 end
