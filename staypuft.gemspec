@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
       `git ls-files`.split
   s.test_files = Dir['test/**/*']
 
-  s.add_dependency 'foreman-tasks'
+  s.add_dependency 'foreman-tasks', '~> 0.5.3'
   s.add_dependency 'dynflow', '~> 0.6.1'
   s.add_dependency 'wicked'
 

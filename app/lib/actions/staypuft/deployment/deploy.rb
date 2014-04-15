@@ -15,6 +15,7 @@ module Actions
     module Deployment
       class Deploy < Actions::Base
 
+        include Actions::Helpers::Lock
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
         def plan(deployment)
@@ -25,6 +26,8 @@ module Actions
           input.update id: deployment.id, name: deployment.name
 
           plan_action Hostgroup::OrderedDeploy, ordered_hostgroups
+
+          lock! deployment
         end
 
         def humanized_input

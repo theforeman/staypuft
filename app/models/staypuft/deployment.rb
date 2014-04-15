@@ -23,6 +23,10 @@ module Staypuft
 
     scoped_search :on => :name, :complete_value => :true
 
+    def self.available_locks
+      [:deploy]
+    end
+
     def destroy
       child_hostgroups.each do |h|
         h.destroy

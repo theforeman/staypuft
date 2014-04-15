@@ -34,7 +34,7 @@ module Staypuft
 
     def summary
       @deployment = Deployment.find(params[:id])
-      @services = @deployment.services
+      @services   = @deployment.services
     end
 
     def destroy
