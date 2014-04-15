@@ -78,7 +78,12 @@
                 <% child_hostgroup.own_and_free_hosts.each do |host| %>
                   <tr class="checkbox_highlight <%= "success" if child_hostgroup.host_ids.include?(host.id) %>">
                     <td class="ca">
-                      <%= check_box_tag "host_ids[]", host.id, child_hostgroup.host_ids.include?(host.id), :id => "host_ids_#{host.id}" %>
+                      <%= check_box_tag 'host_ids[]',
+                                        host.id,
+                                        child_hostgroup.host_ids.include?(host.id),
+                                        :id       => "host_ids_#{host.id}",
+                                        :disabled => host.open_stack_deployed? %>
+                      <%= hidden_field_tag 'host_ids[]', host.id if host.open_stack_deployed? %>
                     </td>
                     <td class="ellipsis"><%= host.name %></td>
                     <td class="hidden-s hidden-xs"><%= host.mac %></td>
