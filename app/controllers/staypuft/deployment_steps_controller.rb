@@ -29,6 +29,7 @@ module Staypuft
         Deployment.transaction do
           @deployment.update_attributes(params[:staypuft_deployment])
           @deployment.update_hostgroup_list
+          @deployment.set_networking_params
         end
       when :services_configuration
         # Collect services across all deployment's roles
