@@ -35,11 +35,11 @@ module Actions
           # TODO: fix dynflow to allow better progress getting
           steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
           progress = if steps.empty?
-                       1
+                       'done'
                      else
-                       steps.map(&:progress_done).reduce(&:+) / steps.size
+                       format '%3d%%', steps.map(&:progress_done).reduce(&:+) / steps.size * 100
                      end
-          format '%3d%% Host: %s', progress * 100, input[:host][:name]
+          format '%s Host: %s', progress, input[:host][:name]
         end
 
       end

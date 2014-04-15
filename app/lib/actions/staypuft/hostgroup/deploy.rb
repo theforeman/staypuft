@@ -40,6 +40,7 @@ module Actions
           format "Hostgroup: %s\n%s", input[:name],
                  planned_actions.
                      map(&:humanized_output).
+                     compact.
                      tap { |lines| lines << '-' if lines.empty? }.
                      map { |l| '  ' + l }.
                      join("\n")
