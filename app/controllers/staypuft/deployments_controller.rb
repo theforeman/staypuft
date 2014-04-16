@@ -64,10 +64,11 @@ module Staypuft
       hosts_to_remove = assigned_hosts - targeted_hosts
 
       hosts_to_assign.each do |discovered_host|
-        host         = discovered_host.becomes(::Host::Managed)
-        host.type    = 'Host::Managed'
-        host.managed = true
-        host.build   = true
+        original_type = discovered_host.type
+        host          = discovered_host.becomes(::Host::Managed)
+        host.type     = 'Host::Managed'
+        host.managed  = true
+        host.build    = true
 
         host.hostgroup   = hostgroup
         # set discovery environment to keep booting discovery image
@@ -84,7 +85,12 @@ module Staypuft
         # FIXME this is definitely ugly, needs to be properly fixed
         discovered_host.update_column :type, 'Host::Managed'
 
-        host.save!
+        begin
+          host.save!
+        rescue => e
+          discovered_host.update_column :type, original_type
+          raise e
+        end
       end
 
       hosts_to_remove.each do |host|
