@@ -11,8 +11,6 @@ module Staypuft
 
     def is_edit
       @deployment.name.starts_with?(Staypuft::Deployment::NEW_NAME_PREFIX)
-      logger.info @deployment.name.starts_with?(Staypuft::Deployment::NEW_NAME_PREFIX)
-      logger.info @deployment.name
     end
 
     def anything_deployed
