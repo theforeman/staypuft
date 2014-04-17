@@ -47,7 +47,7 @@
     </div>
  -->
     <div class="form_actions">
-      <% if anything_deployed %>
+      <% if is_edit %>
         <%= link_to _("Cancel"), deployment_path(@deployment),
                     :class => "btn btn-danger" %>
       <% else %>
