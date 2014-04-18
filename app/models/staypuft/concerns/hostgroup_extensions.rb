@@ -54,7 +54,7 @@ module Staypuft::Concerns::HostgroupExtensions
     end
   end
 
-  Gem::Version.new(SETTINGS[:version].to_s.gsub(/-develop$/, '')) < Gem::Version.new('1.5') and
+  Gem::Version.new(SETTINGS[:version].notag) < Gem::Version.new('1.5') and
       Rails.logger.warn 'Foreman 1.5 is required for nesting of Hostgroups to work properly,' +
                             "please upgrade or expect failures.\n#{__FILE__}:#{__LINE__}"
 end
