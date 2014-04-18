@@ -9,8 +9,8 @@ module Staypuft
       )
     end
 
-    def is_edit
-      @deployment.name.starts_with?(Staypuft::Deployment::NEW_NAME_PREFIX)
+    def is_new
+      @deployment.name.empty?
     end
 
     def anything_deployed
