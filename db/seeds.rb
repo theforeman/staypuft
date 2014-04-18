@@ -107,6 +107,7 @@ params = {
   "horizon_key"                   => "/etc/pki/tls/private/PUB_HOST-horizon.key",
   "qpid_nssdb_password"           => SecureRandom.hex,
   "fence_xvm_key_file_password"   => SecureRandom.hex,
+  "use_qemu_for_poc"              => "false",
 }
 
 def get_key_type(value)
