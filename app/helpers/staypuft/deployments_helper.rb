@@ -8,5 +8,18 @@ module Staypuft
          _("Services Configuration")
       )
     end
+
+    def is_new
+      @deployment.name.empty?
+    end
+
+    def anything_deployed
+      @deployment.child_hostgroups.
+        # this could be an association on deployment
+        inject([]) { |hosts, hg| hosts + hg.hosts }.
+        any?
+        # (:open_stack_deployed?)
+    end
+
   end
 end
