@@ -166,8 +166,7 @@ services = {
   :swift_ha              => {:name => "Swift (HA)", :class => ["quickstack::pacemaker::swift"]},
   :horizon_ha            => {:name => "Horizon (HA)", :class => ["quickstack::pacemaker::horizon"]},
   :mysql_ha              => {:name => "Mysql (HA)", :class => ["quickstack::pacemaker::mysql"]},
-  :neutron_ha            => {:name => "Neutron (HA)", :class => ["quickstack::pacemaker::neutron"]},
-  :ha_db_temp            => {:name => "Database (HA -- temp)", :class => ["quickstack::hamysql::singlenodetest"]}
+  :neutron_ha            => {:name => "Neutron (HA)", :class => ["quickstack::pacemaker::neutron"]}
 }
 services.each do |skey, svalue|
   service = Staypuft::Service.where(:name=>svalue[:name]).first_or_create!
@@ -203,7 +202,7 @@ end
 roles = [
     {:name=>"Controller (Nova)",
      :class=>"quickstack::nova_network::controller",
-     :layouts=>[[:non_ha_nova, 2]],
+     :layouts=>[[:non_ha_nova, 1]],
      :services=>[:non_ha_qpid, :mysql, :non_ha_keystone, :nova_controller, :non_ha_glance, :cinder, :heat, :ceilometer]},
     {:name=>"Compute (Nova)",
      :class=>"quickstack::nova_network::compute",
@@ -211,7 +210,7 @@ roles = [
      :services=>[:nova_compute]},
     {:name=>"Controller (Neutron)",
      :class=>"quickstack::neutron::controller",
-     :layouts=>[[:non_ha_neutron, 2]],
+     :layouts=>[[:non_ha_neutron, 1]],
      :services=>[:non_ha_qpid, :mysql, :non_ha_keystone, :neutron_controller, :non_ha_glance, :cinder, :heat, :ceilometer]},
     {:name=>"Compute (Neutron)",
      :class=>"quickstack::neutron::compute",
@@ -223,7 +222,7 @@ roles = [
      :services=>[:neutron_l3, :dhcp, :ovs]},
     {:name=>"LVM Block Storage",
      :class=>"quickstack::storage_backend::lvm_cinder",
-     :layouts=>[[:ha_nova, 1], [:ha_neutron, 1], [:non_ha_nova, 1], [:non_ha_neutron, 1]],
+     :layouts=>[[:ha_nova, 2], [:ha_neutron, 2], [:non_ha_nova, 2], [:non_ha_neutron, 2]],
      :services=>[:cinder]},
     {:name=>"Swift Storage Node",
      :class=>"quickstack::swift::storage",
@@ -231,13 +230,8 @@ roles = [
      :services=>[:swift]},
     {:name=>"HA Controller",
      :class=>[],
-     :layouts=>[[:ha_nova, 3], [:ha_neutron, 2]],
-     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha, :neutron_ha]},
-         # this one is temporary -- goes away once db is added back to HA COntroller
-    {:name=>"HA Database (temporary)",
-     :class=>[],
-     :layouts=>[[:ha_nova, 2]],
-     :services=>[:ha_db_temp]}
+     :layouts=>[[:ha_nova, 1], [:ha_neutron, 1]],
+     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha, :neutron_ha]}
         ]
 
 roles.each do |r|
