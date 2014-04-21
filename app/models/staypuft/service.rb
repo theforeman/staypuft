@@ -87,8 +87,8 @@ module Staypuft
                             "ovs_vxlan_udp_port", "qpid_host", "ssl",
                             "tenant_network_type", "tunnel_id_ranges", "verbose"],
       "Neutron-ovs-agent"=> [],
-      "Swift" => ["swift_all_ips", "swift_ext4_device", "swift_local_interface",
-                  "swift_loopback", "swift_ring_server", "swift_shared_secret"]
+      "Swift (node)" => ["swift_all_ips", "swift_ext4_device", "swift_local_interface",
+                         "swift_loopback", "swift_ring_server", "swift_shared_secret"]
 
     }
 

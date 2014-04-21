@@ -62,13 +62,18 @@ module Staypuft
       end
     end
 
-    # If layout networking is set to 'neutron', then set include_neutron on the
-    # hostgroup if it includes the "quickstack::pacemaker::params" puppetclass
+    # If layout networking is set to 'neutron', then set include_neutron and
+    # neutron on the hostgroup if it includes the "quickstack::pacemaker::params"
+    #  puppetclass
     def set_networking_params
       child_hostgroups.each do |the_hostgroup|
         the_hostgroup.puppetclasses.each do |pclass|
           if pclass.class_params.where(:key=> "include_neutron").first          
             the_hostgroup.set_param_value_if_changed(pclass, "include_neutron",
+                                     (layout.networking == 'neutron') ? true : false)
+          end
+          if pclass.class_params.where(:key=> "neutron").first          
+            the_hostgroup.set_param_value_if_changed(pclass, "neutron",
                                      (layout.networking == 'neutron') ? true : false)
           end
         end
