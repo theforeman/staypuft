@@ -1,5 +1,5 @@
 <%= render :layout => 'title' do %>
-  <%= raw alert_if_deployed %>
+  <%= alert_if_deployed %>
 
   <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
     <%= base_errors_for @deployment %>
