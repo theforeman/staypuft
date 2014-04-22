@@ -162,6 +162,7 @@ services = {
                                                       "qpid::server"]},
   :glance_ha             => {:name => "Glance (HA)", :class => ["quickstack::pacemaker::glance"]},
   :nova_ha               => {:name => "Nova (HA)", :class => ["quickstack::pacemaker::nova"]},
+  :heat_ha               => {:name => "Heat (HA)", :class => ["quickstack::pacemaker::heat"]},
   :cinder_ha             => {:name => "Cinder (HA)", :class => ["quickstack::pacemaker::cinder"]},
   :swift_ha              => {:name => "Swift (HA)", :class => ["quickstack::pacemaker::swift"]},
   :horizon_ha            => {:name => "Horizon (HA)", :class => ["quickstack::pacemaker::horizon"]},
@@ -231,7 +232,7 @@ roles = [
     {:name=>"HA Controller",
      :class=>[],
      :layouts=>[[:ha_nova, 1], [:ha_neutron, 1]],
-     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha, :neutron_ha]}
+     :services=>[:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha, :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha, :neutron_ha]}
         ]
 
 roles.each do |r|
