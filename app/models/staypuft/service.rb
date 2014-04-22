@@ -65,15 +65,17 @@ module Staypuft
                          "tenant_network_type", "tunnel_id_ranges", "verbose"],
       "DHCP" => [],
       "OVS" => ["ovs_bridge_mappings", "ovs_bridge_uplinks",
-                "ovs_tunnel_iface", "ovs_tunnel_types", "ovs_vlan_ranges",
-                "ovs_vxlan_udp_port" ],
+                "ovs_tunnel_iface", "ovs_tunnel_network", "ovs_tunnel_types",
+                "ovs_vlan_ranges", "ovs_vxlan_udp_port" ],
       "Nova-compute" => ["admin_password", "auto_assign_floating_ip",
                          "ceilometer_metering_secret", "ceilometer_user_password",
                          "cinder_backend_gluster", "controller_priv_host",
                          "controller_pub_host", "fixed_network_range",
                          "floating_network_range", "mysql_ca", "mysql_host",
-                         "nova_db_password", "nova_network_private_iface",
-                         "nova_network_public_iface", "nova_user_password",
+                         "nova_db_password", "network_private_iface",
+                         "network_private_network", 
+                         "network_public_iface",
+                         "network_public_network", "nova_user_password",
                          "qpid_host", "ssl", "verbose", "use_qemu_for_poc"],
       "Neutron-compute" => ["admin_password", "ceilometer_metering_secret",
                             "ceilometer_user_password", "cinder_backend_gluster",
@@ -83,13 +85,14 @@ module Staypuft
                             "neutron_db_password", "neutron_user_password",
                             "nova_db_password", "nova_user_password",
                             "ovs_bridge_mappings", "ovs_tunnel_iface",
-                            "ovs_tunnel_types", "ovs_vlan_ranges",
+                            "ovs_tunnel_network", "ovs_tunnel_types", "ovs_vlan_ranges",
                             "ovs_vxlan_udp_port", "qpid_host", "ssl",
                             "tenant_network_type", "tunnel_id_ranges", "verbose",
                             "use_qemu_for_poc"],
       "Neutron-ovs-agent"=> [],
       "Swift (node)" => ["swift_all_ips", "swift_ext4_device", "swift_local_interface",
-                         "swift_loopback", "swift_ring_server", "swift_shared_secret"]
+                         "swift_local_network","swift_loopback", "swift_ring_server",
+                         "swift_shared_secret"]
 
     }
 
