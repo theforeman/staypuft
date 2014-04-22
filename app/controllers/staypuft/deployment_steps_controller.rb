@@ -8,7 +8,7 @@ module Staypuft
     def show
       case step
       when :deployment_settings
-        @layouts = Layout.all
+        @layouts = ordered_layouts
       when :services_configuration
         @services = @deployment.services
       end
@@ -24,7 +24,7 @@ module Staypuft
 
       case step
       when :deployment_settings
-        @layouts = Layout.all
+        @layouts = ordered_layouts
 
         Deployment.transaction do
           @deployment.update_attributes(params[:staypuft_deployment])
@@ -60,6 +60,10 @@ module Staypuft
 
     def redirect_to_finish_wizard(options = {})
       redirect_to deployment_path(@deployment), :notice => _("Deployment has been succesfully configured.")
+    end
+
+    def ordered_layouts
+      Layout.order(:name).order("networking DESC").all
     end
   end
 end

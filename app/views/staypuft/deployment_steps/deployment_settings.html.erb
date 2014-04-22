@@ -1,7 +1,5 @@
 <%= render :layout => 'title' do %>
-  <% if anything_deployed %>
-    <%= alert :class => 'alert-warning', :text => _('Machines are already deployed with this configuration. Proceed with caution.') %>
-  <% end %>
+  <%= raw alert_if_deployed %>
 
   <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
     <%= base_errors_for @deployment %>
@@ -17,7 +15,7 @@
       <div class="clearfix">
         <div class="form-group">
           <label class="col-md-2 control-label" for="layout_id"><%= _("Deployment Layout") %></label>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <% @layouts.each do |layout| %>
               <%= radio_button_f_non_inline(f, :layout_id, :checked => layout.id == @deployment.layout_id,:value=>layout.id, :text=> "#{layout.name}, #{layout.networking.capitalize} " + _("Networking")) %>
             <% end %>
@@ -51,9 +49,9 @@
         <%= link_to _("Cancel"), deployment_path(@deployment),
                     :class => "btn btn-danger" %>
       <% else %>
-      <%= link_to _("Cancel"), deployment_path(@deployment), :method => :delete,
-                  :confirm => _("This will clear whole deployment configuration. Are you sure?"),
-                  :class => "btn btn-danger" %>
+        <%= link_to _("Cancel"), deployment_path(@deployment), :method => :delete,
+                    :confirm => _("This will clear whole deployment configuration. Are you sure?"),
+                    :class => "btn btn-danger" %>
       <% end %>
       <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
         <%= _("Next") %>

@@ -13,12 +13,13 @@ module Staypuft
       @deployment.name.empty?
     end
 
-    def anything_deployed
-      @deployment.child_hostgroups.
-        # this could be an association on deployment
-        inject([]) { |hosts, hg| hosts + hg.hosts }.
-        any?
-        # (:open_stack_deployed?)
+    def alert_if_deployed
+      if @deployment.hosts.any?(&:open_stack_deployed?)
+        alert :class => 'alert-warning',
+              :text => _('Machines are already deployed with this configuration. Changing the configuration parameters
+                          is unsupported and may result in an unusable configuration. <br/>Please proceed with caution.'),
+              :close => false
+      end
     end
 
   end
