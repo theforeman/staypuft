@@ -10,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = ordered_layouts
       when :services_configuration
-        @services = @deployment.services
+        @services = @deployment.services.order(:name)
       end
 
       render_wizard
@@ -33,10 +33,10 @@ module Staypuft
         end
       when :services_configuration
         # Collect services across all deployment's roles
-        @services = @deployment.roles(:services).map(&:services).flatten.uniq
+        @services = @deployment.services.order(:name)
         if params[:staypuft_deployment]
           param_data = params[:staypuft_deployment][:hostgroup_params]
-          diffs = []
+          diffs      = []
           param_data.each do |hostgroup_id, hostgroup_params|
             hostgroup = Hostgroup.find(hostgroup_id)
             hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
@@ -54,7 +54,7 @@ module Staypuft
 
     private
     def get_deployment
-      @deployment = Deployment.first
+      @deployment      = Deployment.first
       @deployment.name = nil if @deployment.name.starts_with?(Deployment::NEW_NAME_PREFIX)
     end
 

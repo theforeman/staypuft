@@ -33,7 +33,7 @@
   <% else %>
     <%= link_to(_("Deploy"),
                 "",
-                :class => %w(btn btn-success),
+                :class         => %w(btn btn-success),
                 :'data-toggle' => "modal",
                 :'data-target' => "#deploy_modal") %>
   <% end %>
@@ -43,7 +43,7 @@
 <div class="row tabbed_side_nav_table">
   <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">
     <h3><%= _("Host Groups") %></h3>
-    <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
+    <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
       <li class="<%= 'active' if i == 0 %>">
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
           <div class="col-xs-2 text-center">
@@ -66,7 +66,7 @@
   </ul>
 
   <div class="tab-content col-md-8">
-    <% @deployment.child_hostgroups.each_with_index do |child_hostgroup, i| %>
+    <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
       <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= child_hostgroup.name.parameterize.underscore %>">
         <h3><%= _("Hosts") %></h3>
         <% if child_hostgroup.own_and_free_hosts.present? %>

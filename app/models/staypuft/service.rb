@@ -15,7 +15,7 @@ module Staypuft
     # for a param name, an array of [param_name, puppetclass] in the case where
     # there are possibly multiple puppetclass matches. without this, we'll
     # just grab the first puppetclass from the matching hostgroup
-    UI_PARAMS = { 
+    UI_PARAMS = {
       "qpid (non-HA)"=> ["qpid_ca", "qpid_cert", "qpid_host", "qpid_key", "qpid_nssdb_password"],
       "MySQL"=> ["mysql_ca", "mysql_cert", "mysql_host", "mysql_key",
                  "mysql_root_password"],
@@ -73,7 +73,7 @@ module Staypuft
                          "controller_pub_host", "fixed_network_range",
                          "floating_network_range", "mysql_ca", "mysql_host",
                          "nova_db_password", "network_private_iface",
-                         "network_private_network", 
+                         "network_private_network",
                          "network_public_iface",
                          "network_public_network", "nova_user_password",
                          "qpid_host", "ssl", "verbose", "use_qemu_for_poc"],

@@ -9,7 +9,7 @@
     <h4><%= "#{@deployment.layout.name} - #{@deployment.layout.networking.capitalize} " + _("Networking") %></h4>
 
     <div class="clearfix">
-        <% @deployment.roles.each do |role| %>
+        <% @deployment.roles_ordered.each do |role| %>
           <div class="panel panel-default service-box">
             <div class="panel-heading"><strong><%= role.name %></strong></div>
             <div class="panel-body">
