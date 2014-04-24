@@ -77,16 +77,16 @@ module Staypuft
     def set_networking_params
       child_hostgroups.each do |the_hostgroup|
         the_hostgroup.puppetclasses.each do |pclass|
-          if pclass.class_params.where(:key=> "include_neutron").first          
+          if pclass.class_params.where(:key => "include_neutron").first
             the_hostgroup.set_param_value_if_changed(pclass, "include_neutron",
-                                     (layout.networking == 'neutron') ? true : false)
+                                                     layout.networking == 'neutron')
           end
-          if pclass.class_params.where(:key=> "neutron").first          
+          if pclass.class_params.where(:key => "neutron").first
             the_hostgroup.set_param_value_if_changed(pclass, "neutron",
-                                     (layout.networking == 'neutron') ? true : false)
+                                                     layout.networking == 'neutron')
           end
         end
-      end        
+      end
     end
 
     private
