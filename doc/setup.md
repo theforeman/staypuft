@@ -54,8 +54,8 @@ redirected in Apache to thin running form checkout with Staypuft.
     -   add `192.168.100.1 foreman.example.com foreman` line to
          `/etc/hosts`
 
--   fix non ASCI chars in `/etc/fedora-release` and
-    `/etc/fedoraversion` replace ö with o
+-   fix non ASCI chars in `/etc/fedora-release` and if it exists
+    `/etc/fedoraversion` replace ö with o and also remove the ' char.  
 -   run `foreman-installer` (to install foreman with default options)
     -   _use system ruby; rvm and rbenv can mess things up_
     -   _If you get locale errors or related to operatingsystem version
