@@ -7,6 +7,9 @@ module Staypuft::Concerns::HostgroupExtensions
     has_one :role, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Role'
 
     has_one :deployment, :class_name => 'Staypuft::Deployment'
+
+    scope :deploy_order,
+          lambda { reorder "#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order" }
   end
 
   def add_puppetclasses_from_resource(resource)

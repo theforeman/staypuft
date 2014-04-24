@@ -10,9 +10,17 @@ module Staypuft
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
-    has_many :child_hostgroups, :through => :deployment_role_hostgroups, :class_name => 'Hostgroup',
-                                :source => :hostgroup
-    has_many :roles, :through => :deployment_role_hostgroups
+    has_many :child_hostgroups,
+             :through    => :deployment_role_hostgroups,
+             :class_name => 'Hostgroup',
+             :source     => :hostgroup
+
+    has_many :roles,
+             :through => :deployment_role_hostgroups
+    has_many :roles_ordered,
+             :through => :deployment_role_hostgroups,
+             :source  => :role,
+             :order   => "#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order"
 
     has_many :services, :through => :roles
     has_many :hosts, :through => :child_hostgroups
