@@ -63,28 +63,18 @@ module Staypuft
       hosts_to_assign = targeted_hosts - assigned_hosts
       hosts_to_remove = assigned_hosts - targeted_hosts
 
-      hosts_to_assign.each do |discovered_host|
-        host         = discovered_host.becomes(::Host::Managed)
-        host.type    = 'Host::Managed'
-        host.managed = true
-        host.build   = true
+      unassigned_hosts = hosts_to_assign.reduce([]) do |unassigned_hosts, discovered_host|
+        success, host = assign_host_to_hostgroup discovered_host, hostgroup
+        success ? unassigned_hosts : [*unassigned_hosts, host]
+      end
 
-        host.hostgroup   = hostgroup
-        # set discovery environment to keep booting discovery image
-        host.environment = Environment.get_discovery
-
-        # root_pass is not copied for some reason
-        host.root_pass   = hostgroup.root_pass
-
-        # I do not why but the final save! adds following condytion to the update SQL command
-        # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
-        # which will not find the record since it's still Host::Discovered.
-        # Using #update_column to change it directly in DB
-        # (discovered_host is used to avoid same WHERE condition problem here).
-        # FIXME this is definitely ugly, needs to be properly fixed
-        discovered_host.update_column :type, 'Host::Managed'
-
-        host.save!
+      unless unassigned_hosts.empty?
+        flash[:warning] = 'Unassigned hosts: ' + unassigned_hosts.map(&:name_was).join(', ')
+        Rails.logger.warn(
+            "Unassigned hosts: \n" +
+                unassigned_hosts.
+                    map { |h| format '%s (%s)', h.name_was, h.errors.full_messages.join(',') }.
+                    join("\n"))
       end
 
       hosts_to_remove.each do |host|
@@ -93,6 +83,35 @@ module Staypuft
       end
 
       redirect_to deployment_path(id: ::Staypuft::Deployment.first)
+    end
+
+    private
+
+    def assign_host_to_hostgroup(discovered_host, hostgroup)
+      original_type = discovered_host.type
+      host          = discovered_host.becomes(::Host::Managed)
+      host.type     = 'Host::Managed'
+      host.managed  = true
+      host.build    = true
+
+      host.hostgroup   = hostgroup
+      # set discovery environment to keep booting discovery image
+      host.environment = Environment.get_discovery
+
+      # root_pass is not copied for some reason
+      host.root_pass   = hostgroup.root_pass
+
+      # I do not why but the final save! adds following condytion to the update SQL command
+      # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
+      # which will not find the record since it's still Host::Discovered.
+      # Using #update_column to change it directly in DB
+      # (discovered_host is used to avoid same WHERE condition problem here).
+      # FIXME this is definitely ugly, needs to be properly fixed
+      discovered_host.update_column :type, 'Host::Managed'
+
+      [host.save, host].tap do |saved, _|
+        discovered_host.becomes(Host::Base).update_column(:type, original_type) unless saved
+      end
     end
   end
 
