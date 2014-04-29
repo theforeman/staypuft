@@ -29,10 +29,6 @@ module Actions
           Type! compute_resource, *[ComputeResource, (NilClass if fake)].compact
 
           sequence do
-            plan_self deployment_id:   deployment.id,
-                      deployment_name: deployment.name,
-                      fake:            fake,
-                      assign:          assign
 
             hostgroups = deployment.child_hostgroups
             hostgroups.each do |hostgroup|
@@ -47,15 +43,6 @@ module Actions
           end
         end
 
-        def run
-          deployment = ::Staypuft::Deployment.find input.fetch(:deployment_id)
-          hostgroups = deployment.child_hostgroups
-          hostgroups.each do |hostgroup|
-            hostgroup.hosts.each do |host|
-              host.destroy # TODO make action for it
-            end
-          end
-        end
 
         def humanized_input
           "#{input[:deployment_name]} #{input[:fake] ? 'fake' : 'real'}"
