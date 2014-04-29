@@ -2,10 +2,10 @@
 <% title _("%s Summary") % @deployment.name %>
 
 <div class="col-md-12">
-  <% @services.each_with_index do |service, i| %>
+  <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
     <div class="well <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
       <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-      <% if (params_hash = service.ui_params_for_form).size > 0 %>
+      <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
         <% params_hash.each do |param_hash| %>
         <div class="row">
           <div class="col-md-3 text-right">

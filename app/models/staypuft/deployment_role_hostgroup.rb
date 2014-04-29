@@ -5,6 +5,7 @@ module Staypuft
     belongs_to :deployment
     belongs_to :hostgroup
     belongs_to :role
+    has_many :services, :through => :role
 
     validates :deployment, :presence => true
     validates :role, :presence => true

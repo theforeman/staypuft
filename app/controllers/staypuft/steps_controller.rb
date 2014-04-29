@@ -1,5 +1,5 @@
 module Staypuft
-  class DeploymentStepsController < ApplicationController
+  class StepsController < ApplicationController
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
@@ -10,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = ordered_layouts
       when :services_configuration
-        @services = @deployment.services.order(:name)
+        @service_hostgroup_map = @deployment.services_hostgroup_map
       end
 
       render_wizard
@@ -31,7 +31,7 @@ module Staypuft
         @deployment.form_step = Deployment::STEP_SELECTION unless @deployment.form_complete?
       when :services_configuration
         # Collect services across all deployment's roles
-        @services = @deployment.services.order(:name)
+        @service_hostgroup_map = @deployment.services_hostgroup_map
         if params[:staypuft_deployment]
           @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
           param_data = params[:staypuft_deployment][:hostgroup_params]
@@ -52,7 +52,7 @@ module Staypuft
 
     private
     def get_deployment
-      @deployment      = Deployment.first
+      @deployment      = Deployment.find(params[:deployment_id])
       @deployment.name = nil if @deployment.name.starts_with?(Deployment::NEW_NAME_PREFIX)
     end
 

@@ -3,9 +3,9 @@
 <% content_for(:title_actions) do %>
 
   <%= link_to(_("Edit"), if @deployment.deployed?
-                           deployment_step_path(id: 'services_configuration')
+                           deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
                          else
-                           deployment_steps_path
+                           deployment_steps_path(deployment_id: @deployment)
                          end) %>
   <%= link_to(_("Configuration Summary"), summary_deployment_path(@deployment.id), :class => '') %>
 
@@ -74,7 +74,7 @@
       <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= child_hostgroup.name.parameterize.underscore %>">
         <h3><%= _("Hosts") %></h3>
         <% if child_hostgroup.own_and_free_hosts.present? %>
-          <%= form_tag(associate_host_deployments_path, class: 'form-horizontal well association') do |f| %>
+          <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal well association') do |f| %>
             <p>
               <%= submit_tag _("Assign / Unassign"), :class => "btn btn-primary btn-sm" %>
             </p>

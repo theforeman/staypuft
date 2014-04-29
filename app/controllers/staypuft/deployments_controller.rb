@@ -7,12 +7,6 @@ module Staypuft
     end
 
     def new
-      if Deployment.first
-        flash[:warning] = _('Deployment already exists.')
-        redirect_to deployments_url
-        return
-      end
-
       base_hostgroup = Hostgroup.get_base_hostgroup
 
       deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
@@ -24,18 +18,18 @@ module Staypuft
       deployment.hostgroup = deployment_hostgroup
       deployment.save!
 
-      redirect_to deployment_steps_path
+      redirect_to deployment_steps_path(deployment_id: deployment)
     end
 
     def show
       @deployment = Deployment.find(params[:id])
-      @hostgroup = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
-                                 @deployment.child_hostgroups.deploy_order.first
+      @hostgroup  = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
+          @deployment.child_hostgroups.deploy_order.first
     end
 
     def summary
-      @deployment = Deployment.find(params[:id])
-      @services   = @deployment.services
+      @deployment            = Deployment.find(params[:id])
+      @service_hostgroup_map = @deployment.services_hostgroup_map
     end
 
     def destroy
@@ -44,21 +38,23 @@ module Staypuft
     end
 
     def deploy
-      task = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Deploy, Deployment.first
+      deployment = Deployment.find(params[:id])
+      task       = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Deploy, deployment
       redirect_to foreman_tasks_task_url(id: task)
     end
 
     # TODO remove, it's temporary
     def populate
       task = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Populate,
-                                     Deployment.first,
+                                     Deployment.find(params[:id]),
                                      fake:   !!params[:fake],
                                      assign: !!params[:assign]
       redirect_to foreman_tasks_task_url(id: task)
     end
 
     def associate_host
-      hostgroup = ::Hostgroup.find params[:hostgroup_id]
+      deployment = Deployment.find(params[:id])
+      hostgroup  = ::Hostgroup.find params[:hostgroup_id]
 
       targeted_hosts  = ::Host::Base.find Array(params[:host_ids])
       assigned_hosts  = hostgroup.hosts
@@ -84,8 +80,8 @@ module Staypuft
         host.save!
       end
 
-      redirect_to show_with_hostgroup_selected_deployment_path(:id => Staypuft::Deployment.first,
-                                                                :hostgroup_id => hostgroup)
+      redirect_to show_with_hostgroup_selected_deployment_path(
+                      id: deployment, hostgroup_id: hostgroup)
     end
 
     private

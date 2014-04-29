@@ -6,7 +6,7 @@ module Staypuft::Concerns::HostgroupExtensions
     has_one :parent_deployment, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Deployment'
     has_one :role, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Role'
 
-    has_one :deployment, :class_name => 'Staypuft::Deployment'
+    has_one :deployment, :class_name => 'Staypuft::Deployment', through: :deployment_role_hostgroup
 
     scope :deploy_order,
           lambda { reorder "#{::Staypuft::DeploymentRoleHostgroup.table_name}.deploy_order" }

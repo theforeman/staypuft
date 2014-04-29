@@ -8,7 +8,7 @@
     <div class="form-group tabbed_side_nav_form row">
       <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
         <h3><%= _("Services") %></h3>
-        <% @services.each_with_index do |service, i| %>
+        <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
           <li class="<%= 'active' if i == 0 %>">
             <a href="#<%= service.name.parameterize.underscore %>" data-toggle="tab">
               <%= service.name %>
@@ -18,10 +18,10 @@
       </ul>
 
       <div class="tab-content col-md-9">
-        <% @services.each_with_index do |service, i| %>
+        <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
           <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
             <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-            <% if (params_hash = service.ui_params_for_form).size > 0 %>
+            <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
               <% params_hash.each do |param_hash| %>
                 <div class="row">
                   <div class="col-md-4 control-label">
