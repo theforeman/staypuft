@@ -116,6 +116,10 @@ redirected in Apache to thin running form checkout with Staypuft.
         <Proxy balancer://thinserversforeman>
           BalancerMember http://your.machine:3000/ # use fqdn not localhost
         </Proxy>
+        
+        RewriteEngine On
+        # RewriteCond %{REQUEST_URI} !^/pulp.*$ # needed when installed with Katello
+        RewriteRule ^/(.*)$ balancer://thinserversforeman%{REQUEST_URI} [P,QSA,L]
 
 -   Use same DB or copy to the other machine.
 -   check the settings of your new foreman process: modulepath, foreman_url,
