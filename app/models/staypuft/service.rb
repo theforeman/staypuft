@@ -54,7 +54,8 @@ module Staypuft
                   "cinder_db_password", "cinder_gluster_servers",
                   "cinder_gluster_volume", "cinder_user_password"],
       "Heat"=> ["heat_cfn", "heat_cloudwatch", "heat_db_password", "heat_user_password", "heat_auth_encrypt_key"],
-      "Ceilometer"=> ["ceilometer_metering_secret", "ceilometer_user_password"
+      "Ceilometer"=> ["ceilometer", "ceilometer_host",
+                      "ceilometer_metering_secret", "ceilometer_user_password"
                      ],
       "Neutron - L3" => ["controller_priv_host", "enable_tunneling",
                          "external_network_bridge", "fixed_network_range",
@@ -68,6 +69,7 @@ module Staypuft
                 "ovs_tunnel_iface", "ovs_tunnel_network", "ovs_tunnel_types",
                 "ovs_vlan_ranges", "ovs_vxlan_udp_port" ],
       "Nova-compute" => ["admin_password", "auto_assign_floating_ip",
+                         "ceilometer", "ceilometer_host",
                          "ceilometer_metering_secret", "ceilometer_user_password",
                          "cinder_backend_gluster", "controller_priv_host",
                          "controller_pub_host", "fixed_network_range",
@@ -77,7 +79,8 @@ module Staypuft
                          "network_public_iface",
                          "network_public_network", "nova_user_password",
                          "qpid_host", "ssl", "verbose", "use_qemu_for_poc"],
-      "Neutron-compute" => ["admin_password", "ceilometer_metering_secret",
+      "Neutron-compute" => ["admin_password", "ceilometer", "ceilometer_host",
+                            "ceilometer_metering_secret",
                             "ceilometer_user_password", "cinder_backend_gluster",
                             "controller_admin_host", "controller_priv_host",
                             "controller_pub_host", "enable_tunneling", "mysql_ca",
