@@ -15,14 +15,6 @@ Symlink `config/staypuft.local.rb` to yours Foreman `bundle.d`.
 
 See [this](doc/setup.md) document.
 
-## TODO
-
-Much to do:
-* UI For launching a basic provisioning workflow,
-* Deploy a 3-controller HA configuration,
-* Configure an HA OpenStack deployment with three controller nodes and as many compute and storage nodes as are required,
-* Configure an OpenStack deployment with a single controller node.
-
 ## Contributing
 
 Fork and send a Pull Request. Thanks!
