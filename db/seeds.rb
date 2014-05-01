@@ -34,6 +34,7 @@ params = {
   "heat_db_password"              => SecureRandom.hex,
   "heat_user_password"            => SecureRandom.hex,
   "heat_cfn_user_password"        => SecureRandom.hex,
+  "heat_auth_encrypt_key"         => SecureRandom.hex,
   "horizon_secret_key"            => SecureRandom.hex,
   "keystone_admin_token"          => SecureRandom.hex,
   "keystone_db_password"          => SecureRandom.hex,

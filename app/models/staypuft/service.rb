@@ -53,7 +53,7 @@ module Staypuft
       "Cinder"=> ["cinder_backend_gluster", "cinder_backend_iscsi",
                   "cinder_db_password", "cinder_gluster_servers",
                   "cinder_gluster_volume", "cinder_user_password"],
-      "Heat"=> ["heat_cfn", "heat_cloudwatch", "heat_db_password", "heat_user_password"],
+      "Heat"=> ["heat_cfn", "heat_cloudwatch", "heat_db_password", "heat_user_password", "heat_auth_encrypt_key"],
       "Ceilometer"=> ["ceilometer_metering_secret", "ceilometer_user_password"
                      ],
       "Neutron - L3" => ["controller_priv_host", "enable_tunneling",
