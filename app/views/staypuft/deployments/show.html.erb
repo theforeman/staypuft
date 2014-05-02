@@ -2,7 +2,11 @@
 
 <% content_for(:title_actions) do %>
 
-  <%= link_to(_("Edit"), deployment_steps_path) %>
+  <%= link_to(_("Edit"), if @deployment.deployed?
+                           deployment_step_path(id: 'services_configuration')
+                         else
+                           deployment_steps_path
+                         end) %>
   <%= link_to(_("Configuration Summary"), summary_deployment_path(@deployment.id), :class => '') %>
 
   <% if Rails.env.development? %>
@@ -97,7 +101,16 @@
                                         :disabled => host.open_stack_deployed? %>
                       <%= hidden_field_tag 'host_ids[]', host.id if host.open_stack_deployed? %>
                     </td>
-                    <td class="ellipsis"><%= host.name %></td>
+                    <td class="ellipsis">
+                      <% case host %>
+                      <% when Host::Managed %>
+                        <%= link_to_if_authorized host.name, hash_for_host_path(host) %>
+                      <% when Host::Discovered %>
+                        <%= link_to_if_authorized host.name, hash_for_discover_path(host) %>
+                      <% else %>
+                        <%= host.name %>
+                      <% end %>
+                    </td>
                     <td class="hidden-s hidden-xs"><%= host.mac %></td>
                     <td class="hidden-s hidden-xs"><%= host.type %></td>
                   </tr>

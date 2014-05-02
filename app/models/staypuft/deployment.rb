@@ -89,6 +89,10 @@ module Staypuft
       end
     end
 
+    def deployed?
+      self.hosts.any?(&:open_stack_deployed?)
+    end
+
     private
     def update_hostgroup_name
       hostgroup.name = self.name
