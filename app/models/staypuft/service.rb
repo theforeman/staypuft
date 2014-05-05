@@ -50,9 +50,11 @@ module Staypuft
                                  "swift_shared_secret", "swift_storage_device",
                                  "swift_storage_ips"],
       "Glance (non-HA)"=> ["glance_db_password", "glance_user_password"],
-      "Cinder"=> ["cinder_backend_gluster", "cinder_backend_iscsi",
+      "Cinder (controller)"=> cinder_params = ["cinder_backend_gluster", "cinder_backend_iscsi",
                   "cinder_db_password", "cinder_gluster_servers",
-                  "cinder_gluster_volume", "cinder_user_password"],
+                  "cinder_gluster_volume", "cinder_user_password",
+                  "controller_priv_host", "mysql_host", "qpid_host"],
+      "Cinder (node)"=> cinder_params,
       "Heat"=> ["heat_cfn", "heat_cloudwatch", "heat_db_password", "heat_user_password", "heat_auth_encrypt_key"],
       "Ceilometer"=> ["ceilometer", "ceilometer_host",
                       "ceilometer_metering_secret", "ceilometer_user_password"
