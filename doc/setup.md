@@ -14,7 +14,7 @@ redirected in Apache to thin running form checkout with Staypuft.
 ### Installation
 
 -   fresh Fedora 19 on bare-metal
--   `yum -y install http://yum.theforeman.org/releases/1.4/f19/x86_64/foreman-release.rpm`
+-   `yum -y install http://yum.theforeman.org/releases/1.5/f19/x86_64/foreman-release.rpm`
 -   `yum -y install foreman-installer`
 -   `yum -y install foreman-libvirt`
 -   disabled selinux `setenforce` and edit `/etc/sysconfig/selinux`
@@ -71,13 +71,13 @@ redirected in Apache to thin running form checkout with Staypuft.
 ### Configuration
 
 -   enable access to libvirt
-    <http://theforeman.org/manuals/1.4/index.html#5.2.5LibvirtNotes>
+    <http://theforeman.org/manuals/1.5/index.html#5.2.5LibvirtNotes>
     -   test connection from foreman UI
         <https://foreman.example.com/compute_resources/1-libvirt/edit>
         `Test Connection` button
 
 -   configure smart proxy with tftp, dhcp, dns
-    <http://theforeman.org/manuals/1.4/index.html#4.3.9Libvirt>
+    <http://theforeman.org/manuals/1.5/index.html#4.3.9Libvirt>
     -   refresh Features on the smart proxy record
 
 -   see http://www.youtube.com/watch?v=eHjpZr3GB6s about how setup
@@ -205,9 +205,9 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
 ## Enabling Puppet SSH
 
 This is required for invoking puppet runs on remote machines.
-This will be needed in Staypuft for orchestration tasks.
+This will be needed in future versions of Staypuft for orchestration tasks.
 
--   Enable Puppet Run (Based on Foreman 1.4.1)
+-   Enable Puppet Run
     -   Go to the foreman web UI.
         Administer -> Settings -> Puppet
     -   Set Puppet Run to 'true'
