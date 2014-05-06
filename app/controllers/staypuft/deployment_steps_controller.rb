@@ -36,7 +36,6 @@ module Staypuft
         @services = @deployment.services.order(:name)
         if params[:staypuft_deployment]
           param_data = params[:staypuft_deployment][:hostgroup_params]
-          diffs      = []
           param_data.each do |hostgroup_id, hostgroup_params|
             hostgroup = Hostgroup.find(hostgroup_id)
             hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
