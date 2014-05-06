@@ -25,6 +25,7 @@ module Actions
           host             = ::Host.find(input[:host_id])
           # return back to hostgroup's environment
           host.environment = nil
+          host.set_token
           host.save!
           host.send :setTFTP
           restart(host)
