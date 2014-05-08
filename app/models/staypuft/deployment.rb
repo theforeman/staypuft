@@ -1,10 +1,17 @@
 module Staypuft
   class Deployment < ActiveRecord::Base
 
+    # Form step states
+    STEP_SETTINGS =      :settings
+    STEP_CONFIGURATION = :configuration
+    STEP_COMPLETE =      :complete
+    STEP_SELECTION =     :selection
+    
     NEW_NAME_PREFIX="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout
     after_save :update_hostgroup_name
+    after_validation :check_form_complete
 
     belongs_to :layout
     belongs_to :hostgroup, :dependent => :destroy
@@ -29,6 +36,13 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+
+    # TODO(mtaylor)
+    # Use conditional validations to validate the deployment multi-step form.
+    # deployment.form_step should be used to check the form step the user is
+    # currently on.
+    # e.g.
+    # validates :name, :presence => true, :if => :form_step_is_configuation?
 
     scoped_search :on => :name, :complete_value => :true
 
@@ -93,12 +107,20 @@ module Staypuft
       self.hosts.any?(&:open_stack_deployed?)
     end
 
+    def form_complete?
+      self.form_step.to_sym == Deployment::STEP_COMPLETE
+    end
+
     private
     def update_hostgroup_name
       hostgroup.name = self.name
       hostgroup.save!
     end
 
-
+    # Checks to see if the form step was the last in the series.  If so it sets
+    # the form_step field to complete.
+    def check_form_complete
+      self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
+    end
   end
 end

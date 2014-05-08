@@ -17,24 +17,23 @@ module Staypuft
     end
 
     def update
-      # TODO(jtomasek):
-      # in model we need to conditionally validate based on the step eg:
-      # validates_presence_of :some_attribute, :if => :on_deployment_settings_step?
-      # see wicked wiki for more info
-
       case step
       when :deployment_settings
         @layouts = ordered_layouts
 
         Deployment.transaction do
+          @deployment.form_step = Deployment::STEP_SETTINGS unless @deployment.form_complete?
           @deployment.update_attributes(params[:staypuft_deployment])
           @deployment.update_hostgroup_list
           @deployment.set_networking_params
         end
+      when :services_selection
+        @deployment.form_step = Deployment::STEP_SELECTION unless @deployment.form_complete?
       when :services_configuration
         # Collect services across all deployment's roles
         @services = @deployment.services.order(:name)
         if params[:staypuft_deployment]
+          @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
           param_data = params[:staypuft_deployment][:hostgroup_params]
           diffs      = []
           param_data.each do |hostgroup_id, hostgroup_params|
