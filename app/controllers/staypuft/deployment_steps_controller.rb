@@ -35,7 +35,6 @@ module Staypuft
         if params[:staypuft_deployment]
           @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
           param_data = params[:staypuft_deployment][:hostgroup_params]
-          diffs      = []
           param_data.each do |hostgroup_id, hostgroup_params|
             hostgroup = Hostgroup.find(hostgroup_id)
             hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
