@@ -2,6 +2,7 @@ module Staypuft
   class Deployment < ActiveRecord::Base
 
     # Form step states
+    STEP_INACTIVE =      :inactive
     STEP_SETTINGS =      :settings
     STEP_CONFIGURATION = :configuration
     STEP_COMPLETE =      :complete
