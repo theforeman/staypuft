@@ -6,7 +6,7 @@ Rails.application.routes.draw do
         post 'associate_host'
       end
       member do
-        get 'deploy'
+        post 'deploy'
         get 'populate'
         get 'summary'
       end
