@@ -146,7 +146,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
-        <%= display_link_if_authorized(_("Deploy"), hash_for_deploy_deployment_path, :class => 'btn btn-primary') %>
+        <%= display_link_if_authorized(_("Deploy"),
+                                       hash_for_deploy_deployment_path,
+                                       :class => 'btn btn-primary',
+                                       :method => :post,
+                                       :data => { :disable_with => _("Deploying...")}) %>
       </div>
     </div>
   </div>
