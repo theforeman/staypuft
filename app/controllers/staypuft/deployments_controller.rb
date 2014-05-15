@@ -29,6 +29,8 @@ module Staypuft
 
     def show
       @deployment = Deployment.find(params[:id])
+      @hostgroup = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
+                                 @deployment.child_hostgroups.deploy_order.first
     end
 
     def summary
@@ -82,7 +84,8 @@ module Staypuft
         host.save!
       end
 
-      redirect_to deployment_path(id: ::Staypuft::Deployment.first)
+      redirect_to show_with_hostgroup_selected_deployment_path(:id => Staypuft::Deployment.first,
+                                                                :hostgroup_id => hostgroup)
     end
 
     private
