@@ -91,6 +91,26 @@ module Staypuft
                       id: deployment, hostgroup_id: hostgroup)
     end
 
+    def export_config
+      @deployment = Deployment.find(params[:id])
+      send_data DeploymentParamExporter.new(@deployment).to_hash.to_yaml,
+          :type => "application/x-yaml", :disposition => 'attachment',
+          :filename => @deployment.name + '.yml'
+    end
+
+    def import_config
+      @deployment = Deployment.find(params[:id])
+      unless params[:deployment_config_file].nil?
+        new_config = YAML.load_file(params[:deployment_config_file].path)
+        DeploymentParamImporter.new(@deployment).import(new_config)
+
+        flash[:notice] = "Updated parameter values"
+      else
+        flash[:error] = "No import file specified"
+      end
+      redirect_to deployment_path(@deployment)
+    end
+
     private
 
     def assign_host_to_hostgroup(discovered_host, hostgroup)

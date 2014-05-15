@@ -13,6 +13,7 @@ module Staypuft
 
     def ui_params_for_form(hostgroup)
       return [] if (hostgroup.nil?)
+      role = hostgroup.role
       if hostgroup.puppetclasses.blank?
         params_from_hash = []
       else
@@ -27,13 +28,17 @@ module Staypuft
           end
           param_lookup_key = param_puppetclass.class_params.where(:key => param_key).first
           param_lookup_key.nil? ? nil : { :hostgroup   => hostgroup,
+                                          :role        => role,
                                           :puppetclass => param_puppetclass,
                                           :param_key   => param_lookup_key }
         end.compact
       end
       params_from_service = self.puppetclasses.collect do |pclass|
         pclass.class_params.collect do |class_param|
-          { :hostgroup => hostgroup, :puppetclass => pclass, :param_key => class_param }
+          { :hostgroup => hostgroup,
+            :role => role,
+            :puppetclass => pclass,
+            :param_key => class_param }
         end
       end.flatten
       params_from_hash + params_from_service
