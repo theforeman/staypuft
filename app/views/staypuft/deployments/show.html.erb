@@ -48,7 +48,7 @@
   <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">
     <h3><%= _("Host Groups") %></h3>
     <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
-      <li class="<%= 'active' if i == 0 %>">
+      <li class="<%= 'active' if @hostgroup == child_hostgroup %>">
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
           <div class="col-xs-2 text-center">
             <i class="glyphicon glyphicon-ok"></i>
