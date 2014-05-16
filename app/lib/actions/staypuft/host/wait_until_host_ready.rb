@@ -31,6 +31,14 @@ module Actions
           external_task
         end
 
+        def run_progress_weight
+          4
+        end
+
+        def run_progress
+          0.1
+        end
+
         private
 
         def invoke_external_task
@@ -73,6 +81,7 @@ module Actions
             fail(::Staypuft::Exception, "Latest Puppet Run Contains Failures for Host: #{id}")
           end
         end
+
       end
     end
   end
