@@ -38,6 +38,14 @@ module Actions
           plan_self host_id: host_id
         end
 
+        def run_progress_weight
+          4
+        end
+
+        def run_progress
+          0.1
+        end
+
       end
     end
   end
