@@ -3,7 +3,6 @@ Rails.application.routes.draw do
     resources :deployments do
       collection do
         get 'auto_complete_search'
-        post 'associate_host'
       end
       member do
         match '/hostgroup/:hostgroup_id',
@@ -12,9 +11,11 @@ Rails.application.routes.draw do
         post 'deploy'
         get 'populate'
         get 'summary'
+        post 'associate_host'
       end
+
+      resources :steps
     end
 
-    resources :deployment_steps
   end
 end

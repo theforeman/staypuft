@@ -2,12 +2,12 @@ module Staypuft
   class Deployment < ActiveRecord::Base
 
     # Form step states
-    STEP_INACTIVE =      :inactive
-    STEP_SETTINGS =      :settings
+    STEP_INACTIVE      = :inactive
+    STEP_SETTINGS      = :settings
     STEP_CONFIGURATION = :configuration
-    STEP_COMPLETE =      :complete
-    STEP_SELECTION =     :selection
-    
+    STEP_COMPLETE      = :complete
+    STEP_SELECTION     = :selection
+
     NEW_NAME_PREFIX="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout
@@ -102,6 +102,14 @@ module Staypuft
           end
         end
       end
+    end
+
+    def services_hostgroup_map
+      deployment_role_hostgroups.map do |deployment_role_hostgroup|
+        deployment_role_hostgroup.services.reduce({}) do |h, s|
+          h.update s => deployment_role_hostgroup.hostgroup
+        end
+      end.reduce(&:merge)
     end
 
     def deployed?

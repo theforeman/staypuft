@@ -17,6 +17,9 @@ module Staypuft
           menu :top_menu, :openstack_deployments,
                :url_hash => { :controller => 'staypuft/deployments', :action => :index },
                :caption  => N_('Deployments')
+          menu :top_menu, :new_openstack_deployment,
+               :url_hash => { :controller => 'staypuft/deployments', :action => :new },
+               :caption  => N_('New deployment')
         end
       end
     end

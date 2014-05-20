@@ -11,7 +11,7 @@ module Staypuft
 
     validates :name, :presence => true, :uniqueness => true
 
-    def ui_params_for_form(hostgroup = self.hostgroups.first)
+    def ui_params_for_form(hostgroup)
       return [] if (hostgroup.nil?)
       if hostgroup.puppetclasses.blank?
         params_from_hash = []
