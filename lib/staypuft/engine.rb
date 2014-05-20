@@ -1,3 +1,5 @@
+require 'deface'
+
 module Staypuft
   ENGINE_NAME = "staypuft"
   class Engine < ::Rails::Engine
