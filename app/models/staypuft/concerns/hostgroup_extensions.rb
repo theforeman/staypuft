@@ -23,25 +23,27 @@ module Staypuft::Concerns::HostgroupExtensions
   end
 
   def current_param_value(key)
-    if (v = LookupValue.where(:lookup_key_id => key.id, :id => lookup_values).first)
-      return v.value, to_label
+    lookup_value = LookupValue.where(:lookup_key_id => key.id, :id => lookup_values).first
+    if lookup_value
+      [lookup_value.value, to_label]
+    else
+      inherited_lookup_value(key)
     end
-    return inherited_lookup_value(key)
   end
 
   def current_param_value_str(key)
-    val = current_param_value(key)[0]
-    val.is_a?(Array) ? val.join(", ") : val
+    lookup_value, _ = current_param_value(key)
+    return key.value_before_type_cast(lookup_value)
   end
 
   def set_param_value_if_changed(puppetclass, key, value)
-    lookup_key    = puppetclass.class_params.where(:key => key).first
-    current_value = current_param_value(lookup_key)[0]
-    new_value     = current_value.is_a?(Array) ? value.split(", ") : value
-    unless current_value == new_value
+    lookup_key         = puppetclass.class_params.where(:key => key).first
+    lookup_value_value = current_param_value(lookup_key)[0]
+    current_value      = lookup_key.value_before_type_cast(lookup_value_value).to_s.chomp
+    if current_value != value
       lookup       = LookupValue.where(:match         => hostgroup.send(:lookup_value_match),
                                        :lookup_key_id => lookup_key.id).first_or_initialize
-      lookup.value = new_value
+      lookup.value = value
       lookup.save!
     end
   end
