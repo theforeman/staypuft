@@ -53,8 +53,9 @@ module Staypuft
     end
 
     def associate_host
-      deployment = Deployment.find(params[:id])
-      hostgroup  = ::Hostgroup.find params[:hostgroup_id]
+      deployment             = Deployment.find(params[:id])
+      hostgroup              = ::Hostgroup.find params[:hostgroup_id]
+      deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
 
       targeted_hosts  = ::Host::Base.find Array(params[:host_ids])
       assigned_hosts  = hostgroup.hosts
@@ -76,8 +77,14 @@ module Staypuft
       end
 
       hosts_to_remove.each do |host|
-        host.hostgroup = nil
-        host.save!
+        if host.open_stack_deployed? && deployment_in_progress
+          # do not remove
+        else
+          host.hostgroup   = nil
+          host.environment = Environment.get_discovery
+          host.save!
+          host.setBuild
+        end
       end
 
       redirect_to show_with_hostgroup_selected_deployment_path(

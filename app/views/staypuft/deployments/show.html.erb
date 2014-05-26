@@ -86,20 +86,25 @@
                     <%= check_box_tag :check_all %>
                   </th>
                   <th><%= sort :name, :as => _('Name') %></th>
+                  <th class="hidden-s hidden-xs"><%= _('Deployed?') %></th>
                   <th class="hidden-s hidden-xs"><%= sort :mac, :as => _('MAC Address') %></th>
                   <th class="hidden-s hidden-xs"><%= sort :type, :as => _('Type') %></th>
                 </tr>
               </thead>
               <tbody>
                 <% child_hostgroup.own_and_free_hosts.each do |host| %>
-                  <tr class="checkbox_highlight <%= "success" if child_hostgroup.host_ids.include?(host.id) %>">
+                  <tr class="<%= ['checkbox_highlight',
+                                  ('success' if child_hostgroup.host_ids.include?(host.id)),
+                                  ('deployed' if host.open_stack_deployed?)
+                                 ].compact.join(' ') %>">
                     <td class="ca">
+                      <% disabled = ForemanTasks::Lock.locked?(@deployment, nil) && host.open_stack_deployed? %>
                       <%= check_box_tag 'host_ids[]',
                                         host.id,
                                         child_hostgroup.host_ids.include?(host.id),
-                                        :id       => "host_ids_#{host.id}",
-                                        :disabled => host.open_stack_deployed? %>
-                      <%= hidden_field_tag 'host_ids[]', host.id if host.open_stack_deployed? %>
+                                        id:       "host_ids_#{host.id}",
+                                        disabled: disabled %>
+                      <%= hidden_field_tag 'host_ids[]', host.id if disabled %>
                     </td>
                     <td class="ellipsis">
                       <% case host %>
@@ -109,6 +114,13 @@
                         <%= link_to_if_authorized host.name, hash_for_discover_path(host) %>
                       <% else %>
                         <%= host.name %>
+                      <% end %>
+                    </td>
+                    <td class="hidden-s hidden-xs">
+                      <% if host.open_stack_deployed? %>
+                        <span class="glyphicon glyphicon-cloud"></span>
+                      <% else %>
+                        <span class="glyphicon glyphicon-minus"></span>
                       <% end %>
                     </td>
                     <td class="hidden-s hidden-xs"><%= host.mac %></td>
@@ -148,9 +160,9 @@
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
         <%= display_link_if_authorized(_("Deploy"),
                                        hash_for_deploy_deployment_path,
-                                       :class => 'btn btn-primary',
+                                       :class  => 'btn btn-primary',
                                        :method => :post,
-                                       :data => { :disable_with => _("Deploying...")}) %>
+                                       :data   => { :disable_with => _("Deploying...") }) %>
       </div>
     </div>
   </div>
