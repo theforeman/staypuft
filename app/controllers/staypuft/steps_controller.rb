@@ -25,7 +25,7 @@ module Staypuft
           @deployment.form_step = Deployment::STEP_SETTINGS unless @deployment.form_complete?
           @deployment.update_attributes(params[:staypuft_deployment])
           @deployment.update_hostgroup_list
-          @deployment.set_networking_params
+          @deployment.set_custom_params
         end
       when :services_selection
         @deployment.form_step = Deployment::STEP_SELECTION unless @deployment.form_complete?

@@ -10,7 +10,14 @@ module Staypuft
 
     NEW_NAME_PREFIX="uninitialized_"
 
-    attr_accessible :description, :name, :layout_id, :layout
+    # amqp providers
+    AMQP_RABBITMQ        = "rabbitmq"
+    AMQP_QPID            = "qpid"
+    AMQP_PROVIDERS       = [AMQP_RABBITMQ, AMQP_QPID]
+    AMQP_PROVIDER_LABELS = {AMQP_RABBITMQ => "RabbitMQ",
+                            AMQP_QPID     => "Qpid" }
+
+    attr_accessible :description, :name, :layout_id, :layout, :amqp_provider
     after_save :update_hostgroup_name
     after_validation :check_form_complete
 
@@ -37,6 +44,8 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+
+    validates :amqp_provider, :presence => true, :inclusion => {:in => AMQP_PROVIDERS }
 
     # TODO(mtaylor)
     # Use conditional validations to validate the deployment multi-step form.
@@ -89,9 +98,11 @@ module Staypuft
     # If layout networking is set to 'neutron', then set include_neutron and
     # neutron on the hostgroup if it includes the "quickstack::pacemaker::params"
     #  puppetclass
-    def set_networking_params
+    def set_custom_params
       child_hostgroups.each do |the_hostgroup|
         the_hostgroup.puppetclasses.each do |pclass|
+
+          # set params relating to neutron/nova networking choice
           if pclass.class_params.where(:key => "include_neutron").first
             the_hostgroup.set_param_value_if_changed(pclass, "include_neutron",
                                                      layout.networking == 'neutron')
@@ -99,6 +110,12 @@ module Staypuft
           if pclass.class_params.where(:key => "neutron").first
             the_hostgroup.set_param_value_if_changed(pclass, "neutron",
                                                      layout.networking == 'neutron')
+          end
+
+          # set params relating to rabbitmq/qpid amqp choice
+          if pclass.class_params.where(:key => "amqp_server").first
+            the_hostgroup.set_param_value_if_changed(pclass, "amqp_server",
+                                                     amqp_provider)
           end
         end
       end
