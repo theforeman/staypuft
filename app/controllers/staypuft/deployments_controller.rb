@@ -9,7 +9,8 @@ module Staypuft
     def new
       base_hostgroup = Hostgroup.get_base_hostgroup
 
-      deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
+      deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex,
+                                            :amqp_provider => Deployment::AMQP_RABBITMQ)
       deployment.layout    = Layout.where(:name       => "Distributed",
                                           :networking => "neutron").first
       deployment_hostgroup = ::Hostgroup.new name: deployment.name, parent: base_hostgroup
