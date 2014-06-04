@@ -17,6 +17,7 @@
               <%= tag :input, type: 'checkbox', class: 'check_all' %>
             </th>
             <th><%= sort :name, :as => _('Name') %></th>
+            <th class="hidden-s hidden-xs"><%= _('Managed?') %></th>
             <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
           </tr>
         </thead>
@@ -31,6 +32,13 @@
               </td>
               <td class="ellipsis">
                <%= host_label(host) %>
+              </td>
+              <td class="hidden-s hidden-xs">
+                <% if host.managed? %>
+                  <span class="glyphicon glyphicon-ok"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-minus"></span>
+                <% end %>
               </td>
               <td class="hidden-s hidden-xs"><%= host.ip %></td>
             </tr>

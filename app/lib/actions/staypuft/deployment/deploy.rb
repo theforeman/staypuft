@@ -18,11 +18,14 @@ module Actions
         include Actions::Helpers::Lock
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
-        def plan(deployment)
+        def plan(deployment, hosts_to_deploy = nil, hosts_to_provision = nil)
           Type! deployment, ::Staypuft::Deployment
 
           input.update id: deployment.id, name: deployment.name
-          plan_action Hostgroup::OrderedDeploy, deployment.child_hostgroups.deploy_order.to_a
+          plan_action Hostgroup::OrderedDeploy,
+                      deployment.child_hostgroups.deploy_order.to_a,
+                      hosts_to_deploy,
+                      hosts_to_provision
           lock! deployment
         end
 

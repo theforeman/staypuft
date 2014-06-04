@@ -13,26 +13,22 @@
 module Actions
   module Staypuft
     module Host
-      class Deploy < Actions::Base
+      class Deploy < Dynflow::Action
 
         def plan(host)
           Type! host, ::Host::Base
 
           input.update host: { id: host.id, name: host.name }
 
-          unless host.open_stack_deployed?
-            sequence do
-              plan_action Host::Build, host.id
-              plan_action Host::WaitUntilInstalled, host.id
-              plan_action Host::WaitUntilHostReady, host.id
-            end
-          else
-            # it is already deployed
+          sequence do
+            plan_action Actions::Staypuft::Host::Update, host, :environment => nil
+            puppet_run = plan_action Host::PuppetRun, host
+            plan_action Host::ReportCheck, host.id, puppet_run.output[:executed_at]
           end
         end
 
         def task_output
-          steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
+          steps    = planned_actions(Host::ReportCheck).inject([]) { |s, a| s + a.steps[1..2] }.compact
           progress = if steps.empty?
                        1
                      else
@@ -42,11 +38,6 @@ module Actions
                      end
 
           input[:host].merge progress: progress
-        end
-
-        def humanized_output
-          task_output = self.task_output
-          format '%s %s%%', task_output[:name], (task_output[:progress]*100).to_i
         end
 
       end

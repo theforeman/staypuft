@@ -13,18 +13,37 @@
 module Actions
   module Staypuft
     module Host
-      class PuppetRun < Dynflow::Action
+
+      class WaitUntilProvisioned < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
         def plan(host)
-          Type! host, ::Host::Base
-          plan_self host_id: host.id, name: host.name
+          plan_self host_id: host.id
         end
 
-        def run
-          output[:executed_at] = DateTime.now.iso8601
-          ::Host.find(input.fetch(:host_id)).puppetrun!
+        def run(event = nil)
+          case event
+          when nil
+            suspend do |suspended_action|
+              Rails.cache.write(
+                  ::Staypuft::Concerns::HostOrchestrationBuildHook.cache_id(input[:host_id]),
+                  { execution_plan_id: suspended_action.execution_plan_id,
+                    step_id:           suspended_action.step_id })
+            end
+          when Hash
+            output[:installed_at] = event.fetch(:installed_at).to_s
+          else
+            raise TypeError
+          end
+        end
+
+        def run_progress_weight
+          4
+        end
+
+        def run_progress
+          0.1
         end
 
       end
