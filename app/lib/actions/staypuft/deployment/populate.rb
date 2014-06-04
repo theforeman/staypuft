@@ -33,7 +33,7 @@ module Actions
             hostgroups = deployment.child_hostgroups
             hostgroups.each do |hostgroup|
               plan_action Actions::Staypuft::Host::Create,
-                          rand(1000).to_s,
+                          "host-#{rand(1000).to_s}",
                           hostgroup,
                           compute_resource,
                           start:  false,
