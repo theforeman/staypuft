@@ -1,0 +1,11 @@
+<%= form_tag(import_config_deployment_path(@deployment.id),
+             multipart: true,
+             class:     'col-md-12',
+             id:        'import_config_form') do |f| %>
+  <%= file_field_tag :deployment_config_file,
+                     class: 'btn btn-default deployment_config_file' %>
+  <br/>
+  <%= submit_tag _("Import Config"), :class => "btn btn-primary btn-sm pull-right" %>
+  <br/>
+  <br/>
+<% end %>

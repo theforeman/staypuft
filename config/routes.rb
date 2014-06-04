@@ -12,6 +12,8 @@ Rails.application.routes.draw do
         get 'populate'
         get 'summary'
         post 'associate_host'
+        get 'export_config'
+        post 'import_config'
       end
 
       resources :steps

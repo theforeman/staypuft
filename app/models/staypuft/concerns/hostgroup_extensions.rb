@@ -3,7 +3,7 @@ module Staypuft::Concerns::HostgroupExtensions
 
   included do
     has_one :deployment_role_hostgroup, :dependent => :destroy, :class_name => 'Staypuft::DeploymentRoleHostgroup'
-    has_one :parent_deployment, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Deployment'
+    has_one :parent_deployment, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Deployment', :source => :deployment
     has_one :role, :through => :deployment_role_hostgroup, :class_name => 'Staypuft::Role'
 
     has_one :deployment, :class_name => 'Staypuft::Deployment', through: :deployment_role_hostgroup

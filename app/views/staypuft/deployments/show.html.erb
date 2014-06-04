@@ -7,7 +7,29 @@
                          else
                            deployment_steps_path(deployment_id: @deployment)
                          end) %>
-  <%= link_to(_("Configuration Summary"), summary_deployment_path(@deployment.id), :class => '') %>
+  <div class="btn-group dropdown keep-open">
+    <button type="button" class="btn btn-default dropdown-toggle" role="button" href="#"
+            data-toggle="dropdown" data-target="#">
+      <%= _('Configuration') %>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu dropdown keep-open" role="menu">
+      <li><%= link_to(_("Summary"), summary_deployment_path(@deployment.id), :class => '') %></li>
+      <li>
+        <%= link_to(icon_text("cloud-upload", _("Import")),
+                    {},
+                    { :remote => true,
+                      :rel    => 'popover',
+                      :data   => { 'content'        => "#{render partial: 'import_form'}",
+                                   'original-title' => _('Import Config'),
+                                   'placement'      => 'left', } }) %>
+      </li>
+      <li>
+        <%= link_to(icon_text("cloud-download", _("Export")),
+                    export_config_deployment_path(@deployment.id)) %>
+      </li>
+    </ul>
+  </div>
 
   <% if Rails.env.development? %>
     <div class="btn-group">
@@ -41,6 +63,8 @@
                 :'data-toggle' => "modal",
                 :'data-target' => "#deploy_modal") %>
   <% end %>
+
+
   <%= help_path %>
 <% end %>
 
