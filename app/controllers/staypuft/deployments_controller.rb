@@ -102,10 +102,16 @@ module Staypuft
     def import_config
       @deployment = Deployment.find(params[:id])
       unless params[:deployment_config_file].nil?
-        new_config = YAML.load_file(params[:deployment_config_file].path)
-        DeploymentParamImporter.new(@deployment).import(new_config)
+        begin
+          new_config = YAML.load_file(params[:deployment_config_file].path)
+          DeploymentParamImporter.new(@deployment).import(new_config)
 
-        flash[:notice] = "Updated parameter values"
+          flash[:notice] = "Updated parameter values"
+        rescue Psych::SyntaxError => e
+          flash[:error] = "Invalid input file: #{e}"
+        rescue ArgumentError => e
+          flash[:error] = "Invalid input file: #{e}"
+        end
       else
         flash[:error] = "No import file specified"
       end

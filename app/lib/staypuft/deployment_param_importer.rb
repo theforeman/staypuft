@@ -7,7 +7,9 @@ module Staypuft
     def import(in_hash)
       hostgroups = {}
       puppetclasses = {}
-      deployment_node = in_hash['deployment']
+      if !in_hash.is_a?(Hash) || ((deployment_node = in_hash['deployment']).nil?)
+        raise ArgumentError, "Invalid import file: no 'deployment' node found"
+      end
       unless deployment_node.nil? || (services = deployment_node['services']).nil?
         services.each do |service_hash|
           handle_service(service_hash, hostgroups, puppetclasses)
