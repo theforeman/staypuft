@@ -147,7 +147,7 @@ services     = {
     :neutron_controller => { :name => 'Neutron (Controller)', :class => [] },
     :non_ha_glance      => { :name => 'Glance (non-HA)', :class => [] },
     :cinder_controller  => { :name => 'Cinder (controller)', :class => [] },
-    :cinder_node        => { :name => 'Cinder (node)', :class => ['quickstack::storage_backend::lvm_cinder'] },
+    :cinder_node        => { :name => 'Cinder (node)', :class => ['quickstack::storage_backend::cinder'] },
     :heat               => { :name => 'Heat', :class => [] },
     :ceilometer         => { :name => 'Ceilometer', :class => [] },
     :neutron_networker  => { :name => 'Neutron Networker', :class => ['quickstack::neutron::networker'] },
