@@ -54,6 +54,7 @@ Staypuft::Service::UI_PARAMS = {
                                'horizon_cert',
                                'horizon_key',
                                'horizon_secret_key',
+                               'ml2_firewall_driver',
                                'ml2_flat_networks',
                                'ml2_install_deps',
                                'ml2_mechanism_drivers',
