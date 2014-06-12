@@ -9,7 +9,7 @@ module Staypuft
     def new
       base_hostgroup = Hostgroup.get_base_hostgroup
 
-      deployment           = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex,
+      deployment           = Deployment.new(:name          => Deployment::NEW_NAME_PREFIX+SecureRandom.hex,
                                             :amqp_provider => Deployment::AMQP_RABBITMQ)
       deployment.layout    = Layout.where(:name       => "Distributed",
                                           :networking => "neutron").first
@@ -95,8 +95,8 @@ module Staypuft
     def export_config
       @deployment = Deployment.find(params[:id])
       send_data DeploymentParamExporter.new(@deployment).to_hash.to_yaml,
-          :type => "application/x-yaml", :disposition => 'attachment',
-          :filename => @deployment.name + '.yml'
+                :type     => "application/x-yaml", :disposition => 'attachment',
+                :filename => @deployment.name + '.yml'
     end
 
     def import_config
@@ -121,11 +121,32 @@ module Staypuft
     private
 
     def assign_host_to_hostgroup(discovered_host, hostgroup)
+      converting_discovered = discovered_host.is_a? Host::Discovered
+
+      if converting_discovered
+        hosts_facts = FactValue.joins(:fact_name).where(host_id: discovered_host.id)
+        discovery_bootif = hosts_facts.where(fact_names: { name: 'discovery_bootif' }).first or
+            raise 'unknown discovery_bootif fact'
+
+        interface = hosts_facts.
+            includes(:fact_name).
+            where(value: discovery_bootif.value).
+            find { |v| v.fact_name.name =~ /^macaddress_.*$/ }.
+            fact_name.name.split('_').last
+
+        network = hosts_facts.where(fact_names: { name: "network_#{interface}" }).first
+        hostgroup.subnet.network == network.value or
+            raise "networks do not match: #{hostgroup.subnet.network} #{network.value}"
+        ip = hosts_facts.where(fact_names: { name: "ipaddress_#{interface}" }).first
+      end
+
       original_type = discovered_host.type
       host          = discovered_host.becomes(::Host::Managed)
       host.type     = 'Host::Managed'
       host.managed  = true
       host.build    = true
+      host.ip       = ip.value if converting_discovered
+      host.mac      = discovery_bootif.value if converting_discovered
 
       host.hostgroup   = hostgroup
       # set discovery environment to keep booting discovery image
