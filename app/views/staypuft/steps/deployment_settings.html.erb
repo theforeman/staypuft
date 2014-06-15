@@ -29,26 +29,6 @@
       end.join
     end %>
 
-<!--     <div class="row">
-      <%= f.label :services_password, _("Services Password"), :class => "col-md-2 control-label" %><br />
-      <div class="row">
-        <div class="col-md-8">
-          <%= f.radio_button :services_password, false, :checked => true %>
-          <%= f.label :services_password, _("Use single password for all services"), :value => "single_password" %><br />
-          <div class="row">
-            <%= f.label :password, _("Password*"), :class=>"col-md-3 control-label"%>
-            <%= f.password_field :password,  :class=>"col-md-5" %>
-          </div><br />
-          <div class="row">
-            <%= f.label :confirm_password, _("Confirm Password*"), :class=>"col-md-3 control-label" %>
-            <%= f.password_field :confirm_password, :class=>"col-md-5" %>
-          </div><br />
-          <%= f.radio_button :services_password, false, :checked => false %>
-          <%= f.label :services_password, _("Generate random passwords for all services"), :value => "random_password" %>
-        </div>
-      </div>
-    </div>
- -->
     <div class="form_actions">
       <% if !is_new %>
         <%= link_to _("Cancel"), deployment_path(@deployment),
