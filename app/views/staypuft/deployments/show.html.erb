@@ -111,8 +111,7 @@
                   </th>
                   <th><%= sort :name, :as => _('Name') %></th>
                   <th class="hidden-s hidden-xs"><%= _('Deployed?') %></th>
-                  <th class="hidden-s hidden-xs"><%= sort :mac, :as => _('MAC Address') %></th>
-                  <th class="hidden-s hidden-xs"><%= sort :type, :as => _('Type') %></th>
+                  <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
                 </tr>
               </thead>
               <tbody>
@@ -131,14 +130,7 @@
                       <%= hidden_field_tag 'host_ids[]', host.id if disabled %>
                     </td>
                     <td class="ellipsis">
-                      <% case host %>
-                      <% when Host::Managed %>
-                        <%= link_to_if_authorized host.name, hash_for_host_path(host) %>
-                      <% when Host::Discovered %>
-                        <%= link_to_if_authorized host.name, hash_for_discover_path(host) %>
-                      <% else %>
-                        <%= host.name %>
-                      <% end %>
+                     <%= host_label(host) %>
                     </td>
                     <td class="hidden-s hidden-xs">
                       <% if host.open_stack_deployed? %>
@@ -147,8 +139,7 @@
                         <span class="glyphicon glyphicon-minus"></span>
                       <% end %>
                     </td>
-                    <td class="hidden-s hidden-xs"><%= host.mac %></td>
-                    <td class="hidden-s hidden-xs"><%= host.type %></td>
+                    <td class="hidden-s hidden-xs"><%= host.ip %></td>
                   </tr>
                 <% end %>
               </tbody>

@@ -22,5 +22,27 @@ module Staypuft
       end
     end
 
+    def host_label(host)
+      case host
+        when Host::Managed
+          style ="label-info"
+          short = s_("Managed|M")
+          label = _('Known Host')
+          path  = hash_for_host_path(host)
+        when Host::Discovered
+          style ="label-default"
+          short = s_("Discovered|D")
+          label = _('Discovered Host')
+          path  = hash_for_discovered_host_path(host) # TODO: this assumes discovery 1.3
+        else
+          style = 'label-warning'
+          short = s_("Error|E")
+          path  = '#'
+          label = _('Unknown Host')
+      end
+
+      content_tag(:span, short, {:rel => "twipsy", :class => "label label-light " + style, :"data-original-title" => _(label)} ) +  link_to(trunc("  #{host}",32), path)
+    end
   end
+
 end
