@@ -8,29 +8,26 @@
       <%= deployment_wizard 1 %>
     </div>
 
-    <%= text_f f, :name %><br />
-    <%= textarea_f f, :description, :rows => 3 %><br />
+    <%= text_f f, :name %>
+    <%= textarea_f f, :description, :rows => 3 %>
 
-    <div class="row">
-      <div class="clearfix">
-        <div class="form-group">
-          <label class="col-md-2 control-label" for="layout_id"><%= _("Deployment Layout") %></label>
-          <div class="col-md-6">
-            <% @layouts.each do |layout| %>
-              <%= radio_button_f_non_inline(f, :layout_id, :checked => layout.id == @deployment.layout_id,:value=>layout.id, :text=> "#{layout.name}, #{layout.networking.capitalize} " + _("Networking")) %>
-            <% end %>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-md-2 control-label" for="layout_id"><%= _("AMQP Provider") %></label>
-          <div class="col-md-6">
-            <% Staypuft::Deployment::AMQP_PROVIDER_LABELS.each do |provider_value, provider_label| %>
-              <%= radio_button_f_non_inline(f, :amqp_provider, :checked => provider_value == @deployment.amqp_provider,:value=>provider_value, :text=> provider_label) %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%= field(f, :layout_id, :label => _('Deployment Layout')) do
+      @layouts.map do |layout|
+        radio_button_f_non_inline(f, :layout_id,
+                                  :checked => layout.id == @deployment.layout_id,
+                                  :value   => layout.id,
+                                  :text    => "#{layout.name}, #{layout.networking.capitalize} " + _("Networking"))
+      end.join
+    end %>
+
+    <%= field(f, :layout_id, :label => _('Deployment Layout')) do
+      Staypuft::Deployment::AMQP_PROVIDER_LABELS.map do |provider_value, provider_label|
+        radio_button_f_non_inline(f, :amqp_provider,
+                                  :checked => provider_value == @deployment.amqp_provider,
+                                  :value   => provider_value,
+                                  :text    => provider_label)
+      end.join
+    end %>
 
 <!--     <div class="row">
       <%= f.label :services_password, _("Services Password"), :class => "col-md-2 control-label" %><br />
