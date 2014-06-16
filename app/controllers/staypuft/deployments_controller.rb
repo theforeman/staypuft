@@ -130,7 +130,7 @@ module Staypuft
 
         interface = hosts_facts.
             includes(:fact_name).
-            where(value: discovery_bootif.value.upcase).
+            where(value: [discovery_bootif.value.upcase, discovery_bootif.value.downcase]).
             find { |v| v.fact_name.name =~ /^macaddress_.*$/ }.
             fact_name.name.split('_').last
 
