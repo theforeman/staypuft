@@ -20,7 +20,7 @@
       end.join
     end %>
 
-    <%= field(f, :layout_id, :label => _('Deployment Layout')) do
+    <%= field(f, :layout_id, :label => _('Messaging provider')) do
       Staypuft::Deployment::AMQP_PROVIDER_LABELS.map do |provider_value, provider_label|
         radio_button_f_non_inline(f, :amqp_provider,
                                   :checked => provider_value == @deployment.amqp_provider,
@@ -34,9 +34,10 @@
         <%= link_to _("Cancel"), deployment_path(@deployment),
                     :class => "btn btn-danger" %>
       <% else %>
-        <%= link_to _("Cancel"), deployment_path(@deployment), :method => :delete,
+        <%= link_to _("Cancel"), deployment_path(@deployment),
+                    :method  => :delete,
                     :confirm => _("This will clear whole deployment configuration. Are you sure?"),
-                    :class => "btn btn-danger" %>
+                    :class   => "btn btn-danger" %>
       <% end %>
       <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
         <%= _("Next") %>
