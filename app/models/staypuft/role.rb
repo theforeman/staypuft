@@ -15,6 +15,11 @@ module Staypuft
 
     attr_accessible :description, :max_hosts, :min_hosts, :name
 
-    validates  :name, :presence => true, :uniqueness => true
+    validates :name, :presence => true, :uniqueness => true
+
+    scope(:in_deployment, lambda do |deployment|
+      joins(:deployment_role_hostgroups).
+          where(DeploymentRoleHostgroup.table_name => { deployment_id: deployment })
+    end)
   end
 end
