@@ -226,6 +226,7 @@ module Staypuft
       self.form_step.to_sym == Deployment::STEP_COMPLETE
     end
 
+
     def ha?
       self.layout_name == LayoutName::HA
     end
