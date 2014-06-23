@@ -32,8 +32,8 @@ params = {
     'cinder_gluster_volume'         => 'cinder',
     'cinder_gluster_replica_count'  => '3',
     'cinder_gluster_peers'          => %w(192.168.0.4 192.168.0.5 192.168.0.6),
-    'cinder_gluster_shares'         => [ '192.168.0.4:/cinder -o backup-volfile-servers=192.168.0.5' ],
-    'cinder_nfs_shares'             => [ '192.168.0.4:/cinder' ],
+    'cinder_gluster_shares'         => ['192.168.0.4:/cinder -o backup-volfile-servers=192.168.0.5'],
+    'cinder_nfs_shares'             => ['192.168.0.4:/cinder'],
     'cinder_nfs_mount_options'      => '',
     'cinder_san_ip'                 => '192.168.124.11',
     'cinder_san_login'              => 'grpadmin',
@@ -310,5 +310,23 @@ roles.each do |role_hash|
   # delete any prior mappings that remain
   old_layout_roles_arr.each do |layout_role|
     role.layouts.destroy(layout_role.layout)
+  end
+end
+
+functional_dependencies = {
+    'quickstack::pacemaker::params' =>
+        { 'include_neutron' =>
+              (neutron = '<%= @host.params.fetch("ui::deployment::networking") == Staypuft::Deployment::Networking::NEUTRON %>') },
+    'quickstack::pacemaker::params' =>
+        { 'neutron' => neutron }
+}
+
+functional_dependencies.each do |puppetclass_name, params|
+  puppetclass = Puppetclass.find_by_name(puppetclass_name) or
+      raise "missing puppet class #{puppetclass_name}"
+  params.each do |param_key, default_value|
+    param = puppetclass.class_params.find_by_key(param_key) or
+        raise "missing param #{param} in #{puppetclass_name}"
+    param.update_attributes! default_value: default_value
   end
 end

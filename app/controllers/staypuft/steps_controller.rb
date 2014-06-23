@@ -24,8 +24,9 @@ module Staypuft
         Deployment.transaction do
           @deployment.form_step = Deployment::STEP_SETTINGS unless @deployment.form_complete?
           @deployment.update_attributes(params[:staypuft_deployment])
-          @deployment.update_hostgroup_list
-          @deployment.set_custom_params
+
+          # FIXME determine layout based on params, add that to Deployment model
+          # @deployment.update_hostgroup_list
         end
       when :services_overview
         @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?

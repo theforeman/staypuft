@@ -8,16 +8,10 @@ module Staypuft
     STEP_COMPLETE      = :complete
     STEP_OVERVIEW      = :overview
 
-    NEW_NAME_PREFIX="uninitialized_"
+    NEW_NAME_PREFIX ="uninitialized_"
 
-    # amqp providers
-    AMQP_RABBITMQ        = "rabbitmq"
-    AMQP_QPID            = "qpid"
-    AMQP_PROVIDERS       = [AMQP_RABBITMQ, AMQP_QPID]
-    AMQP_PROVIDER_LABELS = {AMQP_RABBITMQ => "RabbitMQ",
-                            AMQP_QPID     => "Qpid" }
-
-    attr_accessible :description, :name, :layout_id, :layout, :amqp_provider
+    attr_accessible :description, :name, :layout_id, :layout,
+                    :amqp_provider, :ha, :networking
     after_save :update_hostgroup_name
     after_validation :check_form_complete
     before_destroy :prepare_destroy
@@ -46,7 +40,63 @@ module Staypuft
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
 
-    validates :amqp_provider, :presence => true, :inclusion => {:in => AMQP_PROVIDERS }
+    def self.param_attr(*names)
+      names.each do |name|
+        ivar_name  = :"@#{name}"
+        param_name = "ui::deployment::#{name}"
+
+        define_method name do
+          instance_variable_get(ivar_name) or
+              instance_variable_set(ivar_name,
+                                    hostgroup.group_parameters.find_by_name(param_name).try(:value))
+        end
+
+        define_method "#{name}=" do |value|
+          instance_variable_set(ivar_name, value)
+        end
+
+        after_save do
+          hostgroup.
+              group_parameters.
+              find_or_create_by_name(param_name).
+              update_attributes!(value: instance_variable_get(ivar_name))
+        end
+      end
+    end
+
+    # TODO hide this in UI
+    param_attr :amqp_provider, :networking, :ha
+
+    module AmqpProvider
+      RABBITMQ = 'rabbitmq'
+      QPID     = 'qpid'
+      LABELS   = { RABBITMQ => N_('RabbitMQ'), QPID => N_('Qpid') }
+      TYPES    = LABELS.keys
+      HUMAN    = N_('Messaging provider')
+    end
+
+    validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
+
+    module Networking
+      NOVA    = 'nove'
+      NEUTRON = 'neutron'
+      LABELS  = { NOVA => N_('Nova Network'), NEUTRON => N_('Neutron Networking') }
+      TYPES   = LABELS.keys
+      HUMAN   = N_('Networking')
+    end
+
+    validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
+
+    module HA
+      ENABLED  = 'true'
+      DISABLED = 'false'
+      LABELS   = { DISABLED => N_('Controller / Compute'),
+                   ENABLED  => N_('High Availability Controllers / Compute') }
+      TYPES    = LABELS.keys
+      HUMAN    = N_('High Availability')
+    end
+
+    validates :ha, presence: true, inclusion: { in: %w[true false] }
 
     # TODO(mtaylor)
     # Use conditional validations to validate the deployment multi-step form.
@@ -85,32 +135,6 @@ module Staypuft
       # delete any prior mappings that remain
       old_role_hostgroups_arr.each do |role_hostgroup|
         role_hostgroup.hostgroup.destroy
-      end
-    end
-
-    # If layout networking is set to 'neutron', then set include_neutron and
-    # neutron on the hostgroup if it includes the "quickstack::pacemaker::params"
-    #  puppetclass
-    def set_custom_params
-      child_hostgroups.each do |the_hostgroup|
-        the_hostgroup.puppetclasses.each do |pclass|
-
-          # set params relating to neutron/nova networking choice
-          if pclass.class_params.where(:key => "include_neutron").first
-            the_hostgroup.set_param_value_if_changed(pclass, "include_neutron",
-                                                     layout.networking == 'neutron')
-          end
-          if pclass.class_params.where(:key => "neutron").first
-            the_hostgroup.set_param_value_if_changed(pclass, "neutron",
-                                                     layout.networking == 'neutron')
-          end
-
-          # set params relating to rabbitmq/qpid amqp choice
-          if pclass.class_params.where(:key => "amqp_server").first
-            the_hostgroup.set_param_value_if_changed(pclass, "amqp_server",
-                                                     amqp_provider)
-          end
-        end
       end
     end
 

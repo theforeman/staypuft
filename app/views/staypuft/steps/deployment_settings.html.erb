@@ -11,23 +11,20 @@
     <%= text_f f, :name %>
     <%= textarea_f f, :description, :rows => 3 %>
 
-    <%= field(f, :layout_id, :label => _('Deployment Layout')) do
-      @layouts.map do |layout|
-        radio_button_f_non_inline(f, :layout_id,
-                                  :checked => layout.id == @deployment.layout_id,
-                                  :value   => layout.id,
-                                  :text    => "#{layout.name}, #{layout.networking.capitalize} " + _("Networking"))
-      end.join
-    end %>
+    <% { ha:            Staypuft::Deployment::HA,
+         networking:    Staypuft::Deployment::Networking,
+         amqp_provider: Staypuft::Deployment::AmqpProvider }.
+           each do |attr, constants| %>
 
-    <%= field(f, :layout_id, :label => _('Messaging provider')) do
-      Staypuft::Deployment::AMQP_PROVIDER_LABELS.map do |provider_value, provider_label|
-        radio_button_f_non_inline(f, :amqp_provider,
-                                  :checked => provider_value == @deployment.amqp_provider,
-                                  :value   => provider_value,
-                                  :text    => provider_label)
-      end.join
-    end %>
+      <%= field(f, attr, :label => _(constants::HUMAN)) do
+        constants::LABELS.map do |value, label|
+          radio_button_f_non_inline(f, attr,
+                                    :checked => value == @deployment.send(attr),
+                                    :value   => value,
+                                    :text    => _(label))
+        end.join
+      end %>
+    <% end %>
 
     <div class="form_actions">
       <% if !is_new %>
