@@ -6,7 +6,7 @@ module Staypuft
     STEP_SETTINGS      = :settings
     STEP_CONFIGURATION = :configuration
     STEP_COMPLETE      = :complete
-    STEP_SELECTION     = :selection
+    STEP_OVERVIEW      = :overview
 
     NEW_NAME_PREFIX="uninitialized_"
 

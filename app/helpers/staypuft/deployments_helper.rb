@@ -4,7 +4,7 @@ module Staypuft
       wizard_header(
           step,
           _("Deployment Settings"),
-          _("Services Selection"),
+          _("Services Overview"),
           _("Services Configuration")
       )
     end

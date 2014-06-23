@@ -1,7 +1,7 @@
 module Staypuft
   class StepsController < ApplicationController
     include Wicked::Wizard
-    steps :deployment_settings, :services_selection, :services_configuration
+    steps :deployment_settings, :services_overview, :services_configuration
 
     before_filter :get_deployment
 
@@ -27,8 +27,8 @@ module Staypuft
           @deployment.update_hostgroup_list
           @deployment.set_custom_params
         end
-      when :services_selection
-        @deployment.form_step = Deployment::STEP_SELECTION unless @deployment.form_complete?
+      when :services_overview
+        @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
       when :services_configuration
         # Collect services across all deployment's roles
         @service_hostgroup_map = @deployment.services_hostgroup_map
