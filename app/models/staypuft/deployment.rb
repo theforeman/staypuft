@@ -11,7 +11,7 @@ module Staypuft
     NEW_NAME_PREFIX ="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :ha, :networking
+                    :amqp_provider, :ha, :networking, :hypervisor
     after_save :update_hostgroup_name
     after_validation :check_form_complete
 
@@ -64,7 +64,7 @@ module Staypuft
     end
 
     # TODO hide this in UI
-    param_attr :amqp_provider, :networking, :ha
+    param_attr :amqp_provider, :networking, :ha, :hypervisor
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
@@ -95,7 +95,19 @@ module Staypuft
       HUMAN    = N_('High Availability')
     end
 
-    validates :ha, presence: true, inclusion: { in: %w[true false] }
+    validates :ha, presence: true, inclusion: { in: HA::TYPES }
+
+    module Hypervisor
+      KVM  = 'kvm'
+      QEMU = 'qemu'
+      LABELS   = { KVM => N_('Libvirt/KVM'),
+                   QEMU  => N_('Libvirt/QEMU') }
+      TYPES    = LABELS.keys
+      HUMAN    = N_('Hypervisor')
+    end
+
+    validates :hypervisor, presence: true, inclusion: { in: Hypervisor::TYPES }
+
 
     # TODO(mtaylor)
     # Use conditional validations to validate the deployment multi-step form.
