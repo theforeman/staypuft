@@ -83,8 +83,10 @@ module Staypuft
               layout_name:   LayoutName::NON_HA,
               hypervisor:    Hypervisor::KVM,
               networking:    Networking::NOVA,
-              platform:      Platform::RHEL7 }.merge(attributes),
+              platform:      Platform::RHEL6 }.merge(attributes),
             options)
+
+      self.nova.nova_network = NovaService::NovaNetwork::FLAT
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
 
@@ -118,7 +120,6 @@ module Staypuft
     def self.param_scope
       'deployment'
     end
-
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
@@ -296,5 +297,61 @@ module Staypuft
       hosts.each { |host| host.open_stack_unassign }
       child_hostgroups.each { |hg| hg.destroy }
     end
+
+    public
+
+    # TODO move to its own file
+    class AbstractService
+      include ActiveModel::Validations
+      extend ActiveModel::Callbacks
+      extend AttributeParamStorage
+      define_model_callbacks :save, :only => [:after]
+
+      def self.param_scope
+        raise NotImplementedError
+      end
+
+      attr_reader :deployment
+
+      def initialize(deployment)
+        @deployment = deployment
+      end
+
+      def hostgroup
+        deployment.hostgroup
+      end
+    end
+
+    class NovaService < AbstractService
+      def self.param_scope
+        'nova'
+      end
+
+      param_attr :nova_network
+
+      module NovaNetwork
+        FLAT      = 'flat'
+        FLAT_DHCP = 'flatdhcp'
+        LABELS    = { FLAT      => N_('Flat'),
+                      FLAT_DHCP => N_('FlatDHCP') }
+        TYPES     = LABELS.keys
+      end
+
+      validate :nova_network, presence: true, inclusion: { in: NovaNetwork::TYPES }
+    end
+
+    # validates_associated :nova
+
+    def nova
+      if networking == Networking::NOVA
+        @nova_service ||= NovaService.new self
+      end
+    end
+
+    after_save do
+      nova.run_callbacks :save if nova
+      true
+    end
+
   end
 end
