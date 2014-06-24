@@ -13,7 +13,8 @@
 
     <% { layout_name: Staypuft::Deployment::LayoutName,
          networking:  Staypuft::Deployment::Networking,
-         hypervisor:  Staypuft::Deployment::Hypervisor }.
+         hypervisor:  Staypuft::Deployment::Hypervisor,
+         platform:    Staypuft::Deployment::Platform }.
            each do |attr, constants| %>
 
       <%= field(f, attr, :label => _(constants::HUMAN)) do
