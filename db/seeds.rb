@@ -600,6 +600,7 @@ functional_dependencies = {
         'nova_user_password'                      => nova_user_pw,
         'amqp_password'                           => amqp_pw,
         'ceilometer_metering_secret'              => ceilometer_metering }
+
 }
 
 functional_dependencies.each do |puppetclass_name, params|
