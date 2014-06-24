@@ -18,23 +18,21 @@ module Staypuft
 
     def update
       case step
+
       when :deployment_settings
-        @layouts = ordered_layouts
+        @layouts               = ordered_layouts
+        @deployment.form_step  = Deployment::STEP_SETTINGS unless @deployment.form_complete?
+        @deployment.attributes = params[:staypuft_deployment]
 
-        Deployment.transaction do
-          @deployment.form_step = Deployment::STEP_SETTINGS unless @deployment.form_complete?
-          @deployment.update_attributes(params[:staypuft_deployment])
-
-          @deployment.update_hostgroup_list
-        end
       when :services_overview
         @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
+
       when :services_configuration
         # Collect services across all deployment's roles
         @service_hostgroup_map = @deployment.services_hostgroup_map
         if params[:staypuft_deployment]
           @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
-          param_data = params[:staypuft_deployment][:hostgroup_params]
+          param_data            = params[:staypuft_deployment][:hostgroup_params]
           param_data.each do |hostgroup_id, hostgroup_params|
             hostgroup = Hostgroup.find(hostgroup_id)
             hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
@@ -45,6 +43,8 @@ module Staypuft
             end
           end
         end
+      else
+        raise 'unknown step'
       end
 
       render_wizard @deployment

@@ -17,6 +17,9 @@ module Staypuft
     before_destroy :prepare_destroy
 
     belongs_to :layout
+
+    # needs to be defined before hostgroup association
+    before_destroy { child_hostgroups.each &:destroy }
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
@@ -39,6 +42,10 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+
+    after_validation :check_form_complete
+    before_save :update_layout
+    after_save :update_based_on_settings
 
     def initialize(attributes = nil, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
@@ -185,9 +192,57 @@ module Staypuft
     end
 
     private
+
+    def update_layout
+      self.layout = Layout.where(:name => layout_name, :networking => networking).first
+    end
+
+    def update_based_on_settings
+      update_hostgroup_name
+      update_operating_system
+      update_hostgroup_list
+    end
+
     def update_hostgroup_name
       hostgroup.name = self.name
       hostgroup.save!
+    end
+
+    def update_operating_system
+      self.hostgroup.operatingsystem = case platform
+                                       when Platform::RHEL6
+                                         Operatingsystem.where(name: 'RedHat', major: '6', minor: '5').first
+                                       when Platform::RHEL7
+                                         Operatingsystem.where(name: 'RedHat', major: '7', minor: '0').first
+                                       end or
+          raise 'missing Operatingsystem'
+      self.hostgroup.save!
+    end
+
+    # After setting or changing layout, update the set of child hostgroups,
+    # adding groups for any roles not already represented, and removing others
+    # no longer needed.
+    def update_hostgroup_list
+      old_deployment_role_hostgroups = deployment_role_hostgroups.to_a
+      new_deployment_role_hostgroups = layout.layout_roles.map do |layout_role|
+        deployment_role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
+          drh.hostgroup = Hostgroup.new(name: layout_role.role.name, parent: hostgroup)
+        end
+
+        deployment_role_hostgroup.hostgroup.add_puppetclasses_from_resource(layout_role.role)
+        layout_role.role.services.each do |service|
+          deployment_role_hostgroup.hostgroup.add_puppetclasses_from_resource(service)
+        end
+        # deployment_role_hostgroup.hostgroup.save!
+
+        deployment_role_hostgroup.deploy_order = layout_role.deploy_order
+        deployment_role_hostgroup.save!
+
+        deployment_role_hostgroup
+      end
+
+      # delete any prior mappings that remain
+      (old_deployment_role_hostgroups - new_deployment_role_hostgroups).each &:destroy
     end
 
     # Checks to see if the form step was the last in the series.  If so it sets
