@@ -49,37 +49,47 @@ module Staypuft
               layout_name:   LayoutName::NON_HA,
               hypervisor:    Hypervisor::KVM,
               networking:    Networking::NOVA,
-              platform:      Platform::RHEL7 }.merge(attributes),
+              platform:      Platform::RHEL6 }.merge(attributes),
             options)
+
+      self.nova.nova_network = NovaService::NovaNetwork::FLAT
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
       self.layout    = Layout.where(:name       => self.layout_name,
                                     :networking => self.networking).first
     end
 
-    def self.param_attr(*names)
-      names.each do |name|
-        ivar_name  = :"@#{name}"
-        param_name = "ui::deployment::#{name}"
+    def self.param_scope
+      'deployment'
+    end
 
-        define_method name do
-          instance_variable_get(ivar_name) or
-              instance_variable_set(ivar_name,
-                                    hostgroup.group_parameters.find_by_name(param_name).try(:value))
-        end
+    module AttributeParamStorage
+      def param_attr(*names)
+        names.each do |name|
+          ivar_name  = :"@#{name}"
+          param_name = "ui::#{param_scope}::#{name}"
 
-        define_method "#{name}=" do |value|
-          instance_variable_set(ivar_name, value)
-        end
+          define_method name do
+            instance_variable_get(ivar_name) or
+                instance_variable_set(ivar_name,
+                                      hostgroup.group_parameters.find_by_name(param_name).try(:value))
+          end
 
-        after_save do
-          hostgroup.
-              group_parameters.
-              find_or_create_by_name(param_name).
-              update_attributes!(value: instance_variable_get(ivar_name))
+          define_method "#{name}=" do |value|
+            instance_variable_set(ivar_name, value)
+          end
+
+          after_save do
+            param = hostgroup.
+                group_parameters.
+                find_or_initialize_by_name(param_name)
+            param.update_attributes!(value: send(name))
+          end
         end
       end
     end
+
+    extend AttributeParamStorage
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
@@ -218,6 +228,61 @@ module Staypuft
     # the form_step field to complete.
     def check_form_complete
       self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
+    end
+
+    public
+
+    # TODO move to its own file
+    class AbstractService
+      include ActiveModel::Validations
+      extend ActiveModel::Callbacks
+      extend AttributeParamStorage
+      define_model_callbacks :save, :only => [:after]
+
+      def self.param_scope
+        raise NotImplementedError
+      end
+
+      attr_reader :deployment
+
+      def initialize(deployment)
+        @deployment = deployment
+      end
+
+      def hostgroup
+        deployment.hostgroup
+      end
+    end
+
+    class NovaService < AbstractService
+      def self.param_scope
+        'nova'
+      end
+
+      param_attr :nova_network
+
+      module NovaNetwork
+        FLAT      = 'flat'
+        FLAT_DHCP = 'flatdhcp'
+        LABELS    = { FLAT      => N_('Flat'),
+                      FLAT_DHCP => N_('FlatDHCP') }
+        TYPES     = LABELS.keys
+      end
+
+      validate :nova_network, presence: true, inclusion: { in: NovaNetwork::TYPES }
+    end
+
+    # validates_associated :nova
+
+    def nova
+      if networking == Networking::NOVA
+        @nova_service ||= NovaService.new self
+      end
+    end
+
+    after_save do
+      nova.run_callbacks :save if nova
+      true
     end
 
   end
