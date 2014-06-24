@@ -82,7 +82,7 @@ module Staypuft
               layout_name:   LayoutName::NON_HA,
               hypervisor:    Hypervisor::KVM,
               networking:    Networking::NOVA,
-              platform:      Platform::RHEL6 }.merge(attributes),
+              platform:      Platform::RHEL7 }.merge(attributes),
             options)
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
@@ -117,6 +117,7 @@ module Staypuft
     def self.param_scope
       'deployment'
     end
+
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
