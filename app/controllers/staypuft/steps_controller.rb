@@ -25,7 +25,6 @@ module Staypuft
         @deployment.passwords.attributes = params[:staypuft_deployment].delete(:passwords)
         @deployment.attributes = params[:staypuft_deployment]
 
-
       when :services_overview
         @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
 

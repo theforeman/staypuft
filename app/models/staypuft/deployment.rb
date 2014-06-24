@@ -77,6 +77,7 @@ module Staypuft
     validates_associated :passwords
     after_save { passwords.run_callbacks :save }
 
+
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
