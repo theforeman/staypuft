@@ -11,9 +11,9 @@
     <%= text_f f, :name %>
     <%= textarea_f f, :description, :rows => 3 %>
 
-    <% { layout_name:   Staypuft::Deployment::LayoutName,
-         networking:    Staypuft::Deployment::Networking,
-         hypervisor:    Staypuft::Deployment::Hypervisor }.
+    <% { layout_name: Staypuft::Deployment::LayoutName,
+         networking:  Staypuft::Deployment::Networking,
+         hypervisor:  Staypuft::Deployment::Hypervisor }.
            each do |attr, constants| %>
 
       <%= field(f, attr, :label => _(constants::HUMAN)) do
@@ -25,14 +25,6 @@
         end.join
       end %>
     <% end %>
-    <%= hidden_field(f, :amqp_provider, :label => _(Staypuft::Deployment::AmqpProvider::HUMAN)) do
-      Staypuft::Deployment::AmqpProvider::LABELS.map do |value, label|
-        radio_button_f_non_inline(f, :amqp_provider,
-                                  :checked => value == @deployment.send(attr),
-                                  :value   => value,
-                                  :text    => _(label))
-      end.join
-      end %>
 
     <div class="form_actions">
       <% if !is_new %>
