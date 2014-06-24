@@ -11,8 +11,9 @@ module Staypuft
     NEW_NAME_PREFIX ="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :ha, :networking, :hypervisor
+                    :amqp_provider, :layout_name, :networking, :hypervisor
     after_save :update_hostgroup_name
+    before_validation :set_default_ui_param_values, :on => :create
     after_validation :check_form_complete
 
     belongs_to :layout
@@ -64,7 +65,7 @@ module Staypuft
     end
 
     # TODO hide this in UI
-    param_attr :amqp_provider, :networking, :ha, :hypervisor
+    param_attr :amqp_provider, :networking, :layout_name, :hypervisor
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
@@ -77,7 +78,7 @@ module Staypuft
     validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
 
     module Networking
-      NOVA    = 'nove'
+      NOVA    = 'nova'
       NEUTRON = 'neutron'
       LABELS  = { NOVA => N_('Nova Network'), NEUTRON => N_('Neutron Networking') }
       TYPES   = LABELS.keys
@@ -86,16 +87,16 @@ module Staypuft
 
     validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
 
-    module HA
-      ENABLED  = 'true'
-      DISABLED = 'false'
-      LABELS   = { DISABLED => N_('Controller / Compute'),
-                   ENABLED  => N_('High Availability Controllers / Compute') }
+    module LayoutName
+      NON_HA   = 'Controller / Compute'
+      HA       = 'High Availability Controllers / Compute'
+      LABELS   = { NON_HA => N_('Controller / Compute'),
+                   HA     => N_('High Availability Controllers / Compute') }
       TYPES    = LABELS.keys
       HUMAN    = N_('High Availability')
     end
 
-    validates :ha, presence: true, inclusion: { in: HA::TYPES }
+    validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
 
     module Hypervisor
       KVM  = 'kvm'
@@ -134,6 +135,8 @@ module Staypuft
     # adding groups for any roles not already represented, and removing others
     # no longer needed.
     def update_hostgroup_list
+      new_layout = Layout.where(:name =>layout_name, :networking => networking).first
+      layout = new_layout
       old_role_hostgroups_arr = deployment_role_hostgroups.to_a
       layout.layout_roles.each do |layout_role|
         role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
@@ -179,10 +182,27 @@ module Staypuft
       hostgroup.save!
     end
 
+    # This needs to set all UI params. For service-level UI params
+    # this can call similar helper methods on the service helper classes to delegate
+    def set_default_ui_param_values
+      self.layout    = Layout.where(:name       => LayoutName::NON_HA,
+                               :networking => Networking::NOVA).first
+      deployment_hostgroup = ::Hostgroup.new name: name, parent: Hostgroup.get_base_hostgroup
+      deployment_hostgroup.save!
+
+      self.hostgroup = deployment_hostgroup
+
+      self.amqp_provider = AmqpProvider::RABBITMQ
+      self.layout_name   = LayoutName::NON_HA
+      self.networking    = Networking::NOVA
+      self.hypervisor    = Hypervisor::KVM
+    end
+
     # Checks to see if the form step was the last in the series.  If so it sets
     # the form_step field to complete.
     def check_form_complete
       self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
     end
+
   end
 end
