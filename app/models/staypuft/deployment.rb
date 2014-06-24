@@ -11,7 +11,7 @@ module Staypuft
     NEW_NAME_PREFIX ="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :layout_name, :networking, :hypervisor
+                    :amqp_provider, :layout_name, :networking, :hypervisor, :platform
     after_save :update_hostgroup_name
     after_validation :check_form_complete
 
@@ -43,7 +43,8 @@ module Staypuft
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
               hypervisor:    Hypervisor::KVM,
-              networking:    Networking::NOVA }.merge(attributes),
+              networking:    Networking::NOVA,
+              platform:      Platform::RHEL7 }.merge(attributes),
             options)
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
@@ -75,9 +76,6 @@ module Staypuft
       end
     end
 
-    # TODO hide this in UI
-    param_attr :amqp_provider, :networking, :layout_name, :hypervisor
-
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
       QPID     = 'qpid'
@@ -86,8 +84,6 @@ module Staypuft
       HUMAN    = N_('Messaging provider')
     end
 
-    validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
-
     module Networking
       NOVA    = 'nova'
       NEUTRON = 'neutron'
@@ -95,8 +91,6 @@ module Staypuft
       TYPES   = LABELS.keys
       HUMAN   = N_('Networking')
     end
-
-    validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
 
     module LayoutName
       NON_HA = 'Controller / Compute'
@@ -107,8 +101,6 @@ module Staypuft
       HUMAN  = N_('High Availability')
     end
 
-    validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
-
     module Hypervisor
       KVM    = 'kvm'
       QEMU   = 'qemu'
@@ -118,8 +110,21 @@ module Staypuft
       HUMAN  = N_('Hypervisor')
     end
 
-    validates :hypervisor, presence: true, inclusion: { in: Hypervisor::TYPES }
+    module Platform
+      RHEL7  = 'rhel7'
+      RHEL6  = 'rhel6'
+      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux Opestack Platfom 5 with RHEL 7'),
+                 RHEL6 => N_('Red Hat Enterprise Linux Opestack Platfom 5 with RHEL 6') }
+      TYPES  = LABELS.keys
+      HUMAN  = N_('Platform')
+    end
 
+    param_attr :amqp_provider, :networking, :layout_name, :hypervisor, :platform
+    validates :hypervisor, presence: true, inclusion: { in: Hypervisor::TYPES }
+    validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
+    validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
+    validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
+    validates :platform, presence: true, inclusion: { in: Platform::TYPES }
 
     # TODO(mtaylor)
     # Use conditional validations to validate the deployment multi-step form.
