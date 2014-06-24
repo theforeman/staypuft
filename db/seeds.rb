@@ -146,13 +146,13 @@ end
 
 # key (:ha, etc) is only  used internally for referencing from roles
 layouts      = {
-    :ha_nova        => Staypuft::Layout.where(:name       => 'Distributed with High Availability',
+    :ha_nova        => Staypuft::Layout.where(:name       => 'High Availability Controllers / Compute',
                                               :networking => 'nova').first_or_create!,
-    :non_ha_nova    => Staypuft::Layout.where(:name       => 'Distributed',
+    :non_ha_nova    => Staypuft::Layout.where(:name       => 'Controller / Compute',
                                               :networking => 'nova').first_or_create!,
-    :ha_neutron     => Staypuft::Layout.where(:name       => 'Distributed with High Availability',
+    :ha_neutron     => Staypuft::Layout.where(:name       => 'High Availability Controllers / Compute',
                                               :networking => 'neutron').first_or_create!,
-    :non_ha_neutron => Staypuft::Layout.where(:name       => 'Distributed',
+    :non_ha_neutron => Staypuft::Layout.where(:name       => 'Controller / Compute',
                                               :networking => 'neutron').first_or_create!,
 }
 
@@ -314,11 +314,23 @@ roles.each do |role_hash|
 end
 
 functional_dependencies = {
+    'quickstack::nova_network::controller' =>
+        { 'amqp_server' =>
+              (amqp_provider = '<%= @host.params.fetch("ui::deployment::amqp_provider") %>')},
+    'quickstack::neutron::controller' =>
+        { 'amqp_server' => amqp_provider  },
     'quickstack::pacemaker::params' =>
         { 'include_neutron' =>
-              (neutron = '<%= @host.params.fetch("ui::deployment::networking") == Staypuft::Deployment::Networking::NEUTRON %>') },
-    'quickstack::pacemaker::params' =>
-        { 'neutron' => neutron }
+              (neutron = '<%= @host.params.fetch("ui::deployment::networking") == Staypuft::Deployment::Networking::NEUTRON %>'),
+          'neutron' => neutron },
+    'quickstack::neutron::networker' =>
+        { 'amqp_server' => amqp_provider  },
+    'quickstack::storage_backend::cinder' =>
+        { 'amqp_server' => amqp_provider  },
+    'quickstack::nova_network::compute' =>
+        { 'amqp_server' => amqp_provider  },
+    'quickstack::neutron::compute' =>
+        { 'amqp_server' => amqp_provider  }
 }
 
 functional_dependencies.each do |puppetclass_name, params|
