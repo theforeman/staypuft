@@ -58,10 +58,7 @@ module Staypuft
       hostgroup              = ::Hostgroup.find params[:hostgroup_id]
       deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
 
-      targeted_hosts  = ::Host::Base.find Array(params[:host_ids])
-      assigned_hosts  = hostgroup.hosts
-      hosts_to_assign = targeted_hosts - assigned_hosts
-      hosts_to_remove = assigned_hosts - targeted_hosts
+      hosts_to_assign  = ::Host::Base.find Array(params[:host_ids])
 
       unassigned_hosts = hosts_to_assign.reduce([]) do |unassigned_hosts, discovered_host|
         success, host = assign_host_to_hostgroup discovered_host, hostgroup
@@ -77,10 +74,19 @@ module Staypuft
                     join("\n"))
       end
 
-      hosts_to_remove.each do |host|
-        if host.open_stack_deployed? && deployment_in_progress
-          # do not remove
-        else
+      redirect_to show_with_hostgroup_selected_deployment_path(
+                      id: deployment, hostgroup_id: hostgroup)
+    end
+
+    def unassign_host
+      deployment             = Deployment.find(params[:id])
+      hostgroup              = ::Hostgroup.find params[:hostgroup_id]
+      deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
+
+      hosts_to_unassign  = ::Host::Base.find Array(params[:host_ids])
+
+      hosts_to_unassign.each do |host|
+        unless host.open_stack_deployed? && deployment_in_progress
           host.open_stack_unassign
           host.environment = Environment.get_discovery
           host.save!

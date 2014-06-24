@@ -24,7 +24,21 @@ $(function () {
     var tr = $(this).closest("tr");
     tr.toggleClass("info", this.checked);
     if (tr.hasClass("deployed")) {
-      tr.toggleClass("danger", !this.checked);
+      tr.toggleClass("danger", this.checked);
     }
   });
+
+  // Workaround to properly activate and deactivate tabs in tabbed_side_nav_table
+  // Should be probably done properly by extending Bootstrap Tab
+  $(".tabbed_side_nav_table").on('click.bs.tab.data-api', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
+    e.preventDefault();
+    $(this).closest('ul').find('.activated').removeClass('activated');
+    $(this).addClass("activated");
+    $(this).closest('li').addClass('activated');
+  });
+
+  $('.tabbed_side_nav_table').on('click', 'button.close', function() {
+    $(this).closest('.tab-pane.active').removeClass('active');
+    $(this).closest('.tabbed_side_nav_table').find('.activated').removeClass('activated');
+  })
 });

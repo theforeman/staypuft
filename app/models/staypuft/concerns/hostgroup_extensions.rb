@@ -48,9 +48,8 @@ module Staypuft::Concerns::HostgroupExtensions
     end
   end
 
-  def own_and_free_hosts
-    # TODO update to Discovered only?
-    Host::Base.where('hostgroup_id = ? OR hostgroup_id IS NULL', id)
+  def free_hosts
+    Host::Base.where('hostgroup_id IS NULL')
   end
 
   module ClassMethods

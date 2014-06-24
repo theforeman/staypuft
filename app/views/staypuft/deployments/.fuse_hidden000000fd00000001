@@ -1,0 +1,60 @@
+<div class="tab-pane" id="<%= child_hostgroup.name.parameterize.underscore %>_assigned_hosts">
+  <% if child_hostgroup.hosts.present? %>
+    <%= form_tag(unassign_host_deployment_path(id: deployment), class: 'form-horizontal well association') do |f| %>
+      <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm pull-left" %>
+      <h4 class="pull-left"><%= _("Assigned Hosts") %></h4>
+      <button type="button" class="close" aria-hidden="true">×</button>
+      <p class="clearfix"></p>
+      <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
+      <table class="table table-bordered table-striped table-condensed">
+        <thead>
+          <tr>
+            <th class="ca">
+              <%= check_box_tag :check_all %>
+            </th>
+            <th><%= sort :name, :as => _('Name') %></th>
+            <th class="hidden-s hidden-xs"><%= _('Deployed?') %></th>
+            <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% child_hostgroup.hosts.each do |host| %>
+            <% disabled = ForemanTasks::Lock.locked?(deployment, nil) && host.open_stack_deployed? %>
+            <tr class="<%= ['checkbox_highlight',
+                            ('deployed' if disabled)
+                           ].compact.join(' ') %>">
+              <td class="ca">
+                <%= check_box_tag 'host_ids[]',
+                                  host.id,
+                                  false,
+                                  id:       "host_ids_#{host.id}",
+                                  disabled: disabled %>
+                <%= hidden_field_tag 'host_ids[]', host.id if disabled %>
+              </td>
+              <td class="ellipsis">
+               <%= host_label(host) %>
+              </td>
+              <td class="hidden-s hidden-xs">
+                <% if host.open_stack_deployed? %>
+                  <span class="glyphicon glyphicon-cloud-upload"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-minus"></span>
+                <% end %>
+              </td>
+              <td class="hidden-s hidden-xs"><%= host.ip %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% else %>
+    <div class="well association">
+      <button type="button" class="close pull-right" aria-hidden="true">×</button>
+      <h4><%= _("Assigned Hosts") %></h4>
+      <div class="alert alert-warning">
+        <span class="glyphicon glyphicon-warning-sign">&nbsp;</span>
+        <%= _("No hosts were assigned to this group yet.") %>
+      </div>
+    </div>
+  <% end %>
+</div>

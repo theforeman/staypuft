@@ -12,6 +12,7 @@ Rails.application.routes.draw do
         get 'populate'
         get 'summary'
         post 'associate_host'
+        post 'unassign_host'
         get 'export_config'
         post 'import_config'
       end
