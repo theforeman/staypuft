@@ -313,24 +313,18 @@ roles.each do |role_hash|
   end
 end
 
+amqp_provider = '<%= @host.deployment.amqp_provider %>'
+neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+
 functional_dependencies = {
-    'quickstack::nova_network::controller' =>
-        { 'amqp_server' =>
-              (amqp_provider = '<%= @host.params.fetch("ui::deployment::amqp_provider") %>')},
-    'quickstack::neutron::controller' =>
-        { 'amqp_server' => amqp_provider  },
-    'quickstack::pacemaker::params' =>
-        { 'include_neutron' =>
-              (neutron = '<%= @host.params.fetch("ui::deployment::networking") == Staypuft::Deployment::Networking::NEUTRON %>'),
-          'neutron' => neutron },
-    'quickstack::neutron::networker' =>
-        { 'amqp_server' => amqp_provider  },
-    'quickstack::storage_backend::cinder' =>
-        { 'amqp_server' => amqp_provider  },
-    'quickstack::nova_network::compute' =>
-        { 'amqp_server' => amqp_provider  },
-    'quickstack::neutron::compute' =>
-        { 'amqp_server' => amqp_provider  }
+    'quickstack::nova_network::controller' => { 'amqp_server' => amqp_provider },
+    'quickstack::neutron::controller'      => { 'amqp_server' => amqp_provider },
+    'quickstack::pacemaker::params'        => { 'include_neutron' => neutron,
+                                                'neutron'         => neutron },
+    'quickstack::neutron::networker'       => { 'amqp_server' => amqp_provider },
+    'quickstack::storage_backend::cinder'  => { 'amqp_server' => amqp_provider },
+    'quickstack::nova_network::compute'    => { 'amqp_server' => amqp_provider },
+    'quickstack::neutron::compute'         => { 'amqp_server' => amqp_provider }
 }
 
 functional_dependencies.each do |puppetclass_name, params|
