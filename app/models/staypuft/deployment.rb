@@ -13,7 +13,6 @@ module Staypuft
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :hypervisor, :platform
     after_save :update_hostgroup_name
-    before_validation :set_default_ui_param_values, :on => :create
     after_validation :check_form_complete
     before_destroy :prepare_destroy
 
@@ -46,7 +45,6 @@ module Staypuft
 
     after_validation :check_form_complete
     before_save :update_layout
-    after_save :update_based_on_settings
 
     def nova
       @nova_service ||= NovaService.new self
