@@ -13,7 +13,6 @@ module Staypuft
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :hypervisor
     after_save :update_hostgroup_name
-    before_validation :set_default_ui_param_values, :on => :create
     after_validation :check_form_complete
     before_destroy :prepare_destroy
 
@@ -40,6 +39,18 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+
+    def initialize(attributes = nil, options = {})
+      super({ amqp_provider: AmqpProvider::RABBITMQ,
+              layout_name:   LayoutName::NON_HA,
+              hypervisor:    Hypervisor::KVM,
+              networking:    Networking::NOVA }.merge(attributes),
+            options)
+
+      self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
+      self.layout    = Layout.where(:name       => self.layout_name,
+                                    :networking => self.networking).first
+    end
 
     def self.param_attr(*names)
       names.each do |name|
@@ -89,23 +100,23 @@ module Staypuft
     validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
 
     module LayoutName
-      NON_HA   = 'Controller / Compute'
-      HA       = 'High Availability Controllers / Compute'
-      LABELS   = { NON_HA => N_('Controller / Compute'),
-                   HA     => N_('High Availability Controllers / Compute') }
-      TYPES    = LABELS.keys
-      HUMAN    = N_('High Availability')
+      NON_HA = 'Controller / Compute'
+      HA     = 'High Availability Controllers / Compute'
+      LABELS = { NON_HA => N_('Controller / Compute'),
+                 HA     => N_('High Availability Controllers / Compute') }
+      TYPES  = LABELS.keys
+      HUMAN  = N_('High Availability')
     end
 
     validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
 
     module Hypervisor
-      KVM  = 'kvm'
-      QEMU = 'qemu'
-      LABELS   = { KVM => N_('Libvirt/KVM'),
-                   QEMU  => N_('Libvirt/QEMU') }
-      TYPES    = LABELS.keys
-      HUMAN    = N_('Hypervisor')
+      KVM    = 'kvm'
+      QEMU   = 'qemu'
+      LABELS = { KVM  => N_('Libvirt/KVM'),
+                 QEMU => N_('Libvirt/QEMU') }
+      TYPES  = LABELS.keys
+      HUMAN  = N_('Hypervisor')
     end
 
     validates :hypervisor, presence: true, inclusion: { in: Hypervisor::TYPES }
@@ -128,10 +139,9 @@ module Staypuft
     # adding groups for any roles not already represented, and removing others
     # no longer needed.
     def update_hostgroup_list
-      new_layout = Layout.where(:name =>layout_name, :networking => networking).first
-      layout = new_layout
+      new_layout              = Layout.where(:name => layout_name, :networking => networking).first
       old_role_hostgroups_arr = deployment_role_hostgroups.to_a
-      layout.layout_roles.each do |layout_role|
+      new_layout.layout_roles.each do |layout_role|
         role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
           drh.hostgroup = Hostgroup.new(name: layout_role.role.name, parent: hostgroup)
         end
@@ -173,22 +183,6 @@ module Staypuft
     def update_hostgroup_name
       hostgroup.name = self.name
       hostgroup.save!
-    end
-
-    # This needs to set all UI params. For service-level UI params
-    # this can call similar helper methods on the service helper classes to delegate
-    def set_default_ui_param_values
-      self.layout    = Layout.where(:name       => LayoutName::NON_HA,
-                               :networking => Networking::NOVA).first
-      deployment_hostgroup = ::Hostgroup.new name: name, parent: Hostgroup.get_base_hostgroup
-      deployment_hostgroup.save!
-
-      self.hostgroup = deployment_hostgroup
-
-      self.amqp_provider = AmqpProvider::RABBITMQ
-      self.layout_name   = LayoutName::NON_HA
-      self.networking    = Networking::NOVA
-      self.hypervisor    = Hypervisor::KVM
     end
 
     # Checks to see if the form step was the last in the series.  If so it sets
