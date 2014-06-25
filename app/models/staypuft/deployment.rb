@@ -339,7 +339,7 @@ module Staypuft
           :ceilometer_metering_secret, :heat_auth_encrypt_key, :horizon_secret_key,
           :swift_shared_secret, :neutron_metadata_proxy_secret
 
-      OTHER_ATTRS_LIST = :mode, :service_password
+      OTHER_ATTRS_LIST = :mode, :single_password
 
       def self.param_scope
         'passwords'
@@ -354,15 +354,10 @@ module Staypuft
       module Mode
         SINGLE = 'single'
         RANDOM = 'random'
-        LABELS = { SINGLE => N_('Use single password for all services'),
-                   RANDOM => N_('Generate random password for each service') }
+        LABELS = { RANDOM => N_('Generate random password for each service'),
+                   SINGLE => N_('Use single password for all services') }
         TYPES  = LABELS.keys
         HUMAN  = N_('Service Password')
-      end
-
-      module ServicePassword
-        LABEL         = N_('Password')
-        CONFIRM_LABEL = N_('Confirm Password')
       end
 
       validates :mode, presence: true, inclusion: { in: Mode::TYPES }
@@ -370,12 +365,12 @@ module Staypuft
       # using old hash syntax here since if:, while validly parsing as :if => in
       # ruby itself, in irb the parser treats it as an if keyword, as does both
       # emacs and rubymine, which really messes with indention, etc.
-      validates :service_password,
+      validates :single_password,
                 :presence     => true,
                 :confirmation => true,
                 :if           => :single_mode?,
                 :length       => { minimum: 6 }
-      validates :service_password_confirmation,
+      validates :single_password_confirmation,
                 :presence => true,
                 :if       => :single_mode?
 
@@ -392,14 +387,14 @@ module Staypuft
 
       def effective_value(password_field)
         if single_mode?
-          service_password
+          single_password
         else
           send(password_field)
         end
       end
 
       def id # compatibility with password_f
-        service_password
+        single_password
       end
     end
 
