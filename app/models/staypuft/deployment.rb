@@ -46,6 +46,7 @@ module Staypuft
     after_validation :check_form_complete
     before_save :update_layout
 
+<<<<<<< HEAD
     def nova
       @nova_service ||= NovaService.new self
     end
@@ -86,7 +87,9 @@ module Staypuft
               platform:      Platform::RHEL6 }.merge(attributes),
             options)
 
+      
       self.nova.nova_network = NovaService::NovaNetwork::FLAT
+      self.passwords.set_defaults
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
 
@@ -337,19 +340,90 @@ module Staypuft
         TYPES     = LABELS.keys
       end
 
-      validate :nova_network, presence: true, inclusion: { in: NovaNetwork::TYPES }
+      validates :nova_network, presence: true, inclusion: { in: NovaNetwork::TYPES }
     end
 
     # validates_associated :nova
 
     def nova
-      if networking == Networking::NOVA
-        @nova_service ||= NovaService.new self
+      @nova_service ||= NovaService.new self
+    end
+
+    class PasswordService < AbstractService
+      PASSWORD_LIST = :admin, :ceilometer_user, :cinder_db, :cinder_user,
+        :glance_db, :glance_user, :heat_db, :heat_user, :heat_cfn_user, :mysql_root,
+        :keystone_db, :keystone_user, :neutron_db, :neutron_user, :nova_db, :nova_user,
+        :swift_admin, :swift_user, :amqp, :amqp_nssdb, :keystone_admin_token,
+        :ceilometer_metering_secret, :heat_auth_encrypt_key, :horizon_secret_key,
+        :swift_shared_secret, :neutron_metadata_proxy_secret
+
+      OTHER_ATTRS_LIST = :mode, :service_password
+
+      def self.param_scope
+        'passwords'
       end
+
+      param_attr *OTHER_ATTRS_LIST, *PASSWORD_LIST
+
+      def attributes=(attr_list)
+        mode = attr_list[:mode]
+        service_password = attr_list[:service_password]
+        service_password_confirmation = attr_list[:service_password_confirmation]
+      end
+
+      module Mode
+        SINGLE = 'single'
+        RANDOM = 'random'
+        LABELS    = { SINGLE => N_('Use single password for all services'),
+                      RANDOM => N_('Generate random password for each service') }
+        TYPES     = LABELS.keys
+        HUMAN  = N_('Service Password')
+      end
+      module ServicePassword
+        LABEL         =  N_('Password')
+        CONFIRM_LABEL =  N_('Confirm Password')
+      end
+
+      validates :mode, presence: true, inclusion: { in: Mode::TYPES }
+
+      # using old hash syntax here since if:, while validly parsing as :if => in
+      # ruby itself, in irb the parser treats it as an if keyword, as does both
+      # emacs and rubymine, which really messes with indention, etc.
+      validates :service_password, :presence => true, :confirmation => true,
+      :if => :single_mode?, :length => { minimum: 6 }
+      validates :service_password_confirmation, :presence => true, :if => :single_mode?
+
+      def set_defaults
+        self.mode = Mode::RANDOM
+        # FIXME: figure out how to handle blank values
+        self.service_password = "BLANK"
+        PASSWORD_LIST.each do |password_field|
+          self.send("#{password_field}=", SecureRandom.hex)
+        end
+      end
+
+      def single_mode?
+        mode == Mode::SINGLE
+      end
+
+      def effective_value(password_field)
+        if single_mode?
+          service_password
+        else
+          send(password_field)
+        end
+      end
+    end
+
+    # validates_associated :passwords
+
+    def passwords
+      @password_service ||= PasswordService.new self
     end
 
     after_save do
       nova.run_callbacks :save if nova
+      passwords.run_callbacks :save
       true
     end
 

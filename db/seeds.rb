@@ -13,10 +13,6 @@ params = {
     'heat_cloudwatch'               => 'false',
     'ceilometer'                    => 'true',
     'ceilometer_host'               => 'false',
-    'ceilometer_metering_secret'    => SecureRandom.hex,
-    'ceilometer_user_password'      => SecureRandom.hex,
-    'cinder_db_password'            => SecureRandom.hex,
-    'cinder_user_password'          => SecureRandom.hex,
     'cinder_backend_gluster'        => 'false',
     'cinder_backend_gluster_name'   => 'glusterfs_backend',
     'cinder_backend_iscsi'          => 'false',
@@ -35,15 +31,13 @@ params = {
     'cinder_nfs_mount_options'      => '',
     'cinder_san_ip'                 => '192.168.124.11',
     'cinder_san_login'              => 'grpadmin',
-    'cinder_san_password'           => SecureRandom.hex,
+    'cinder_san_password'           => '',
     'cinder_san_thin_provision'     => 'false',
     'cinder_eqlx_group_name'        => 'group-0',
     'cinder_eqlx_pool'              => 'default',
     'cinder_eqlx_use_chap'          => 'false',
     'cinder_eqlx_chap_login'        => 'chapadmin',
-    'cinder_eqlx_chap_password'     => SecureRandom.hex,
-    'glance_db_password'            => SecureRandom.hex,
-    'glance_user_password'          => SecureRandom.hex,
+    'cinder_eqlx_chap_password'     => '',
     'glance_gluster_peers'          => [],
     'glance_gluster_volume'         => 'glance',
     'glance_gluster_replica_count'  => '3',
@@ -346,7 +340,6 @@ cinder_eqlx_pool                        = 'default'
 cinder_eqlx_use_chap                    = 'false'
 cinder_eqlx_chap_login                  = '<%= #@host.deployment.cinder.chap_login %>'
 cinder_eqlx_chap_password               = '<%= #@host.deployment.cinder.chap_password %>'
-
 
 # effective_value grabs shared password if deployment is in shared password mode,
 # otherwise use the service-specific one
