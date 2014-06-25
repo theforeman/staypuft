@@ -1,6 +1,5 @@
 # Libs
 require 'facter'
-require 'securerandom'
 
 # enabling puppet run'
 #Setting['puppetrun'] = true
@@ -12,13 +11,8 @@ params = {
     'verbose'                       => 'true',
     'heat_cfn'                      => 'false',
     'heat_cloudwatch'               => 'false',
-    'admin_password'                => SecureRandom.hex,
     'ceilometer'                    => 'true',
     'ceilometer_host'               => 'false',
-    'ceilometer_metering_secret'    => SecureRandom.hex,
-    'ceilometer_user_password'      => SecureRandom.hex,
-    'cinder_db_password'            => SecureRandom.hex,
-    'cinder_user_password'          => SecureRandom.hex,
     'cinder_backend_gluster'        => 'false',
     'cinder_backend_gluster_name'   => 'glusterfs_backend',
     'cinder_backend_iscsi'          => 'false',
@@ -37,36 +31,18 @@ params = {
     'cinder_nfs_mount_options'      => '',
     'cinder_san_ip'                 => '192.168.124.11',
     'cinder_san_login'              => 'grpadmin',
-    'cinder_san_password'           => SecureRandom.hex,
+    'cinder_san_password'           => '',
     'cinder_san_thin_provision'     => 'false',
     'cinder_eqlx_group_name'        => 'group-0',
     'cinder_eqlx_pool'              => 'default',
     'cinder_eqlx_use_chap'          => 'false',
     'cinder_eqlx_chap_login'        => 'chapadmin',
-    'cinder_eqlx_chap_password'     => SecureRandom.hex,
-    'glance_db_password'            => SecureRandom.hex,
-    'glance_user_password'          => SecureRandom.hex,
+    'cinder_eqlx_chap_password'     => '',
     'glance_gluster_peers'          => [],
     'glance_gluster_volume'         => 'glance',
     'glance_gluster_replica_count'  => '3',
     'gluster_open_port_count'       => '10',
-    'heat_db_password'              => SecureRandom.hex,
-    'heat_user_password'            => SecureRandom.hex,
-    'heat_cfn_user_password'        => SecureRandom.hex,
-    'heat_auth_encrypt_key'         => SecureRandom.hex,
-    'horizon_secret_key'            => SecureRandom.hex,
-    'keystone_admin_token'          => SecureRandom.hex,
-    'keystone_db_password'          => SecureRandom.hex,
-    'keystone_user_password'        => SecureRandom.hex,
-    'mysql_root_password'           => SecureRandom.hex,
-    'neutron_db_password'           => SecureRandom.hex,
-    'neutron_user_password'         => SecureRandom.hex,
-    'nova_db_password'              => SecureRandom.hex,
-    'nova_user_password'            => SecureRandom.hex,
     'nova_default_floating_pool'    => 'nova',
-    'swift_admin_password'          => SecureRandom.hex,
-    'swift_shared_secret'           => SecureRandom.hex,
-    'swift_user_password'           => SecureRandom.hex,
     'swift_all_ips'                 => %w(192.168.203.1 192.168.203.2 192.168.203.3 192.168.203.4),
     'swift_ext4_device'             => '/dev/sdc2',
     'swift_local_interface'         => 'eth3',
@@ -89,9 +65,7 @@ params = {
     "amqp_server"                   => 'rabbitmq',
     'amqp_host'                     => '172.16.0.1',
     'amqp_username'                 => 'openstack',
-    'amqp_password'                 => SecureRandom.hex,
     'admin_email'                   => "admin@#{Facter.value(:domain)}",
-    'neutron_metadata_proxy_secret' => SecureRandom.hex,
     'enable_ovs_agent'              => 'true',
     'ovs_vlan_ranges'               => '',
     'ovs_bridge_mappings'           => [],
@@ -125,11 +99,7 @@ params = {
     'horizon_ca'                    => '/etc/ipa/ca.crt',
     'horizon_cert'                  => '/etc/pki/tls/certs/PUB_HOST-horizon.crt',
     'horizon_key'                   => '/etc/pki/tls/private/PUB_HOST-horizon.key',
-    'amqp_nssdb_password'           => SecureRandom.hex,
-    'fence_xvm_key_file_password'   => SecureRandom.hex,
     'use_qemu_for_poc'              => 'false',
-    'secret_key'                    => SecureRandom.hex,
-    'admin_token'                   => SecureRandom.hex,
 }
 
 get_key_type = lambda do |value|
@@ -316,15 +286,147 @@ end
 amqp_provider = '<%= @host.deployment.amqp_provider %>'
 neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
 
+# effective_value grabs shared password if deployment is in shared password mode,
+# otherwise use the service-specific one
+admin_pw             = '<%= @host.deployment.passwords.effective_value(:admin) %>'
+ceilometer_user_pw   = '<%= @host.deployment.passwords.effective_value(:ceilometer_user) %>'
+cinder_db_pw         = '<%= @host.deployment.passwords.effective_value(:cinder_db) %>'
+cinder_user_pw       = '<%= @host.deployment.passwords.effective_value(:cinder_user) %>'
+glance_db_pw         = '<%= @host.deployment.passwords.effective_value(:glance_db) %>'
+glance_user_pw       = '<%= @host.deployment.passwords.effective_value(:glance_user) %>'
+heat_db_pw           = '<%= @host.deployment.passwords.effective_value(:heat_db) %>'
+heat_user_pw         = '<%= @host.deployment.passwords.effective_value(:heat_user) %>'
+heat_cfn_user_pw     = '<%= @host.deployment.passwords.effective_value(:heat_cfn_user) %>'
+keystone_db_pw       = '<%= @host.deployment.passwords.effective_value(:keystone_db) %>'
+keystone_user_pw     = '<%= @host.deployment.passwords.effective_value(:keystone_user) %>'
+mysql_root_pw        = '<%= @host.deployment.passwords.effective_value(:mysql_root) %>'
+neutron_db_pw        = '<%= @host.deployment.passwords.effective_value(:neutron_db) %>'
+neutron_user_pw      = '<%= @host.deployment.passwords.effective_value(:neutron_user) %>'
+nova_db_pw           = '<%= @host.deployment.passwords.effective_value(:nova_db) %>'
+nova_user_pw         = '<%= @host.deployment.passwords.effective_value(:nova_user) %>'
+swift_admin_pw       = '<%= @host.deployment.passwords.effective_value(:swift_admin) %>'
+swift_user_pw        = '<%= @host.deployment.passwords.effective_value(:swift_user) %>'
+amqp_pw              = '<%= @host.deployment.passwords.effective_value(:amqp) %>'
+amqp_nssdb_pw        = '<%= @host.deployment.passwords.effective_value(:amqp_nssdb) %>'
+keystone_admin_token = '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>'
+
+#these don't share the user-supplied password value; they're always a random per param value
+ceilometer_metering           = '<%= @host.deployment.passwords.ceilometer_metering_secret) %>'
+heat_auth_encrypt_key         = '<%= @host.deployment.passwords.heat_auth_encrypt_key) %>'
+horizon_secret_key            = '<%= @host.deployment.passwords.horizon_secret_key) %>'
+swift_shared_secret           = '<%= @host.deployment.passwords.swift_shared_secret) %>'
+neutron_metadata_proxy_secret = '<%= @host.deployment.passwords.neutron_metadata_proxy_secret) %>'
+
 functional_dependencies = {
-    'quickstack::nova_network::controller' => { 'amqp_server' => amqp_provider },
-    'quickstack::neutron::controller'      => { 'amqp_server' => amqp_provider },
-    'quickstack::pacemaker::params'        => { 'include_neutron' => neutron,
-                                                'neutron'         => neutron },
-    'quickstack::neutron::networker'       => { 'amqp_server' => amqp_provider },
-    'quickstack::storage_backend::cinder'  => { 'amqp_server' => amqp_provider },
-    'quickstack::nova_network::compute'    => { 'amqp_server' => amqp_provider },
-    'quickstack::neutron::compute'         => { 'amqp_server' => amqp_provider }
+    'quickstack::nova_network::controller' => {
+        'amqp_server'                   => amqp_provider,
+        'admin_password'                => admin_pw,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'cinder_db_password'            => cinder_db_pw,
+        'cinder_user_password'          => cinder_user_pw,
+        'glance_db_password'            => glance_db_pw,
+        'glance_user_password'          => glance_user_pw,
+        'heat_db_password'              => heat_db_pw,
+        'heat_user_password'            => heat_user_pw,
+        'keystone_db_password'          => keystone_db_pw,
+        'mysql_root_password'           => mysql_root_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'swift_admin_password'          => swift_admin_pw,
+        'amqp_password'                 => amqp_pw,
+        'amqp_nssdb_password'           => amqp_nssdb_pw,
+        'keystone_admin_token'          => keystone_admin_token,
+        'ceilometer_metering_secret'    => ceilometer_metering,
+        'heat_auth_encrypt_key'         => heat_auth_encrypt_key,
+        'horizon_secret_key'            => horizon_secret_key,
+        'swift_shared_secret'           => swift_shared_secret },
+    'quickstack::neutron::controller'      => {
+        'amqp_server'                   => amqp_provider,
+        'admin_password'                => admin_pw,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'cinder_db_password'            => cinder_db_pw,
+        'cinder_user_password'          => cinder_user_pw,
+        'glance_db_password'            => glance_db_pw,
+        'glance_user_password'          => glance_user_pw,
+        'heat_db_password'              => heat_db_pw,
+        'heat_user_password'            => heat_user_pw,
+        'keystone_db_password'          => keystone_db_pw,
+        'mysql_root_password'           => mysql_root_pw,
+        'neutron_db_password'           => neutron_db_pw,
+        'neutron_user_password'         => neutron_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'swift_admin_password'          => swift_admin_pw,
+        'amqp_password'                 => amqp_pw,
+        'amqp_nssdb_password'           => amqp_nssdb_pw,
+        'keystone_admin_token'          => keystone_admin_token,
+        'ceilometer_metering_secret'    => ceilometer_metering,
+        'heat_auth_encrypt_key'         => heat_auth_encrypt_key,
+        'horizon_secret_key'            => horizon_secret_key,
+        'swift_shared_secret'           => swift_shared_secret,
+        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+    'quickstack::pacemaker::params'        => {
+        'include_neutron'               => neutron,
+        'neutron'                       => neutron,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'cinder_db_password'            => cinder_db_pw,
+        'cinder_user_password'          => cinder_user_pw,
+        'glance_db_password'            => glance_db_pw,
+        'glance_user_password'          => glance_user_pw,
+        'heat_db_password'              => heat_db_pw,
+        'heat_user_password'            => heat_user_pw,
+        'heat_cfn_user_password'        => heat_cfn_user_pw,
+        'keystone_db_password'          => keystone_db_pw,
+        'keystone_user_password'        => keystone_user_pw,
+        'neutron_db_password'           => neutron_db_pw,
+        'neutron_user_password'         => neutron_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'amqp_password'                 => amqp_pw,
+        'heat_auth_encrypt_key'         => heat_auth_encrypt_key,
+        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+    'quickstack::pacemaker::keystone'      => {
+        'admin_password'                => admin_pw,
+        'admin_token'                   => keystone_admin_token },
+    'quickstack::pacemaker::horizon'       => {
+        'secret_key'                    => horizon_secret_key },
+    'quickstack::pacemaker::swift'         => {
+        'swift_shared_secret'           => swift_shared_secret },
+    'quickstack::pacemaker::mysql'         => {
+        'mysql_root_password'           => mysql_root_pw },
+    'quickstack::pacemaker::mysql'         => {
+        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+    'quickstack::neutron::networker'       => {
+        'amqp_server'                   => amqp_provider,
+        'neutron_db_password'           => neutron_db_pw,
+        'neutron_user_password'         => neutron_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'amqp_password'                 => amqp_pw,
+        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+    'quickstack::storage_backend::cinder'  => {
+        'amqp_server'                   => amqp_provider,
+        'cinder_db_password'            => cinder_db_pw,
+        'cinder_user_password'          => cinder_user_pw,
+        'amqp_password'                 => amqp_pw },
+    'quickstack::nova_network::compute'    => {
+        'amqp_server'                   => amqp_provider,
+        'admin_password'                => admin_pw,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'amqp_password'                 => amqp_pw,
+        'ceilometer_metering_secret'    => ceilometer_metering },
+    'quickstack::neutron::compute'         => {
+        'amqp_server'                   => amqp_provider,
+        'admin_password'                => admin_pw,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'neutron_db_password'           => neutron_db_pw,
+        'neutron_user_password'         => neutron_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'amqp_password'                 => amqp_pw,
+        'ceilometer_metering_secret'    => ceilometer_metering }
 }
 
 functional_dependencies.each do |puppetclass_name, params|

@@ -27,6 +27,36 @@
       end %>
     <% end %>
 
+    <div class="row">
+      <%= f.fields_for :passwords do |p| %>
+        <%= p.label Staypuft::Deployment::PasswordService::Mode::HUMAN, :class => "col-md-2 control-label" %><br />
+        <div class="row">
+          <div class="col-md-8">
+            <%=
+            radio_button_f_non_inline(p, :mode,
+                                  :checked => true,
+                                  :value   => Staypuft::Deployment::PasswordService::Mode::SINGLE,
+                                  :text    => Staypuft::Deployment::PasswordService::Mode::LABELS[Staypuft::Deployment::PasswordService::Mode::SINGLE])
+            %>
+            <div class="formgroup clearfix">
+              <%= p.label :service_password, Staypuft::Deployment::PasswordService::ServicePassword::LABEL, :class=>"col-md-4 control-label"%>
+              <%= p.password_field :service_password,  :class=>"col-md-5" %>
+            </div>
+            <div class="formgroup clearfix">
+              <%= p.label :service_password_confirmation, Staypuft::Deployment::PasswordService::ServicePassword::CONFIRM_LABEL, :class=>"col-md-4 control-label" %>
+              <%= p.password_field :service_password_confirmation, :class=>"col-md-5" %>
+            </div>
+            <%=
+            radio_button_f_non_inline(p, :mode,
+                                  :checked => false,
+                                  :value   => Staypuft::Deployment::PasswordService::Mode::RANDOM,
+                                  :text    => Staypuft::Deployment::PasswordService::Mode::LABELS[Staypuft::Deployment::PasswordService::Mode::RANDOM])
+            %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
     <div class="form_actions">
       <% if !is_new %>
         <%= link_to _("Cancel"), deployment_path(@deployment),
