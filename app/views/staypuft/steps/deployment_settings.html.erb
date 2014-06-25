@@ -27,29 +27,23 @@
       end %>
     <% end %>
 
-    <div class="row">
-      <%= f.fields_for :passwords, @deployment.passwords do |p| %>
-        <%= p.label Staypuft::Deployment::PasswordService::Mode::HUMAN, :class => "col-md-2 control-label" %>
-        <br/>
+    <%= fields_for :passwords, @deployment.passwords do |p| %>
+      <%= field(p, :mode, :label => _(Staypuft::Deployment::PasswordService::Mode::HUMAN)) do
+        Staypuft::Deployment::PasswordService::Mode::LABELS.map do |value, label|
+          radio_button_f_non_inline(p, :mode,
+                                    :checked => @deployment.passwords.mode == value,
+                                    :value   => value,
+                                    :text    => label)
+        end.join
+      end %>
 
-        <div class="row">
-          <div class="col-md-8">
-            <%= radio_button_f_non_inline(p, :mode,
-                                          :checked => @deployment.passwords.mode == Staypuft::Deployment::PasswordService::Mode::SINGLE,
-                                          :value   => Staypuft::Deployment::PasswordService::Mode::SINGLE,
-                                          :text    => Staypuft::Deployment::PasswordService::Mode::LABELS[Staypuft::Deployment::PasswordService::Mode::SINGLE])
-            %>
-            <%= password_f p, :service_password %>
-            <%= password_f p, :service_password_confirmation %>
-            <%= radio_button_f_non_inline(p, :mode,
-                                          :checked => @deployment.passwords.mode == Staypuft::Deployment::PasswordService::Mode::RANDOM,
-                                          :value   => Staypuft::Deployment::PasswordService::Mode::RANDOM,
-                                          :text    => Staypuft::Deployment::PasswordService::Mode::LABELS[Staypuft::Deployment::PasswordService::Mode::RANDOM])
-            %>
-          </div>
-        </div>
-      <% end %>
-    </div>
+      <%# TODO hide single password fields when random mode is selected %>
+      <%= password_f p, :single_password %>
+      <%= password_f p, :single_password_confirmation %>
+
+    <% end %>
+
+
 
     <div class="form_actions">
       <% if !is_new %>
