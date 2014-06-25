@@ -75,6 +75,22 @@ module Staypuft
 
     extend AttributeParamStorage
 
+    # Returns a list of hosts that are currently being deployed.
+    def in_progress_hosts(hostgroup)
+      return in_progress? ? hostgroup.openstack_hosts : {}
+    end
+
+    # Helper method for checking whether this deployment is in progress or not.
+    def in_progress?
+      ForemanTasks::Lock.locked? self, nil
+    end
+
+    # Returns all deployed hosts with no errors (default behaviour).  Set
+    # errors=true to return all deployed hosts that have errors
+    def deployed_hosts(hostgroup, errors=false)
+      in_progress? ? {} : hostgroup.openstack_hosts(errors)
+    end
+
     def self.param_scope
       'deployment'
     end

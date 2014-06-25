@@ -51,7 +51,7 @@
     </div>
   <% end %>
 
-  <% if ForemanTasks::Lock.locked? @deployment, nil %>
+  <% if @deployment.in_progress? %>
     <%= display_link_if_authorized(
             _('Deploy in progress'),
             hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
@@ -76,15 +76,15 @@
         <a href="#<%= child_hostgroup.name.parameterize.underscore %>" data-toggle="tab" class="roles_list">
           <div class="col-xs-2 text-center">
             <i class="glyphicon glyphicon-ok"></i>
-            <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && !h.error? }.count %></span>
+            <span><%= @deployment.deployed_hosts(child_hostgroup).count %></span>
           </div>
           <div class="col-xs-2 text-center">
             <i class="glyphicon glyphicon-warning-sign"></i>
-            <span><%= child_hostgroup.hosts.select { |h| h.open_stack_deployed? && h.error? }.count %></span>
+            <span><%= @deployment.deployed_hosts(child_hostgroup, true).count %></span>
           </div>
           <div class="col-xs-2 text-center">
             <i class="glyphicon glyphicon-time"></i>
-            <span><%= child_hostgroup.hosts.select { |h| !h.open_stack_deployed? }.count %></span>
+            <span><%= @deployment.in_progress_hosts(child_hostgroup).count %></span>
           </div>
           <div class="col-xs-6"><%= child_hostgroup.name %></div>
           <span class="clearfix"></span>
@@ -121,7 +121,7 @@
                                   ('deployed' if host.open_stack_deployed?)
                                  ].compact.join(' ') %>">
                     <td class="ca">
-                      <% disabled = ForemanTasks::Lock.locked?(@deployment, nil) && host.open_stack_deployed? %>
+                      <% disabled = @deployment.in_progress? && host.open_stack_environment_set? %>
                       <%= check_box_tag 'host_ids[]',
                                         host.id,
                                         child_hostgroup.host_ids.include?(host.id),
