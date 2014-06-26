@@ -7,7 +7,7 @@ module Staypuft
     end
 
     def new
-      deployment           = Deployment.new(:name          => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
+      deployment = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
       deployment.save!
 
       redirect_to deployment_steps_path(deployment_id: deployment)

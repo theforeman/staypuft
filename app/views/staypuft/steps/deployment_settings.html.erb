@@ -27,7 +27,7 @@
       end %>
     <% end %>
 
-    <%= fields_for :passwords, @deployment.passwords do |p| %>
+    <%= f.fields_for :passwords, @deployment.passwords do |p| %>
       <%= field(p, :mode, :label => _(Staypuft::Deployment::PasswordService::Mode::HUMAN)) do
         Staypuft::Deployment::PasswordService::Mode::LABELS.map do |value, label|
           radio_button_f_non_inline(p, :mode,
@@ -40,7 +40,6 @@
       <%# TODO hide single password fields when random mode is selected %>
       <%= password_f p, :single_password %>
       <%= password_f p, :single_password_confirmation %>
-
     <% end %>
 
 
