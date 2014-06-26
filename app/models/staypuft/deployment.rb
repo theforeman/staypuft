@@ -312,6 +312,11 @@ module Staypuft
 
       param_attr *OTHER_ATTRS_LIST, *PASSWORD_LIST
 
+      def initialize(deployment)
+        super deployment
+        self.single_password_confirmation = single_password
+      end
+
       def attributes=(attr_list)
         attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
@@ -335,9 +340,6 @@ module Staypuft
                 :confirmation => true,
                 :if           => :single_mode?,
                 :length       => { minimum: 6 }
-      validates :single_password_confirmation,
-                :presence => true,
-                :if       => :single_mode?
 
       def set_defaults
         self.mode = Mode::RANDOM
