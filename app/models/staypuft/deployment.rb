@@ -68,13 +68,12 @@ module Staypuft
               platform:      Platform::RHEL6 }.merge(attributes),
             options)
 
+      self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
 
       self.nova.nova_network = NovaService::NovaNetwork::FLAT
       self.passwords.set_defaults
-
-      self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
-      self.layout    = Layout.where(:name       => self.layout_name,
-                                    :networking => self.networking).first
+      self.layout = Layout.where(:name       => self.layout_name,
+                                 :networking => self.networking).first
     end
 
     extend AttributeParamStorage
