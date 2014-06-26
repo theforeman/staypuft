@@ -430,11 +430,17 @@ functional_dependencies = {
 }
 
 functional_dependencies.each do |puppetclass_name, params|
-  puppetclass = Puppetclass.find_by_name(puppetclass_name) or
-      raise "missing puppet class #{puppetclass_name}"
+  puppetclass = Puppetclass.find_by_name(puppetclass_name)
+  unless puppetclass
+    Rails.logger.error "missing puppet class #{puppetclass_name}"
+    next
+  end
   params.each do |param_key, default_value|
-    param = puppetclass.class_params.find_by_key(param_key) or
-        raise "missing param #{param} in #{puppetclass_name}"
+    param = puppetclass.class_params.find_by_key(param_key)
+    unless param
+      Rails.logger.error "missing param #{param} in #{puppetclass_name}"
+      next
+    end
     param.update_attributes! default_value: default_value
   end
 end
