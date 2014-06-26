@@ -66,10 +66,6 @@ module Staypuft
     end
 
     module AttributeParamStorage
-      # FIXME: this is probably the wrong way to do this, but it's a placeholder
-      # since the views and form helpers seem to want []-based access
-
-
       def param_attr(*names)
         names.each do |name|
           ivar_name  = :"@#{name}"
@@ -82,7 +78,6 @@ module Staypuft
           end
 
           define_method "#{name}=" do |value|
-            raise ArgumentError if value.nil?
             instance_variable_set(ivar_name, value)
           end
 
@@ -267,8 +262,13 @@ module Staypuft
         deployment.hostgroup
       end
 
+      # compatibility with validates_associated
       def marked_for_destruction?
         false
+      end
+
+      def attributes=(attr_list)
+        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
     end
 
@@ -315,10 +315,6 @@ module Staypuft
       def initialize(deployment)
         super deployment
         self.single_password_confirmation = single_password
-      end
-
-      def attributes=(attr_list)
-        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
 
       module Mode
