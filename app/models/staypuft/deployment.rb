@@ -104,6 +104,7 @@ module Staypuft
       self.neutron.set_defaults
       self.glance.set_defaults
       self.cinder.set_defaults
+
       self.passwords.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
