@@ -47,6 +47,19 @@ module Staypuft
     before_save :update_layout
     after_save :update_based_on_settings
 
+    def nova
+      @nova_service ||= NovaService.new self
+    end
+
+    after_save { nova.run_callbacks :save }
+
+    def passwords
+      @password_service ||= Passwords.new self
+    end
+
+    validates_associated :passwords
+    after_save { passwords.run_callbacks :save }
+
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
@@ -64,44 +77,11 @@ module Staypuft
                                     :networking => self.networking).first
     end
 
+    extend AttributeParamStorage
+
     def self.param_scope
       'deployment'
     end
-
-    module AttributeParamStorage
-      def param_attr(*names)
-        names.each do |name|
-          ivar_name  = :"@#{name}"
-          param_name = "ui::#{param_scope}::#{name}"
-
-          define_method name do
-            instance_variable_get(ivar_name) or
-                instance_variable_set(ivar_name,
-                                      hostgroup.group_parameters.find_by_name(param_name).try(:value))
-          end
-
-          define_method "#{name}=" do |value|
-            instance_variable_set(ivar_name, value)
-          end
-
-          after_save do
-            value = send(name)
-            if value.blank?
-              hostgroup.
-                  group_parameters.
-                  find_by_name(param_name).try(:destroy)
-            else
-              param = hostgroup.
-                  group_parameters.
-                  find_or_initialize_by_name(param_name)
-              param.update_attributes!(value: value)
-            end
-          end
-        end
-      end
-    end
-
-    extend AttributeParamStorage
 
     module AmqpProvider
       RABBITMQ = 'rabbitmq'
@@ -274,139 +254,5 @@ module Staypuft
       hosts.each { |host| host.open_stack_unassign }
       child_hostgroups.each { |hg| hg.destroy }
     end
-    public
-
-    # TODO move to its own file
-    class AbstractService
-      include ActiveModel::Validations
-      extend ActiveModel::Callbacks
-      extend AttributeParamStorage
-      define_model_callbacks :save, :only => [:after]
-
-      def self.param_scope
-        raise NotImplementedError
-      end
-
-      attr_reader :deployment
-
-      def initialize(deployment)
-        @deployment = deployment
-      end
-
-      def hostgroup
-        deployment.hostgroup
-      end
-
-      # compatibility with validates_associated
-      def marked_for_destruction?
-        false
-      end
-
-      def attributes=(attr_list)
-        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
-      end
-    end
-
-    class NovaService < AbstractService
-      def self.param_scope
-        'nova'
-      end
-
-      param_attr :nova_network
-
-      module NovaNetwork
-        FLAT      = 'flat'
-        FLAT_DHCP = 'flatdhcp'
-        LABELS    = { FLAT      => N_('Flat'),
-                      FLAT_DHCP => N_('FlatDHCP') }
-        TYPES     = LABELS.keys
-      end
-
-      validates :nova_network, presence: true, inclusion: { in: NovaNetwork::TYPES }
-    end
-
-    # validates_associated :nova
-
-    def nova
-      @nova_service ||= NovaService.new self
-    end
-
-    class PasswordService < AbstractService
-      PASSWORD_LIST = :admin, :ceilometer_user, :cinder_db, :cinder_user,
-          :glance_db, :glance_user, :heat_db, :heat_user, :heat_cfn_user, :mysql_root,
-          :keystone_db, :keystone_user, :neutron_db, :neutron_user, :nova_db, :nova_user,
-          :swift_admin, :swift_user, :amqp, :amqp_nssdb, :keystone_admin_token,
-          :ceilometer_metering_secret, :heat_auth_encrypt_key, :horizon_secret_key,
-          :swift_shared_secret, :neutron_metadata_proxy_secret
-
-      OTHER_ATTRS_LIST = :mode, :single_password
-
-      def self.param_scope
-        'passwords'
-      end
-
-      param_attr *OTHER_ATTRS_LIST, *PASSWORD_LIST
-
-      def initialize(deployment)
-        super deployment
-        self.single_password_confirmation = single_password
-      end
-
-      module Mode
-        SINGLE = 'single'
-        RANDOM = 'random'
-        LABELS = { RANDOM => N_('Generate random password for each service'),
-                   SINGLE => N_('Use single password for all services') }
-        TYPES  = LABELS.keys
-        HUMAN  = N_('Service Password')
-      end
-
-      validates :mode, presence: true, inclusion: { in: Mode::TYPES }
-
-      # using old hash syntax here since if:, while validly parsing as :if => in
-      # ruby itself, in irb the parser treats it as an if keyword, as does both
-      # emacs and rubymine, which really messes with indention, etc.
-      validates :single_password,
-                :presence     => true,
-                :confirmation => true,
-                :if           => :single_mode?,
-                :length       => { minimum: 6 }
-
-      def set_defaults
-        self.mode = Mode::RANDOM
-        PASSWORD_LIST.each do |password_field|
-          self.send("#{password_field}=", SecureRandom.hex)
-        end
-      end
-
-      def single_mode?
-        mode == Mode::SINGLE
-      end
-
-      def effective_value(password_field)
-        if single_mode?
-          single_password
-        else
-          send(password_field)
-        end
-      end
-
-      def id # compatibility with password_f
-        single_password
-      end
-    end
-
-    validates_associated :passwords
-
-    def passwords
-      @password_service ||= PasswordService.new self
-    end
-
-    after_save do
-      nova.run_callbacks :save
-      passwords.run_callbacks :save
-      true
-    end
-
   end
 end
