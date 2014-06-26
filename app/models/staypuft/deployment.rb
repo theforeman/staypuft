@@ -98,10 +98,6 @@ module Staypuft
               platform:      Platform::RHEL6 }.merge(attributes),
             options)
 
-
-      self.nova.nova_network = NovaService::NovaNetwork::FLAT
-      self.passwords.set_defaults
-
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
 
       self.nova.set_defaults
