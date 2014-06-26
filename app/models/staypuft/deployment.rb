@@ -313,7 +313,7 @@ module Staypuft
       param_attr *OTHER_ATTRS_LIST, *PASSWORD_LIST
 
       def attributes=(attr_list)
-        attr_list.each { |attr, value| send "#{attr}=", value }
+        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
 
       module Mode
