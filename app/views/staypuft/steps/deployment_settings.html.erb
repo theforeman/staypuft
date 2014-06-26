@@ -28,8 +28,8 @@
     <% end %>
 
     <%= f.fields_for :passwords, @deployment.passwords do |p| %>
-      <%= field(p, :mode, :label => _(Staypuft::Deployment::PasswordService::Mode::HUMAN)) do
-        Staypuft::Deployment::PasswordService::Mode::LABELS.map do |value, label|
+      <%= field(p, :mode, :label => _(Staypuft::Deployment::Passwords::Mode::HUMAN)) do
+        Staypuft::Deployment::Passwords::Mode::LABELS.map do |value, label|
           radio_button_f_non_inline(p, :mode,
                                     :checked => @deployment.passwords.mode == value,
                                     :value   => value,
