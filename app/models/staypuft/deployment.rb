@@ -107,7 +107,6 @@ module Staypuft
       return in_progress? ? hostgroup.openstack_hosts : {}
     end
 
-
     # Helper method for checking whether this deployment is in progress or not.
     def in_progress?
       ForemanTasks::Lock.locked? self, nil
@@ -323,8 +322,13 @@ module Staypuft
         deployment.hostgroup
       end
 
+      # compatibility with validates_associated
       def marked_for_destruction?
         false
+      end
+
+      def attributes=(attr_list)
+        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
     end
 
@@ -371,10 +375,6 @@ module Staypuft
       def initialize(deployment)
         super deployment
         self.single_password_confirmation = single_password
-      end
-
-      def attributes=(attr_list)
-        attr_list.each { |attr, value| send "#{attr}=", value } unless attr_list.nil?
       end
 
       module Mode
