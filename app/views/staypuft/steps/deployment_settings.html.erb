@@ -37,9 +37,17 @@
         end.join
       end %>
 
-      <%# TODO hide single password fields when random mode is selected %>
-      <%= password_f p, :single_password %>
-      <%= password_f p, :single_password_confirmation %>
+      <div class="single_password col-md-offset-2 hide">
+        <%= password_f p, :single_password,
+                          :label => _("Password"),
+                          :class=> "single_password",
+                          :help_inline => _("Password should be 6 characters or more"),
+                          :placeholder => password_placeholder(f.object)%>
+        <%= password_f p, :single_password_confirmation,
+                          :label => _("Confirm"),
+                          :class=> "single_password",
+                          :placeholder => password_placeholder(f.object)%>
+      </div>
     <% end %>
 
 
