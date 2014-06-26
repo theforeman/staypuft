@@ -27,4 +27,15 @@ $(function () {
       tr.toggleClass("danger", !this.checked);
     }
   });
+
+  showPasswords();
+  $("input[name='staypuft_deployment[passwords][mode]']").change(showPasswords);
+  function showPasswords() {
+    if ($('#staypuft_deployment_passwords_mode_single').is(":checked")) {
+      $('.single_password').show();
+    }
+    else {
+      $('.single_password').hide();
+    }
+  }
 });
