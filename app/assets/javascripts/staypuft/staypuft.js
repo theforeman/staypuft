@@ -41,4 +41,16 @@ $(function () {
     $(this).closest('.tab-pane.active').removeClass('active');
     $(this).closest('.tabbed_side_nav_table').find('.activated').removeClass('activated');
   })
+
+  showPasswords();
+  $("input[name='staypuft_deployment[passwords][mode]']").change(showPasswords);
+  function showPasswords() {
+    if ($('#staypuft_deployment_passwords_mode_single').is(":checked")) {
+      $('.single_password').show();
+    }
+    else {
+      $('.single_password').hide();
+    }
+  }
+
 });
