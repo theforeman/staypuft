@@ -70,7 +70,7 @@ module Staypuft
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
 
-      self.nova.nova_network = NovaService::NovaNetwork::FLAT
+      self.nova.set_defaults
       self.passwords.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
