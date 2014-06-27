@@ -67,14 +67,8 @@ params = {
     'amqp_username'                 => 'openstack',
     'admin_email'                   => "admin@#{Facter.value(:domain)}",
     'enable_ovs_agent'              => 'true',
-    'ovs_vlan_ranges'               => '',
-    'ovs_bridge_mappings'           => [],
-    'ovs_bridge_uplinks'            => [],
-    'ovs_tunnel_iface'              => 'eth0',
     'tenant_network_type'           => 'vxlan',
-    'enable_tunneling'              => 'True',
     'ovs_vxlan_udp_port'            => '4789',
-    'ovs_tunnel_types'              => ['vxlan'],
     'auto_assign_floating_ip'       => 'True',
     'cisco_vswitch_plugin'          => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
     'cisco_nexus_plugin'            => 'neutron.plugins.cisco.nexus.cisco_nexus_plugin_v2.NexusPlugin',
@@ -285,12 +279,31 @@ end
 
 amqp_provider = '<%= @host.deployment.amqp_provider %>'
 neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+# Nova
 network_manager = '<%= @host.deployment.nova.network_manager %>'
 # TODO: other nova params related to VLAN range, tenant (compute) and external (controller)
 # interfaces, etc.
 # FIXME: should things like nova_multi_host that are decided for Phase 1 defaults but
 # statically defined (i.e. not affected by wizard choices) be defined down here or in the 
 # previously-existing 'defaults' above?
+
+# Neutron
+ovs_vlan_ranges             = '<%= "physnet-tenants:#{@host.deployment.neutron.tenant_vlan_ranges}" %>'
+ml2_network_vlan_ranges     = [ovs_vlan_ranges]
+# FIXME figure out array issues
+ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation_list %>']
+ml2_tunnel_id_ranges        = ['10:100000']
+ml2_vni_ranges              = ['10:100000']
+ovs_tunnel_types            = ['vxlan','gre']
+ovs_tunnel_iface            = '<%= @host.deployment.neutron.networker_tenant_interface %>'
+# FIXME figure out array issues
+ovs_bridge_mappings         = ['<%= @host.deployment.neutron.controller_ovs_bridge_mappings.to_s %>']
+ovs_bridge_uplinks          = ['<%= @host.deployment.neutron.controller_ovs_bridge_uplinks.to_s %>']
+compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
+# FIXME figure out array issues
+compute_ovs_bridge_mappings = ['<%= @host.deployment.neutron.compute_ovs_bridge_mappings.to_s %>']
+compute_ovs_bridge_uplinks  = ['<%= @host.deployment.neutron.compute_ovs_bridge_uplinks.to_s %>']
+enable_tunneling            = 'True'
 
 # effective_value grabs shared password if deployment is in shared password mode,
 # otherwise use the service-specific one
@@ -348,6 +361,12 @@ functional_dependencies = {
         'swift_shared_secret'           => swift_shared_secret },
     'quickstack::neutron::controller'      => {
         'amqp_server'                   => amqp_provider,
+        'ml2_network_vlan_ranges'       => ml2_network_vlan_ranges,
+        'ml2_tenant_network_types'      => ml2_tenant_network_types,
+        'ml2_tunnel_id_ranges'          => ml2_tunnel_id_ranges,
+        'ml2_vni_ranges'                => ml2_vni_ranges,
+        'ovs_vlan_ranges'               => ovs_vlan_ranges,
+        'enable_tunneling'              => enable_tunneling,
         'admin_password'                => admin_pw,
         'ceilometer_user_password'      => ceilometer_user_pw,
         'cinder_db_password'            => cinder_db_pw,
@@ -391,6 +410,17 @@ functional_dependencies = {
         'amqp_password'                 => amqp_pw,
         'heat_auth_encrypt_key'         => heat_auth_encrypt_key,
         'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+    'quickstack::pacemaker::neutron'      => {
+        'ml2_network_vlan_ranges'       => ml2_network_vlan_ranges,
+        'ml2_tenant_network_types'      => ml2_tenant_network_types,
+        'ml2_tunnel_id_ranges'          => ml2_tunnel_id_ranges,
+        'enable_tunneling'              => enable_tunneling,
+        'ovs_bridge_mappings'           => ovs_bridge_mappings,
+        'ovs_bridge_uplinks'            => ovs_bridge_uplinks,
+        'ovs_tunnel_iface'              => ovs_tunnel_iface,
+        'ovs_tunnel_types'              => ovs_tunnel_types,
+        'ovs_vlan_ranges'               => ovs_vlan_ranges
+ },
     'quickstack::pacemaker::keystone'      => {
         'admin_password'                => admin_pw,
         'admin_token'                   => keystone_admin_token },
@@ -404,6 +434,12 @@ functional_dependencies = {
         'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
     'quickstack::neutron::networker'       => {
         'amqp_server'                   => amqp_provider,
+        'enable_tunneling'              => enable_tunneling,
+        'ovs_bridge_mappings'           => ovs_bridge_mappings,
+        'ovs_bridge_uplinks'            => ovs_bridge_uplinks,
+        'ovs_tunnel_iface'              => ovs_tunnel_iface,
+        'ovs_tunnel_types'              => ovs_tunnel_types,
+        'ovs_vlan_ranges'               => ovs_vlan_ranges,
         'neutron_db_password'           => neutron_db_pw,
         'neutron_user_password'         => neutron_user_pw,
         'nova_db_password'              => nova_db_pw,
@@ -426,6 +462,12 @@ functional_dependencies = {
         'ceilometer_metering_secret'    => ceilometer_metering },
     'quickstack::neutron::compute'         => {
         'amqp_server'                   => amqp_provider,
+        'enable_tunneling'              => enable_tunneling,
+        'ovs_bridge_mappings'           => compute_ovs_bridge_mappings,
+        'ovs_bridge_uplinks'            => compute_ovs_bridge_uplinks,
+        'ovs_tunnel_iface'              => compute_ovs_tunnel_iface,
+        'ovs_tunnel_types'              => ovs_tunnel_types,
+        'ovs_vlan_ranges'               => ovs_vlan_ranges,
         'admin_password'                => admin_pw,
         'ceilometer_user_password'      => ceilometer_user_pw,
         'neutron_db_password'           => neutron_db_pw,
