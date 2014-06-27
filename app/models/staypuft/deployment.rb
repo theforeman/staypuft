@@ -81,7 +81,11 @@ module Staypuft
       @nova_service ||= NovaService.new self
     end
 
-    after_save { nova.run_callbacks :save }
+    def neutron
+      @neutron_service ||= NeutronService.new self
+    end
+
+    after_save { neutron.run_callbacks :save }
 
     def passwords
       @password_service ||= Passwords.new self
@@ -104,7 +108,6 @@ module Staypuft
       self.neutron.set_defaults
       self.glance.set_defaults
       self.cinder.set_defaults
-
       self.passwords.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first

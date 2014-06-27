@@ -46,20 +46,37 @@ module Staypuft
     validates :use_external_interface, inclusion: { in: [true, false] }
 
     module ExternalInterfaceName
-      HUMAN       = N_('External interface connected to')
-      HUMAN_AFTER = N_('(interface) (i.e. eth1)')
+      HUMAN        = N_('External interface connected to')
+      HUMAN_AFTER  = N_('(interface) (i.e. eth1)')
     end
     validates :external_interface_name,
-              :presence => true,
-              :if       => :use_external_interface
+              :presence     => true,
+              :if           => :use_external_interface
     # TODO: interface name format validation
 
+    module UseVlanForExternalNetwork
+      # TODO: no text here; remove module if final UI still leaves blank
+    end
+    validates :use_vlan_for_external_network,
+              :inclusion => { in: [true, false] },
+              :if        => :use_external_interface
+
+    module VlanIdForExternalNetwork
+      HUMAN        = N_('Use VLAN ID')
+      HUMAN_AFTER  = N_('for External Network')
+    end
+    validates :vlan_id_for_external_network,
+              :presence     => true,
+              :if           => :external_network_vlan?
+    # TODO: VLAN ID format/value validation
+
+
     module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
-      HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
+      HUMAN        = N_('Which interface to use for tenant networks:')
+      HUMAN_AFTER  = N_('(i.e. eth0, em1, etc.)')
     end
     validates :compute_tenant_interface,
-              :presence => true
+              :presence     => true
     # TODO: interface name format validation
 
     def set_defaults
