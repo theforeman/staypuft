@@ -602,6 +602,7 @@ functional_dependencies = {
 
 }
 
+
 functional_dependencies.each do |puppetclass_name, params|
   puppetclass = Puppetclass.find_by_name(puppetclass_name)
   unless puppetclass
