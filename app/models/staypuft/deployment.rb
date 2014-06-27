@@ -20,6 +20,7 @@ module Staypuft
     attr_accessible :description, :name, :layout_id, :layout, :amqp_provider
     after_save :update_hostgroup_name
     after_validation :check_form_complete
+    before_destroy :prepare_destroy
 
     belongs_to :layout
     belongs_to :hostgroup, :dependent => :destroy
@@ -58,14 +59,6 @@ module Staypuft
 
     def self.available_locks
       [:deploy]
-    end
-
-    def destroy
-      child_hostgroups.each do |h|
-        h.destroy
-      end
-      #do the main destroy
-      super
     end
 
     # After setting or changing layout, update the set of child hostgroups,
@@ -147,6 +140,11 @@ module Staypuft
     # the form_step field to complete.
     def check_form_complete
       self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
+    end
+
+    def prepare_destroy
+      hosts.each { |host| host.open_stack_unassign }
+      child_hostgroups.each { |hg| hg.destroy }
     end
   end
 end

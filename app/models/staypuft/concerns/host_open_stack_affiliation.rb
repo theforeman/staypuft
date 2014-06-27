@@ -13,6 +13,11 @@ module Staypuft
         respond_to?(:hostgroup) &&
             hostgroup.try(:parent).try(:parent) == Hostgroup.get_base_hostgroup
       end
+
+      def open_stack_unassign
+        hostgroup = nil
+        save!
+      end
     end
   end
 end
