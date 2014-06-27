@@ -51,6 +51,8 @@ module Staypuft
       @nova_service ||= NovaService.new self
     end
 
+    after_save { nova.run_callbacks :save }
+
     def neutron
       @neutron_service ||= NeutronService.new self
     end
