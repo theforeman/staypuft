@@ -285,6 +285,12 @@ end
 
 amqp_provider = '<%= @host.deployment.amqp_provider %>'
 neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+network_manager = '<%= @host.deployment.nova.network_manager %>'
+# TODO: other nova params related to VLAN range, tenant (compute) and external (controller)
+# interfaces, etc.
+# FIXME: should things like nova_multi_host that are decided for Phase 1 defaults but
+# statically defined (i.e. not affected by wizard choices) be defined down here or in the 
+# previously-existing 'defaults' above?
 
 # effective_value grabs shared password if deployment is in shared password mode,
 # otherwise use the service-specific one
@@ -411,6 +417,7 @@ functional_dependencies = {
         'amqp_password'                 => amqp_pw },
     'quickstack::nova_network::compute'    => {
         'amqp_server'                   => amqp_provider,
+        'network_manager'               => network_manager,
         'admin_password'                => admin_pw,
         'ceilometer_user_password'      => ceilometer_user_pw,
         'nova_db_password'              => nova_db_pw,
