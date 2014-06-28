@@ -276,6 +276,7 @@ end
 
 amqp_provider = '<%= @host.deployment.amqp_provider %>'
 neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+
 # Nova
 network_manager         = '<%= @host.deployment.nova.network_manager %>'
 # multi_host handled inline, since it's two separate static values 'true' and 'True'
@@ -537,8 +538,8 @@ functional_dependencies = {
     'quickstack::pacemaker::mysql'         => {
         'mysql_root_password'                     => mysql_root_pw },
     'quickstack::pacemaker::nova'         => {
-        'multi_host'                              => 'true',
-        'neutron_metadata_proxy_secret'           => neutron_metadata_proxy_secret },
+        'multi_host'                    => 'true'
+        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
     'quickstack::neutron::networker'       => {
         'amqp_server'                             => amqp_provider,
         'enable_tunneling'                        => enable_tunneling,
@@ -559,23 +560,23 @@ functional_dependencies = {
         'cinder_user_password'                    => cinder_user_pw,
         'amqp_password'                           => amqp_pw },
     'quickstack::nova_network::compute'    => {
-        'amqp_server'                             => amqp_provider,
-        'network_manager'                         => network_manager,
-        'network_overrides'                       => network_overrides,
-        'network_num_networks'                    => network_num_networks,
-        'network_network_size'                    => network_network_size,
-        'network_fixed_range'                     => network_fixed_range,
-        'network_floating_range'                  => network_floating_range,
-        'network_private_iface'                   => network_private_iface,
-        'network_public_iface'                    => network_public_iface,
-        'network_create_networks'                 => network_create_networks,
-        'nova_multi_host'                         => 'True',
-        'admin_password'                          => admin_pw,
-        'ceilometer_user_password'                => ceilometer_user_pw,
-        'nova_db_password'                        => nova_db_pw,
-        'nova_user_password'                      => nova_user_pw,
-        'amqp_password'                           => amqp_pw,
-        'ceilometer_metering_secret'              => ceilometer_metering },
+        'amqp_server'                   => amqp_provider,
+        'network_manager'               => network_manager,
+        'network_overrides'             => network_overrides,
+        'network_num_networks'          => network_num_networks,
+        'network_network_size'          => network_network_size,
+        'network_fixed_range'           => network_fixed_range,
+        'network_floating_range'        => network_floating_range,
+        'network_private_iface'         => network_private_iface,
+        'network_public_iface'          => network_public_iface,
+        'network_create_networks'       => network_create_networks,
+        'nova_multi_host'               => 'True'
+        'admin_password'                => admin_pw,
+        'ceilometer_user_password'      => ceilometer_user_pw,
+        'nova_db_password'              => nova_db_pw,
+        'nova_user_password'            => nova_user_pw,
+        'amqp_password'                 => amqp_pw,
+        'ceilometer_metering_secret'    => ceilometer_metering },
     'quickstack::neutron::compute'         => {
         'amqp_server'                             => amqp_provider,
         'enable_tunneling'                        => enable_tunneling,
