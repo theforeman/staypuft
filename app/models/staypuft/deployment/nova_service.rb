@@ -4,15 +4,13 @@ module Staypuft
       'nova'
     end
 
-    param_attr :network_manager, :vlan_range, :use_external_interface,
-        :external_interface_name, :compute_tenant_interface
+    param_attr :network_manager, :vlan_range, :external_interface_name, :public_floating_range,
+        :compute_tenant_interface, :private_fixed_range
 
     module NetworkManager
       FLAT_DHCP = 'FlatDHCPManager'
-      FLAT      = 'FlatManager'
       VLAN      = 'VlanManager'
       LABELS    = { FLAT_DHCP => N_('FlatDHCP'),
-                    FLAT      => N_('Flat'),
                     VLAN      => N_('VLAN') }
       TYPES     = LABELS.keys
       HUMAN  = N_('Network Type')
@@ -27,20 +25,20 @@ module Staypuft
               :presence     => true,
               :if           => :vlan_manager?
     # TODO: vlan range format validation
-
-    module UseExternalInterface
-      HUMAN        = N_('Configure external interface on network node')
-    end
-    validates :use_external_interface, inclusion: { in: [true, false] }
+    # TODO: determine whether this is a true range or a single value
 
     module ExternalInterfaceName
       HUMAN        = N_('External interface connected to')
       HUMAN_AFTER  = N_('(interface) (i.e. eth1)')
     end
-    validates :external_interface_name,
-              :presence     => true,
-              :if           => :use_external_interface
+    validates :external_interface_name, presence: true
     # TODO: interface name format validation
+
+    module PublicFloatingRange
+      HUMAN        = N_('Floating IP range for external network ("10.0.0.0/24", for example):')
+    end
+    validates :public_floating_range, presence: true
+    # TODO: interface format validation
 
     module ComputeTenantInterface
       HUMAN        = N_('Which interface to use for tenant networks:')
@@ -49,6 +47,12 @@ module Staypuft
     validates :compute_tenant_interface,
               :presence     => true
     # TODO: interface name format validation
+
+    module PrivateFixedRange
+      HUMAN        = N_('Private IP range for tenant networks ("10.0.0.0/24", for example):')
+    end
+    validates :private_fixed_range, presence: true
+    # TODO: interface format validation
 
     def set_defaults
       self.network_manager = NetworkManager::FLAT_DHCP
@@ -60,6 +64,15 @@ module Staypuft
 
     def vlan_manager?
       self.network_manager == NetworkManager::VLAN
+    end
+
+    def network_overrides
+      # FIXME this is a string, but once foreman is fixed, it should probably return a hash
+      ret_hash =  {"force_dhcp_release" => false}
+      if self.vlan_manager?
+        ret_hash["vlan_start"] = self..vlan_range.split(':')[0]
+      end
+      ret_hash.to_s
     end
 
   end
