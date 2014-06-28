@@ -279,13 +279,19 @@ end
 
 amqp_provider = '<%= @host.deployment.amqp_provider %>'
 neutron       = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+
 # Nova
-network_manager = '<%= @host.deployment.nova.network_manager %>'
-# TODO: other nova params related to VLAN range, tenant (compute) and external (controller)
-# interfaces, etc.
-# FIXME: should things like nova_multi_host that are decided for Phase 1 defaults but
-# statically defined (i.e. not affected by wizard choices) be defined down here or in the 
-# previously-existing 'defaults' above?
+network_manager         = '<%= @host.deployment.nova.network_manager %>'
+# multi_host handled inline, since it's two separate static values 'true' and 'True'
+network_overrides       = '<%= @host.deployment.nova.network_overrides %>'
+# TODO: determine whether num_networks and network_size are static or calculated
+network_num_networks    = 1
+network_network_size    = 255
+network_fixed_range     = '<%= @host.deployment.nova.private_fixed_range %>'
+network_floating_range  = '<%= @host.deployment.nova.public_floating_range %>'
+network_private_iface   = '<%= @host.deployment.nova.compute_tenant_interface %>'
+network_public_iface    = '<%= @host.deployment.nova.external_interface_name %>'
+network_create_networks = true
 
 # Neutron
 ovs_vlan_ranges             = '<%= "physnet-tenants:#{@host.deployment.neutron.tenant_vlan_ranges}" %>'
@@ -430,7 +436,8 @@ functional_dependencies = {
         'swift_shared_secret'           => swift_shared_secret },
     'quickstack::pacemaker::mysql'         => {
         'mysql_root_password'           => mysql_root_pw },
-    'quickstack::pacemaker::mysql'         => {
+    'quickstack::pacemaker::nova'         => {
+        'multi_host'                    => 'true'
         'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
     'quickstack::neutron::networker'       => {
         'amqp_server'                   => amqp_provider,
@@ -454,6 +461,15 @@ functional_dependencies = {
     'quickstack::nova_network::compute'    => {
         'amqp_server'                   => amqp_provider,
         'network_manager'               => network_manager,
+        'network_overrides'             => network_overrides,
+        'network_num_networks'          => network_num_networks,
+        'network_network_size'          => network_network_size,
+        'network_fixed_range'           => network_fixed_range,
+        'network_floating_range'        => network_floating_range,
+        'network_private_iface'         => network_private_iface,
+        'network_public_iface'          => network_public_iface,
+        'network_create_networks'       => network_create_networks,
+        'nova_multi_host'               => 'True'
         'admin_password'                => admin_pw,
         'ceilometer_user_password'      => ceilometer_user_pw,
         'nova_db_password'              => nova_db_pw,
