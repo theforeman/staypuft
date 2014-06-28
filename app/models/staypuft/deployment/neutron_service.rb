@@ -7,8 +7,7 @@ module Staypuft
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
-        :use_external_interface, :external_interface_name, :use_vlan_for_external_network,
-        :vlan_id_for_external_network, :compute_tenant_interface
+        :use_external_interface, :external_interface_name, :compute_tenant_interface
 
     module NetworkSegmentation
       VXLAN     = 'vxlan'
@@ -54,23 +53,6 @@ module Staypuft
               :presence     => true,
               :if           => :use_external_interface
     # TODO: interface name format validation
-
-    module UseVlanForExternalNetwork
-      # TODO: no text here; remove module if final UI still leaves blank
-    end
-    validates :use_vlan_for_external_network,
-              :inclusion => { in: [true, false] },
-              :if        => :use_external_interface
-
-    module VlanIdForExternalNetwork
-      HUMAN        = N_('Use VLAN ID')
-      HUMAN_AFTER  = N_('for External Network')
-    end
-    validates :vlan_id_for_external_network,
-              :presence     => true,
-              :if           => :external_network_vlan?
-    # TODO: VLAN ID format/value validation
-
 
     module ComputeTenantInterface
       HUMAN        = N_('Which interface to use for tenant networks:')
