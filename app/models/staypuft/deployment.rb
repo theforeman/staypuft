@@ -89,6 +89,12 @@ module Staypuft
 
     after_save { neutron.run_callbacks :save }
 
+    def glance
+      @glance_service ||= GlanceService.new self
+    end
+
+    after_save { glance.run_callbacks :save }
+
     def passwords
       @password_service ||= Passwords.new self
     end
@@ -111,6 +117,7 @@ module Staypuft
       self.glance.set_defaults
       self.cinder.set_defaults
       self.passwords.set_defaults
+
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
     end
@@ -243,7 +250,6 @@ module Staypuft
     def form_complete?
       self.form_step.to_sym == Deployment::STEP_COMPLETE
     end
-
 
     def ha?
       self.layout_name == LayoutName::HA
