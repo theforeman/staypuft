@@ -308,6 +308,14 @@ compute_ovs_bridge_mappings = ['<%= @host.deployment.neutron.compute_ovs_bridge_
 compute_ovs_bridge_uplinks  = ['<%= @host.deployment.neutron.compute_ovs_bridge_uplinks.to_s %>']
 enable_tunneling            = 'True'
 
+# Glance
+backend         = 'file'
+pcmk_fs_type    = '<%= @host.deployment.glance.driver_backend %>'
+pcmk_fs_device  = '<%= @host.deployment.glance.pcmk_fs_device %>'
+pcmk_fs_dir     = '<%= @host.deployment.glance.pcmk_fs_dir %>'
+pcmk_fs_manage  = 'true'
+pcmk_fs_options = '<%= @host.deployment.glance.pcmk_fs_options %>'
+
 # effective_value grabs shared password if deployment is in shared password mode,
 # otherwise use the service-specific one
 admin_pw             = '<%= @host.deployment.passwords.effective_value(:admin) %>'
@@ -424,6 +432,13 @@ functional_dependencies = {
         'ovs_tunnel_types'              => ovs_tunnel_types,
         'ovs_vlan_ranges'               => ovs_vlan_ranges
  },
+    'quickstack::pacemaker::glance'      => {
+    'backend'                           => backend,
+    'pcmk_fs_type'                      => pcmk_fs_type,
+    'pcmk_fs_device'                    => pcmk_fs_device,
+    'pcmk_fs_dir'                       => pcmk_fs_dir,
+    'pcmk_fs_manage'                    => pcmk_fs_manage,
+    'pcmk_fs_options'                   => pcmk_fs_options },
     'quickstack::pacemaker::keystone'      => {
         'admin_password'                => admin_pw,
         'admin_token'                   => keystone_admin_token },
