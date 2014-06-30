@@ -4,6 +4,9 @@ module Staypuft::Concerns::LookupKeyExtensions
   included do
     alias_method_chain :cast_validate_value, :erb
     alias_method_chain :default_value_before_type_cast, :limpet
+
+    # apply only when this extension is included
+    monkey_path_safe_render
   end
 
   LIMPET_FORMAT        = '<%%={key_id:%s};'
@@ -32,36 +35,35 @@ module Staypuft::Concerns::LookupKeyExtensions
   end
 
   def default_value_before_type_cast_with_limpet
-    default_value_before_type_cast_without_limpet.gsub(LIMPET_FORMAT_REGEXP,'<%=')
-  end
-end
-
-# MONKEY
-::SafeRender.class_eval do
-
-  def parse_string(string)
-    raise ::ForemanException.new(N_('SafeRender#parse_string was passed a %s instead of a string') % string.class) unless string.is_a? String
-
-    lookup_key_id = string[Staypuft::Concerns::LookupKeyExtensions::LIMPET_FORMAT_REGEXP, 1]
-    if lookup_key_id
-      lookup_key = LookupKey.find(lookup_key_id)
-      type       = lookup_key.key_type
-    end
-
-    value = if Setting[:safemode_render]
-              box = Safemode::Box.new self, @allowed_methods
-              box.eval(ERB.new(string, nil, '-').src, @allowed_vars)
-            else
-              @allowed_vars.each { |k, v| instance_variable_set "@#{k}", v }
-              ERB.new(string, nil, '-').result(binding)
-            end
-
-    if type
-      lookup_key.cast_validate_value_after_erb value, type
-    else
-      value
-    end
+    default_value_before_type_cast_without_limpet.gsub(LIMPET_FORMAT_REGEXP, '<%=')
   end
 
+  def self.monkey_path_safe_render
+    ::SafeRender.class_eval do
+      def parse_string(string)
+        raise ::ForemanException.new(N_('SafeRender#parse_string was passed a %s instead of a string') % string.class) unless string.is_a? String
+
+        lookup_key_id = string[Staypuft::Concerns::LookupKeyExtensions::LIMPET_FORMAT_REGEXP, 1]
+        if lookup_key_id
+          lookup_key = LookupKey.find(lookup_key_id)
+          type       = lookup_key.key_type
+        end
+
+        value = if Setting[:safemode_render]
+                  box = Safemode::Box.new self, @allowed_methods
+                  box.eval(ERB.new(string, nil, '-').src, @allowed_vars)
+                else
+                  @allowed_vars.each { |k, v| instance_variable_set "@#{k}", v }
+                  ERB.new(string, nil, '-').result(binding)
+                end
+
+        if type
+          lookup_key.cast_validate_value_after_erb value, type
+        else
+          value
+        end
+      end
+    end
+  end
 end
 
