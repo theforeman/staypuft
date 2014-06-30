@@ -67,12 +67,11 @@ module Staypuft
     end
 
     def network_overrides
-      # FIXME this is a string, but once foreman is fixed, it should probably return a hash
       ret_hash =  {"force_dhcp_release" => false}
       if self.vlan_manager?
         ret_hash["vlan_start"] = self..vlan_range.split(':')[0]
       end
-      ret_hash.to_s
+      ret_hash
     end
 
   end
