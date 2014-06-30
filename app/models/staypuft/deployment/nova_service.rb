@@ -70,7 +70,6 @@ module Staypuft
       { 'force_dhcp_release' => false }.tap do |h|
         h.update 'vlan_start' => self.vlan_range.split(':')[0] if self.vlan_manager?
       end
-
     end
 
   end
