@@ -346,11 +346,11 @@ amqp_nssdb_pw        = '<%= @host.deployment.passwords.effective_value(:amqp_nss
 keystone_admin_token = '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>'
 
 #these don't share the user-supplied password value; they're always a random per param value
-ceilometer_metering           = '<%= @host.deployment.passwords.ceilometer_metering_secret) %>'
-heat_auth_encrypt_key         = '<%= @host.deployment.passwords.heat_auth_encrypt_key) %>'
-horizon_secret_key            = '<%= @host.deployment.passwords.horizon_secret_key) %>'
-swift_shared_secret           = '<%= @host.deployment.passwords.swift_shared_secret) %>'
-neutron_metadata_proxy_secret = '<%= @host.deployment.passwords.neutron_metadata_proxy_secret) %>'
+ceilometer_metering           = '<%= @host.deployment.passwords.ceilometer_metering_secret %>'
+heat_auth_encrypt_key         = '<%= @host.deployment.passwords.heat_auth_encrypt_key %>'
+horizon_secret_key            = '<%= @host.deployment.passwords.horizon_secret_key %>'
+swift_shared_secret           = '<%= @host.deployment.passwords.swift_shared_secret %>'
+neutron_metadata_proxy_secret = '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>'
 
 functional_dependencies = {
     'quickstack::nova_network::controller' => {
