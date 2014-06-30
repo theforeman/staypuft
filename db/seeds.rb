@@ -538,8 +538,7 @@ functional_dependencies = {
     'quickstack::nova_network::compute'    => {
         'amqp_server'                             => amqp_provider,
         'network_manager'                         => network_manager,
-         # FIXME: can't set this until Foreman allows dynamic hash entries
-         #'network_overrides'                       => network_overrides,
+        'network_overrides'                       => network_overrides,
         'network_num_networks'                    => network_num_networks,
         'network_network_size'                    => network_network_size,
         'network_fixed_range'                     => network_fixed_range,
