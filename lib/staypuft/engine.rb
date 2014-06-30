@@ -33,6 +33,7 @@ module Staypuft
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
+      ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
     end
 
     rake_tasks do
