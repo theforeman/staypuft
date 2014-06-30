@@ -35,7 +35,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module PublicFloatingRange
-      HUMAN        = N_('Floating IP range for external network ("10.0.0.0/24", for example):')
+      HUMAN = N_('Floating IP range for external network ("10.0.0.0/24", for example):')
     end
     validates :public_floating_range, presence: true
     # TODO: interface format validation
@@ -49,7 +49,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module PrivateFixedRange
-      HUMAN        = N_('Private IP range for tenant networks ("10.0.0.0/24", for example):')
+      HUMAN = N_('Private IP range for tenant networks ("10.0.0.0/24", for example):')
     end
     validates :private_fixed_range, presence: true
     # TODO: interface format validation
