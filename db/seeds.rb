@@ -268,19 +268,16 @@ network_create_networks = true
 # Neutron
 ovs_vlan_ranges             = '<%= "physnet-tenants:#{@host.deployment.neutron.tenant_vlan_ranges}" %>'
 ml2_network_vlan_ranges     = [ovs_vlan_ranges]
-# FIXME figure out array issues
-ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation_list %>']
+ml2_tenant_network_types    = '<%= @host.deployment.neutron.network_segmentation_list %>'
 ml2_tunnel_id_ranges        = ['10:100000']
 ml2_vni_ranges              = ['10:100000']
 ovs_tunnel_types            = ['vxlan','gre']
 ovs_tunnel_iface            = '<%= @host.deployment.neutron.networker_tenant_interface %>'
-# FIXME figure out array issues
-ovs_bridge_mappings         = ['<%= @host.deployment.neutron.controller_ovs_bridge_mappings.to_s %>']
-ovs_bridge_uplinks          = ['<%= @host.deployment.neutron.controller_ovs_bridge_uplinks.to_s %>']
+ovs_bridge_mappings         = '<%= @host.deployment.neutron.controller_ovs_bridge_mappings %>'
+ovs_bridge_uplinks          = '<%= @host.deployment.neutron.controller_ovs_bridge_uplinks %>'
 compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
-# FIXME figure out array issues
-compute_ovs_bridge_mappings = ['<%= @host.deployment.neutron.compute_ovs_bridge_mappings.to_s %>']
-compute_ovs_bridge_uplinks  = ['<%= @host.deployment.neutron.compute_ovs_bridge_uplinks.to_s %>']
+compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
+compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
 enable_tunneling            = 'True'
 
 # Glance
@@ -292,13 +289,12 @@ pcmk_fs_manage  = 'true'
 pcmk_fs_options = '<%= @host.deployment.glance.pcmk_fs_options %>'
 
 # Cinder
-# FIXME: boolean values are not working with dynamic params; commented out dynamic call until we fix it
-cinder_backend_iscsi                    = false #'<%= @host.deployment.cinder.lvm_backend? %>'
-cinder_backend_nfs                      = false #'<%= @host.deployment.cinder.nfs_backend? %>'
+cinder_backend_iscsi                    = '<%= @host.deployment.cinder.lvm_backend? %>'
+cinder_backend_nfs                      = '<%= @host.deployment.cinder.nfs_backend? %>'
 cinder_nfs_shares                       = ['<%= @host.deployment.cinder.nfs_uri %>']
 cinder_nfs_mount_options                = '<%= @host.deployment.cinder.nfs_mount_options %>'
 
-cinder_backend_rdb                      = false #'<%= @host.deployment.cinder.ceph_backend? %>'
+cinder_backend_rdb                      = '<%= @host.deployment.cinder.ceph_backend? %>'
 # TODO: confirm these params and add them to model where user input is needed
 cinder_rdb_pool                         = 'volumes'
 cinder_rdb_ceph_conf                    = '/etc/ceph/ceph.conf/'
@@ -307,7 +303,7 @@ cinder_rbd_max_clone_depth              = '5'
 cinder_rdb_user                         = 'cinder'
 cinder_rbd_secret_uuid                  = ''
 
-cinder_backend_eqlx                     = false #'<%= @host.deployment.cinder.equallogic_backend? %>'
+cinder_backend_eqlx                     = '<%= @host.deployment.cinder.equallogic_backend? %>'
 # TODO: confirm these params and add them to model where user input is needed
 # below dynamic calls are commented out since the model does not yet have san/chap entries
 cinder_san_ip                           = '<%= #@host.deployment.cinder.san_ip %>'
