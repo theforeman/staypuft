@@ -164,34 +164,6 @@ module Staypuft
       [:deploy]
     end
 
-    # After setting or changing layout, update the set of child hostgroups,
-    # adding groups for any roles not already represented, and removing others
-    # no longer needed.
-    def update_hostgroup_list
-      new_layout              = Layout.where(:name => layout_name, :networking => networking).first
-      old_role_hostgroups_arr = deployment_role_hostgroups.to_a
-      new_layout.layout_roles.each do |layout_role|
-        role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
-          drh.hostgroup = Hostgroup.new(name: layout_role.role.name, parent: hostgroup)
-        end
-
-        role_hostgroup.hostgroup.add_puppetclasses_from_resource(layout_role.role)
-        layout_role.role.services.each do |service|
-          role_hostgroup.hostgroup.add_puppetclasses_from_resource(service)
-        end
-        role_hostgroup.hostgroup.save!
-
-        role_hostgroup.deploy_order = layout_role.deploy_order
-        role_hostgroup.save!
-
-        old_role_hostgroups_arr.delete(role_hostgroup)
-      end
-      # delete any prior mappings that remain
-      old_role_hostgroups_arr.each do |role_hostgroup|
-        role_hostgroup.hostgroup.destroy
-      end
-    end
-
     def services_hostgroup_map
       deployment_role_hostgroups.map do |deployment_role_hostgroup|
         deployment_role_hostgroup.services.reduce({}) do |h, s|
