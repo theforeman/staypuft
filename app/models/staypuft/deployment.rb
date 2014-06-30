@@ -95,6 +95,12 @@ module Staypuft
 
     after_save { glance.run_callbacks :save }
 
+    def cinder
+      @cinder_service ||= CinderService.new self
+    end
+
+    after_save { cinder.run_callbacks :save }
+
     def passwords
       @password_service ||= Passwords.new self
     end

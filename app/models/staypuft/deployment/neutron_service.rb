@@ -9,7 +9,6 @@ module Staypuft
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
                :use_external_interface, :external_interface_name, :compute_tenant_interface
 
-
     module NetworkSegmentation
       VXLAN  = 'vxlan'
       GRE    = 'gre'
@@ -47,20 +46,20 @@ module Staypuft
     validates :use_external_interface, inclusion: { in: [true, false] }
 
     module ExternalInterfaceName
-      HUMAN        = N_('External interface connected to')
-      HUMAN_AFTER  = N_('(interface) (i.e. eth1)')
+      HUMAN       = N_('External interface connected to')
+      HUMAN_AFTER = N_('(interface) (i.e. eth1)')
     end
     validates :external_interface_name,
-              :presence     => true,
-              :if           => :use_external_interface
+              :presence => true,
+              :if       => :use_external_interface
     # TODO: interface name format validation
 
     module ComputeTenantInterface
-      HUMAN        = N_('Which interface to use for tenant networks:')
-      HUMAN_AFTER  = N_('(i.e. eth0, em1, etc.)')
+      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
     validates :compute_tenant_interface,
-              :presence     => true
+              :presence => true
     # TODO: interface name format validation
 
     def set_defaults

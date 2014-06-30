@@ -13,31 +13,6 @@ params = {
     'heat_cloudwatch'               => 'false',
     'ceilometer'                    => 'true',
     'ceilometer_host'               => 'false',
-    'cinder_backend_gluster'        => 'false',
-    'cinder_backend_gluster_name'   => 'glusterfs_backend',
-    'cinder_backend_iscsi'          => 'false',
-    'cinder_backend_iscsi_name'     => 'iscsi_backend',
-    'cinder_backend_nfs'            => 'false',
-    'cinder_backend_nfs_name'       => 'nfs_backend',
-    'cinder_backend_eqlx'           => 'false',
-    'cinder_backend_eqlx_name'      => 'eqlx_backend',
-    'cinder_multiple_backends'      => 'false',
-    'cinder_gluster_peers'          => [],
-    'cinder_gluster_volume'         => 'cinder',
-    'cinder_gluster_replica_count'  => '3',
-    'cinder_gluster_peers'          => %w(192.168.0.4 192.168.0.5 192.168.0.6),
-    'cinder_gluster_shares'         => ['192.168.0.4:/cinder -o backup-volfile-servers=192.168.0.5'],
-    'cinder_nfs_shares'             => ['192.168.0.4:/cinder'],
-    'cinder_nfs_mount_options'      => '',
-    'cinder_san_ip'                 => '192.168.124.11',
-    'cinder_san_login'              => 'grpadmin',
-    'cinder_san_password'           => '',
-    'cinder_san_thin_provision'     => 'false',
-    'cinder_eqlx_group_name'        => 'group-0',
-    'cinder_eqlx_pool'              => 'default',
-    'cinder_eqlx_use_chap'          => 'false',
-    'cinder_eqlx_chap_login'        => 'chapadmin',
-    'cinder_eqlx_chap_password'     => '',
     'glance_gluster_peers'          => [],
     'glance_gluster_volume'         => 'glance',
     'glance_gluster_replica_count'  => '3',
@@ -341,6 +316,7 @@ cinder_eqlx_use_chap                    = 'false'
 cinder_eqlx_chap_login                  = '<%= #@host.deployment.cinder.chap_login %>'
 cinder_eqlx_chap_password               = '<%= #@host.deployment.cinder.chap_password %>'
 
+
 # effective_value grabs shared password if deployment is in shared password mode,
 # otherwise use the service-specific one
 admin_pw             = '<%= @host.deployment.passwords.effective_value(:admin) %>'
@@ -538,8 +514,8 @@ functional_dependencies = {
     'quickstack::pacemaker::mysql'         => {
         'mysql_root_password'                     => mysql_root_pw },
     'quickstack::pacemaker::nova'         => {
-        'multi_host'                    => 'true',
-        'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+        'multi_host'                              => 'true',
+        'neutron_metadata_proxy_secret'           => neutron_metadata_proxy_secret },
     'quickstack::neutron::networker'       => {
         'amqp_server'                             => amqp_provider,
         'enable_tunneling'                        => enable_tunneling,
@@ -560,24 +536,24 @@ functional_dependencies = {
         'cinder_user_password'                    => cinder_user_pw,
         'amqp_password'                           => amqp_pw },
     'quickstack::nova_network::compute'    => {
-        'amqp_server'                   => amqp_provider,
-        'network_manager'               => network_manager,
+        'amqp_server'                             => amqp_provider,
+        'network_manager'                         => network_manager,
          # FIXME: can't set this until Foreman allows dynamic hash entries
-         #'network_overrides'             => network_overrides,
-        'network_num_networks'          => network_num_networks,
-        'network_network_size'          => network_network_size,
-        'network_fixed_range'           => network_fixed_range,
-        'network_floating_range'        => network_floating_range,
-        'network_private_iface'         => network_private_iface,
-        'network_public_iface'          => network_public_iface,
-        'network_create_networks'       => network_create_networks,
-        'nova_multi_host'               => 'True',
-        'admin_password'                => admin_pw,
-        'ceilometer_user_password'      => ceilometer_user_pw,
-        'nova_db_password'              => nova_db_pw,
-        'nova_user_password'            => nova_user_pw,
-        'amqp_password'                 => amqp_pw,
-        'ceilometer_metering_secret'    => ceilometer_metering },
+         #'network_overrides'                       => network_overrides,
+        'network_num_networks'                    => network_num_networks,
+        'network_network_size'                    => network_network_size,
+        'network_fixed_range'                     => network_fixed_range,
+        'network_floating_range'                  => network_floating_range,
+        'network_private_iface'                   => network_private_iface,
+        'network_public_iface'                    => network_public_iface,
+        'network_create_networks'                 => network_create_networks,
+        'nova_multi_host'                         => 'True',
+        'admin_password'                          => admin_pw,
+        'ceilometer_user_password'                => ceilometer_user_pw,
+        'nova_db_password'                        => nova_db_pw,
+        'nova_user_password'                      => nova_user_pw,
+        'amqp_password'                           => amqp_pw,
+        'ceilometer_metering_secret'              => ceilometer_metering },
     'quickstack::neutron::compute'         => {
         'amqp_server'                             => amqp_provider,
         'enable_tunneling'                        => enable_tunneling,
@@ -594,7 +570,6 @@ functional_dependencies = {
         'nova_user_password'                      => nova_user_pw,
         'amqp_password'                           => amqp_pw,
         'ceilometer_metering_secret'              => ceilometer_metering }
-
 }
 
 
