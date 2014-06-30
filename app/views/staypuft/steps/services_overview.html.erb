@@ -5,7 +5,7 @@
     <%= base_errors_for @deployment %>
 
     <%= deployment_wizard 2 %>
-    <h3><%= _("Host Groups & Available Services") %></h3>
+    <h3><%= _("Deployment Roles & Available Services") %></h3>
     <h4><%= "#{@deployment.layout.name} - #{@deployment.layout.networking.capitalize} " + _("Networking") %></h4>
 
     <div class="clearfix">
@@ -13,12 +13,16 @@
           <div class="panel panel-default service-box">
             <div class="panel-heading"><strong><%= role.name %></strong></div>
             <div class="panel-body">
+              <ul>
               <% role.services.each do |service| %>
-                <%= f.label service.name.parameterize.underscore.to_sym, service.name, :class=> "checkbox inline"  do %>
-                  <%= f.check_box(service.name.parameterize.underscore.to_sym, :checked => true, :disabled => "disabled") %>
+                <li>
+                <%= f.label service.name.parameterize.underscore.to_sym, service.name, :class=> "inline"  do %>
+                  <%= f.check_box(service.name.parameterize.underscore.to_sym, :checked => true, :disabled => "disabled", :hidden=> true) %>
                   <%= service.name %>
                 <% end %>
+                </li>
               <% end %>
+              </ul>
              </div>
           </div>
         <% end %>
