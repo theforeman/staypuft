@@ -18,8 +18,6 @@ module Staypuft
 
     belongs_to :layout
 
-    # needs to be defined before hostgroup association
-    before_destroy { child_hostgroups.each &:destroy }
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
