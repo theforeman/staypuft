@@ -57,6 +57,7 @@ module Staypuft::Concerns::LookupKeyExtensions
                   ERB.new(string, nil, '-').result(binding)
                 end
 
+
         if type
           lookup_key.cast_validate_value_after_erb value, type
         else
