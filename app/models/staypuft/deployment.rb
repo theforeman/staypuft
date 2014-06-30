@@ -11,7 +11,7 @@ module Staypuft
     NEW_NAME_PREFIX ="uninitialized_"
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :layout_name, :networking, :hypervisor, :platform
+                    :amqp_provider, :layout_name, :networking, :platform
     after_save :update_hostgroup_name
     after_validation :check_form_complete
     before_destroy :prepare_destroy
@@ -79,7 +79,6 @@ module Staypuft
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
-              hypervisor:    Hypervisor::KVM,
               networking:    Networking::NOVA,
               platform:      Platform::RHEL6 }.merge(attributes),
             options)
@@ -126,15 +125,6 @@ module Staypuft
       HUMAN  = N_('High Availability')
     end
 
-    module Hypervisor
-      KVM    = 'kvm'
-      QEMU   = 'qemu'
-      LABELS = { KVM  => N_('Libvirt/KVM'),
-                 QEMU => N_('Libvirt/QEMU') }
-      TYPES  = LABELS.keys
-      HUMAN  = N_('Hypervisor')
-    end
-
     module Platform
       RHEL7  = 'rhel7'
       RHEL6  = 'rhel6'
@@ -144,8 +134,7 @@ module Staypuft
       HUMAN  = N_('Platform')
     end
 
-    param_attr :amqp_provider, :networking, :layout_name, :hypervisor, :platform
-    validates :hypervisor, presence: true, inclusion: { in: Hypervisor::TYPES }
+    param_attr :amqp_provider, :networking, :layout_name, :platform
     validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
     validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
     validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
