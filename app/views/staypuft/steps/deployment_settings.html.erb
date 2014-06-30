@@ -13,7 +13,7 @@
 
     <% { layout_name: Staypuft::Deployment::LayoutName,
          networking:  Staypuft::Deployment::Networking,
-         hypervisor:  Staypuft::Deployment::Hypervisor,
+         amqp_provider:  Staypuft::Deployment::AmqpProvider,
          platform:    Staypuft::Deployment::Platform }.
            each do |attr, constants| %>
 
