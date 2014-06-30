@@ -65,6 +65,12 @@ module Staypuft
 
     after_save { glance.run_callbacks :save }
 
+    def cinder
+      @cinder_service ||= CinderService.new self
+    end
+
+    after_save { cinder.run_callbacks :save }
+
     def passwords
       @password_service ||= Passwords.new self
     end
@@ -85,6 +91,7 @@ module Staypuft
       self.nova.set_defaults
       self.neutron.set_defaults
       self.glance.set_defaults
+      self.cinder.set_defaults
       self.passwords.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
