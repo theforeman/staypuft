@@ -6,7 +6,7 @@ module Staypuft::Concerns::LookupKeyExtensions
     alias_method_chain :default_value_before_type_cast, :limpet
 
     # apply only when this extension is included
-    monkey_path_safe_render
+    ::Staypuft::Concerns::LookupKeyExtensions.monkey_path_safe_render
   end
 
   LIMPET_FORMAT        = '<%%={key_id:%s};'
