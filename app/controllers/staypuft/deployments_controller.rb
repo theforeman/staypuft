@@ -1,5 +1,5 @@
 module Staypuft
-  class DeploymentsController < ApplicationController
+  class DeploymentsController < Staypuft::ApplicationController
     include Foreman::Controller::AutoCompleteSearch
 
     def index

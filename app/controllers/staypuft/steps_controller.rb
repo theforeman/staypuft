@@ -1,5 +1,5 @@
 module Staypuft
-  class StepsController < ApplicationController
+  class StepsController < Staypuft::ApplicationController
     include Wicked::Wizard
     steps :deployment_settings, :services_selection, :services_configuration
 
