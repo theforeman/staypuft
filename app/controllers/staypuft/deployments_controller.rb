@@ -81,7 +81,7 @@ module Staypuft
         if host.open_stack_deployed? && deployment_in_progress
           # do not remove
         else
-          host.hostgroup   = nil
+          host.open_stack_unassign
           host.environment = Environment.get_discovery
           host.save!
           host.setBuild
