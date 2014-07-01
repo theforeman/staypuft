@@ -3,7 +3,7 @@ module Staypuft::Concerns::LookupKeyExtensions
 
   included do
     alias_method_chain :cast_validate_value, :erb
-    alias_method_chain :default_value_before_type_cast, :limpet
+    alias_method_chain :value_before_type_cast, :limpet
 
     # apply only when this extension is included
     ::Staypuft::Concerns::LookupKeyExtensions.monkey_path_safe_render
@@ -34,8 +34,10 @@ module Staypuft::Concerns::LookupKeyExtensions
     value =~ /<%.*%>/
   end
 
-  def default_value_before_type_cast_with_limpet
-    default_value_before_type_cast_without_limpet.gsub(LIMPET_FORMAT_REGEXP, '<%=')
+  def value_before_type_cast_with_limpet(value)
+    value_before_type_cast_without_limpet(value).tap do |v|
+      v.gsub!(LIMPET_FORMAT_REGEXP, '<%=') if has_erb? v
+    end
   end
 
   def self.monkey_path_safe_render
