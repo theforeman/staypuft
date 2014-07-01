@@ -14,10 +14,11 @@ module Staypuft
                     :amqp_provider, :layout_name, :networking, :platform
     after_save :update_hostgroup_name
     after_validation :check_form_complete
-    before_destroy :prepare_destroy
 
     belongs_to :layout
 
+    # needs to be defined before hostgroup association
+    before_destroy :prepare_destroy
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
@@ -309,8 +310,8 @@ module Staypuft
     end
 
     def prepare_destroy
-      hosts.each { |host| host.open_stack_unassign }
-      child_hostgroups.each { |hg| hg.destroy }
+      hosts.each &:open_stack_unassign
+      child_hostgroups.each &:destroy
     end
 
   end
