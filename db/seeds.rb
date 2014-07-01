@@ -585,7 +585,7 @@ functional_dependencies.each do |puppetclass_name, params|
   params.each do |param_key, default_value|
     param = puppetclass.class_params.find_by_key(param_key)
     unless param
-      Rails.logger.error "missing param #{param} in #{puppetclass_name}"
+      Rails.logger.error "missing param #{param_key} in #{puppetclass_name}"
       next
     end
     param.update_attributes! default_value: default_value
