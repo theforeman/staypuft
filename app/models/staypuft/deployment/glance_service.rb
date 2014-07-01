@@ -50,7 +50,7 @@ module Staypuft
     end
 
     # gluster config only shows up for HA
-    # TODO: confirm this: in particular, if true, the LOCAL stuff goes away entirely
+    # glance UI is HA only until we add ceph (since there's only one option for non-HA)
     def active?
       deployment.ha?
     end
@@ -83,8 +83,7 @@ module Staypuft
 
     def pcmk_fs_options
       if self.nfs_backend?
-        #FIXME: real value for NFS context is needed
-        "context=\"system_u:object_r:mysqld_db_t:s0\")"
+        "context=\"system_u:object_r:glance_var_lib_t:s0\")"
       elsif self.gluster_backend
         unless self.gluster_backup_volfile_servers.blank?
           "selinux,backup-volfile-servers#{backup_volfile_servers}"
@@ -95,7 +94,6 @@ module Staypuft
     end
 
     # view should use this rather than DriverBackend::LABELS to hide LOCAL for HA.
-    # TODO: unless we're dropping LOCAL entirely
     def backend_labels_for_layout
       ret_list = DriverBackend::LABELS.clone
       ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
