@@ -53,5 +53,8 @@ $(function () {
     }
   }
 
+  if($('.configuration').length > 0){
+    $('.configuration').find('li').first().find('a')[0].click();
+  }
 
 });
