@@ -29,7 +29,7 @@ module Staypuft
       end
 
       def open_stack_unassign
-        hostgroup = nil
+        self.hostgroup = nil
         save!
       end
     end
