@@ -289,6 +289,7 @@ pcmk_fs_manage  = 'true'
 pcmk_fs_options = '<%= @host.deployment.glance.pcmk_fs_options %>'
 
 # Cinder
+volume                                  = true
 cinder_backend_iscsi                    = '<%= @host.deployment.cinder.lvm_backend? %>'
 cinder_backend_nfs                      = '<%= @host.deployment.cinder.nfs_backend? %>'
 cinder_nfs_shares                       = ['<%= @host.deployment.cinder.nfs_uri %>']
@@ -485,6 +486,7 @@ functional_dependencies = {
         'pcmk_fs_manage'                          => pcmk_fs_manage,
         'pcmk_fs_options'                         => pcmk_fs_options },
     'quickstack::pacemaker::cinder'      => {
+        'volume'                                  => volume,
         'backend_iscsi'                           => cinder_backend_iscsi,
         'backend_nfs'                             => cinder_backend_nfs,
         'nfs_shares'                              => cinder_nfs_shares,
