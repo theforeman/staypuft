@@ -110,6 +110,7 @@ module Staypuft
         :cinder_ha          => { :name => 'Cinder (HA)', :class => ['quickstack::pacemaker::cinder'] },
         :swift_ha           => { :name => 'Swift (HA)', :class => ['quickstack::pacemaker::swift'] },
         :horizon_ha         => { :name => 'Horizon (HA)', :class => ['quickstack::pacemaker::horizon'] },
+        :galera_ha          => { :name => 'Galera (HA)', :class => ['quickstack::pacemaker::galera'] },
         :mysql_ha           => { :name => 'Mysql (HA)', :class => ['quickstack::pacemaker::mysql'] },
         :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] }
     }
@@ -155,7 +156,7 @@ module Staypuft
           :layouts  => [[:ha_nova, 1], [:ha_neutron, 1]],
           :services => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
                         :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
-                        :neutron_ha] }]
+                        :neutron_ha, :galera_ha] }]
 
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
 
@@ -458,6 +459,8 @@ module Staypuft
               'admin_token'    => keystone_admin_token },
           'quickstack::pacemaker::horizon'         => {
               'secret_key' => horizon_secret_key },
+          'quickstack::pacemaker::galera'         => {
+              'mysql_root_password' => mysql_root_pw },
           'quickstack::pacemaker::swift'           => {
               'swift_shared_secret' => swift_shared_secret,
               'swift_internal_vip'  => vip_format % :swift },
