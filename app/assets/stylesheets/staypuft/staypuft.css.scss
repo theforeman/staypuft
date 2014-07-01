@@ -101,6 +101,18 @@ span.editable, span.editable:hover {
   overflow: auto;
 }
 
+
+.nav > li > a.roles_list {
+  padding: 0;
+  border: 1px solid #ddd;
+  & > div {
+    padding: 10px;
+    &:not(:first-child) {
+      border-left: 1px solid #ddd;
+    }
+  }
+}
+
 .association.well {
   min-height: 500px;
   margin-top: 50px;

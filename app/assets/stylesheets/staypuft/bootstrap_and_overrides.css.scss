@@ -46,6 +46,10 @@
   padding: 19px 36px;
   background-color: #f5f5f5;
   @include center-block;
+
+  table tbody td {
+    background-color: #fff;
+  }
 }
 
 .tabbed_side_nav_form{
@@ -80,7 +84,7 @@
 }
 
 .wizard {
-  width: 675px;
+  width: 900px;
   display: block;
   @include center-block;
 }

@@ -5,7 +5,8 @@ module Staypuft
           step,
           _("Deployment Settings"),
           _("Services Overview"),
-          _("Services Configuration")
+          _("Services Configuration"),
+          _("Network Configuration")
       )
     end
 

@@ -1,7 +1,7 @@
 module Staypuft
   class StepsController < Staypuft::ApplicationController
     include Wicked::Wizard
-    steps :deployment_settings, :services_overview, :services_configuration
+    steps :deployment_settings, :services_overview, :services_configuration, :network_configuration
 
     before_filter :get_deployment
 
@@ -15,6 +15,8 @@ module Staypuft
         end
       when :services_configuration
         @services_map = [:nova, :neutron, :glance, :cinder]
+      when :network_configuration
+        @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
       end
 
       render_wizard
