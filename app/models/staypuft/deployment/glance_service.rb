@@ -74,23 +74,23 @@ module Staypuft
     def network_path
       if self.nfs_backend?
         self.nfs_network_path
-      elsif self.gluster_backend
+      elsif self.gluster_backend?
         self.gluster_network_path
       end
     end
 
     def pcmk_fs_device
-      network_path.split(':')[0]
+      network_path.split(':')[0] if network_path
     end
 
     def pcmk_fs_dir
-      network_path.split(':')[1]
+      network_path.split(':')[1] if network_path
     end
 
     def pcmk_fs_options
       if self.nfs_backend?
         "context=\"system_u:object_r:glance_var_lib_t:s0\")"
-      elsif self.gluster_backend
+      elsif self.gluster_backend?
         unless self.gluster_backup_volfile_servers.blank?
           "selinux,backup-volfile-servers#{backup_volfile_servers}"
         else
