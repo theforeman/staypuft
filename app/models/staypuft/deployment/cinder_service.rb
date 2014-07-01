@@ -11,29 +11,29 @@ module Staypuft
       NFS        = 'nfs'
       CEPH       = 'ceph'
       EQUALLOGIC = 'equallogic'
-      LABELS    = { LVM        => N_('LVM'),
-                    NFS        => N_('NFS'),
-                    CEPH       => N_('Ceph'),
-                    EQUALLOGIC => N_('EqualLogic') }
-      TYPES     = LABELS.keys
-      HUMAN  = N_('Choose Driver Backend')
+      LABELS     = { LVM        => N_('LVM'),
+                     NFS        => N_('NFS'),
+                     CEPH       => N_('Ceph'),
+                     EQUALLOGIC => N_('EqualLogic') }
+      TYPES      = LABELS.keys
+      HUMAN      = N_('Choose Driver Backend')
     end
     validates :driver_backend, presence: true, inclusion: { in: DriverBackend::TYPES }
 
     module NfsUri
-      HUMAN        = N_('NFS URI ("example.com/path/to/mount"):')
+      HUMAN = N_('NFS URI ("example.com/path/to/mount"):')
     end
     validates :nfs_uri,
-              :presence     => true,
-              :if           => :nfs_backend?
+              :presence => true,
+              :if       => :nfs_backend?
     # TODO: uri validation
 
     module NfsMountOptions
-      HUMAN        = N_('NFS mount options"):')
+      HUMAN = N_('NFS mount options"):')
     end
     validates :nfs_mount_options,
-              :presence     => true,
-              :if           => :nfs_backend?
+              :presence => true,
+              :if       => :nfs_backend?
     # TODO: mount options validation
 
     # TODO: add ceph UI parameters
@@ -53,12 +53,15 @@ module Staypuft
     def lvm_backend?
       !self.deployment.ha? && (self.driver_backend == DriverBackend::LVM)
     end
+
     def nfs_backend?
       self.driver_backend == DriverBackend::NFS
     end
+
     def ceph_backend?
       self.driver_backend == DriverBackend::CEPH
     end
+
     def equallogic_backend?
       self.driver_backend == DriverBackend::EQUALLOGIC
     end

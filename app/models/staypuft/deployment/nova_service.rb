@@ -15,12 +15,14 @@ module Staypuft
       TYPES     = LABELS.keys
       HUMAN     = N_('Network Type')
     end
+
     validates :network_manager, presence: true, inclusion: { in: NetworkManager::TYPES }
 
     module VlanRange
       HUMAN       = N_('VLAN Range')
       HUMAN_AFTER = '[0-4094]'
     end
+
     validates :vlan_range,
               :presence => true,
               :if       => :vlan_manager?
@@ -31,12 +33,14 @@ module Staypuft
       HUMAN       = N_('External interface connected to')
       HUMAN_AFTER = N_('(interface) (i.e. eth1)')
     end
+
     validates :external_interface_name, presence: true
     # TODO: interface name format validation
 
     module PublicFloatingRange
       HUMAN = N_('Floating IP range for external network ("10.0.0.0/24", for example):')
     end
+
     validates :public_floating_range, presence: true
     # TODO: interface format validation
 
@@ -44,6 +48,7 @@ module Staypuft
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
+
     validates :compute_tenant_interface,
               :presence => true
     # TODO: interface name format validation
@@ -51,6 +56,7 @@ module Staypuft
     module PrivateFixedRange
       HUMAN = N_('Private IP range for tenant networks ("10.0.0.0/24", for example):')
     end
+
     validates :private_fixed_range, presence: true
     # TODO: interface format validation
 
