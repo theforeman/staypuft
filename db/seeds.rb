@@ -41,7 +41,7 @@ params = {
     'enable_ovs_agent'              => 'true',
     'tenant_network_type'           => 'vxlan',
     'ovs_vxlan_udp_port'            => '4789',
-    'auto_assign_floating_ip'       => 'True',
+    'auto_assign_floating_ip'       => 'true',
     'cisco_vswitch_plugin'          => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
     'cisco_nexus_plugin'            => 'neutron.plugins.cisco.nexus.cisco_nexus_plugin_v2.NexusPlugin',
     'nexus_config'                  => {},
@@ -278,7 +278,7 @@ ovs_bridge_uplinks          = '<%= @host.deployment.neutron.controller_ovs_bridg
 compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
 compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
 compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
-enable_tunneling            = 'True'
+enable_tunneling            = 'true'
 
 # Glance
 backend         = 'file'
@@ -550,7 +550,7 @@ functional_dependencies = {
         'network_private_iface'                   => network_private_iface,
         'network_public_iface'                    => network_public_iface,
         'network_create_networks'                 => network_create_networks,
-        'nova_multi_host'                         => 'True',
+        'nova_multi_host'                         => 'true',
         'admin_password'                          => admin_pw,
         'ceilometer_user_password'                => ceilometer_user_pw,
         'nova_db_password'                        => nova_db_pw,
