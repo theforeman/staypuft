@@ -46,36 +46,22 @@ module Staypuft
     before_save :update_layout
     after_save :update_based_on_settings
 
-    def nova
-      @nova_service ||= NovaService.new self
-    end
+    SCOPES = [[:nova, :@nova_service, NovaService],
+              [:neutron, :@neutron_service, NeutronService],
+              [:glance, :@glance_service, GlanceService],
+              [:cinder, :@cinder_service, CinderService],
+              [:passwords, :@passwords, Passwords],
+              [:vips, :@vips, VIPS]]
 
-    after_save { nova.run_callbacks :save }
-
-    def neutron
-      @neutron_service ||= NeutronService.new self
-    end
-
-    after_save { neutron.run_callbacks :save }
-
-    def glance
-      @glance_service ||= GlanceService.new self
-    end
-
-    after_save { glance.run_callbacks :save }
-
-    def cinder
-      @cinder_service ||= CinderService.new self
-    end
-
-    after_save { cinder.run_callbacks :save }
-
-    def passwords
-      @password_service ||= Passwords.new self
+    SCOPES.each do |name, ivar, scope_class|
+      define_method name do
+        instance_variable_get ivar or
+            instance_variable_set ivar, scope_class.new(self)
+      end
+      after_save { send(name).run_callbacks :save }
     end
 
     validates_associated :passwords
-    after_save { passwords.run_callbacks :save }
 
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
