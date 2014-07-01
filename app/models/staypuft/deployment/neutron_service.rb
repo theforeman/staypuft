@@ -21,12 +21,14 @@ module Staypuft
       TYPES  = LABELS.keys
       HUMAN  = N_('Tenant Network Type')
     end
+
     validates :network_segmentation, presence: true, inclusion: { in: NetworkSegmentation::TYPES }
 
     module TenantVlanRange
       HUMAN       = N_('Tenant (VM data) VLAN Ranges')
       HUMAN_AFTER = '[0-4094]'
     end
+
     validates :tenant_vlan_range,
               :presence => true,
               :if       => :vlan_segmentation?
@@ -36,6 +38,7 @@ module Staypuft
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
+
     validates :networker_tenant_interface,
               :presence => true
     # TODO: interface name format validation
@@ -43,12 +46,14 @@ module Staypuft
     module UseExternalInterface
       HUMAN = N_('Configure external interface on network node')
     end
+
     validates :use_external_interface, inclusion: { in: [true, false] }
 
     module ExternalInterfaceName
       HUMAN       = N_('External interface connected to')
       HUMAN_AFTER = N_('(interface) (i.e. eth1)')
     end
+
     validates :external_interface_name,
               :presence => true,
               :if       => :use_external_interface
@@ -58,6 +63,7 @@ module Staypuft
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
+
     validates :compute_tenant_interface,
               :presence => true
     # TODO: interface name format validation
