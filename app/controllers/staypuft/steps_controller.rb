@@ -10,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = ordered_layouts
       when :services_configuration
-        @service_hostgroup_map = @deployment.services_hostgroup_map
+        @services_map = [:nova, :neutron, :glance, :cinder]
       end
 
       render_wizard

@@ -1,0 +1,10 @@
+<%= f.fields_for :nova, @deployment.nova do |p|
+   field(p, :mode, :label => _(Staypuft::Deployment::NovaService::NetworkManager::HUMAN)) do
+    Staypuft::Deployment::NovaService::NetworkManager::LABELS.map do |value, label|
+      radio_button_f_non_inline(p, :mode,
+                                :checked => @deployment.nova.network_manager == value,
+                                :value   => value,
+                                :text    => label)
+    end.join
+  end
+end %>
