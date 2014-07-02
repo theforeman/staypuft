@@ -8,7 +8,7 @@ module Staypuft
     STEP_COMPLETE      = :complete
     STEP_OVERVIEW      = :overview
 
-    NEW_NAME_PREFIX ="uninitialized_"
+    NEW_NAME_PREFIX = 'uninitialized_'
 
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
@@ -91,8 +91,8 @@ module Staypuft
       after_save { send(name).run_callbacks :save }
     end
 
-    validates_associated :nova,    :if => lambda {|d| d.form_step_is_past_configuration? && d.nova.active? }
-    validates_associated :neutron, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.neutron.active? }
+    validates_associated :nova, :if => lambda { |d| d.form_step_is_past_configuration? && d.nova.active? }
+    validates_associated :neutron, :if => lambda { |d| d.form_step_is_past_configuration? && d.neutron.active? }
     # TODO: enable these after the UI tabs are functional.
     #validates_associated :glance, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.glance.active? }
     #validates_associated :cinder, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.cinder.active? }

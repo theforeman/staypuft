@@ -13,8 +13,9 @@
 
     <% { layout_name: Staypuft::Deployment::LayoutName,
          networking:  Staypuft::Deployment::Networking,
-         amqp_provider:  Staypuft::Deployment::AmqpProvider,
-         platform:    Staypuft::Deployment::Platform }.
+         #amqp_provider: Staypuft::Deployment::AmqpProvider,
+         #platform:      Staypuft::Deployment::Platform
+       }.
            each do |attr, constants| %>
 
       <%= field(f, attr, :label => _(constants::HUMAN)) do
@@ -39,14 +40,14 @@
 
       <div class="single_password col-md-offset-2 hide">
         <%= password_f p, :single_password,
-                          :label => _("Password"),
-                          :class=> "single_password",
-                          :help_inline => _("Password should be 6 characters or more"),
-                          :placeholder => password_placeholder(f.object)%>
+                       :label       => _("Password"),
+                       :class       => "single_password",
+                       :help_inline => _("Password should be 6 characters or more"),
+                       :placeholder => password_placeholder(f.object) %>
         <%= password_f p, :single_password_confirmation,
-                          :label => _("Confirm"),
-                          :class=> "single_password",
-                          :placeholder => password_placeholder(f.object)%>
+                       :label       => _("Confirm"),
+                       :class       => "single_password",
+                       :placeholder => password_placeholder(f.object) %>
       </div>
     <% end %>
 
