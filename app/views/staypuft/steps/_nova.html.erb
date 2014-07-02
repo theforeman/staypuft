@@ -1,29 +1,33 @@
 <%= f.fields_for :nova, @deployment.nova do |p| %>
-  <%= field(p, :network_manager, :label => _(Staypuft::Deployment::NovaService::NetworkManager::HUMAN)) do
+  <%= change_label_width(4, field(p, :network_manager, :label => _(Staypuft::Deployment::NovaService::NetworkManager::HUMAN)) do
     Staypuft::Deployment::NovaService::NetworkManager::LABELS.map do |value, label|
       radio_button_f_non_inline(p, :network_manager,
                                 :checked => @deployment.nova.network_manager == value,
                                 :value   => value,
                                 :text    => label)
     end.join
-  end %>
+  end) %>
 
-  <div class="nova_vlan_range col-md-offset-2 hide">
-    <%=  text_f p, :vlan_range, class: "nova_vlan_range", label: _(Staypuft::Deployment::NovaService::VlanRange::HUMAN),
-         help_inline:  _(Staypuft::Deployment::NovaService::VlanRange::HUMAN_AFTER) %>
+  <div class="nova_vlan_range col-md-offset-0 hide">
+    <%= change_label_width 4, text_f(p, :vlan_range, class: "nova_vlan_range", label: _(Staypuft::Deployment::NovaService::VlanRange::HUMAN),
+                                     help_inline:           _(Staypuft::Deployment::NovaService::VlanRange::HUMAN_AFTER)) %>
   </div>
 
-  <%=  text_f p, :public_floating_range, label: _(Staypuft::Deployment::NovaService::PublicFloatingRange::HUMAN) %>
+  <%= change_label_width 4, text_f(p, :public_floating_range,
+                                   label:       _(Staypuft::Deployment::NovaService::PublicFloatingRange::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NovaService::PublicFloatingRange::HUMAN_AFTER)) %>
 
-  <%=  text_f p, :private_fixed_range, label: _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN) %>
+  <%= change_label_width 4, text_f(p, :private_fixed_range,
+                                   label:       _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN_AFTER)) %>
 
   <h4><%= _('Compute Nodes') %> </h4>
 
-  <%=  text_f p, :external_interface_name, label: _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN),
-       help_inline: _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN_AFTER) %>
+  <%= change_label_width 4, text_f(p, :external_interface_name, label: _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN),
+                                   help_inline:                        _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN_AFTER)) %>
 
-  <%=  text_f p, :compute_tenant_interface, label: _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN),
-       help_inline: _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN_AFTER) %>
+  <%= change_label_width 4, text_f(p, :compute_tenant_interface, label: _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN),
+                                   help_inline:                         _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN_AFTER)) %>
 
   <%= _('NOTE: Best practice is to use a different interface than the interface used for pxe/provisioning the node. This practice is mandatory if VLAN is chosen as the tenant network type.') %>
 

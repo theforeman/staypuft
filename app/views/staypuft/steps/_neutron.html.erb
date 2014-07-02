@@ -1,9 +1,9 @@
-      <% if @deployment.neutron.errors.any? %>
+<% if @deployment.neutron.errors.any? %>
+  <% @deployment.neutron.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+<% end %>
 
-      <% @deployment.neutron.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      <% end %>
 <%= f.fields_for :neutron, @deployment.neutron do |p| %>
   <%= field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
     Staypuft::Deployment::NeutronService::NetworkSegmentation::LABELS.map do |value, label|
@@ -14,35 +14,39 @@
     end.join
   end %>
 
-  <div class="neutron_tenant_vlan_ranges col-md-offset-2 hide">
-    <%=  text_f p, :tenant_vlan_ranges, class: "neutron_tenant_vlan_ranges", label: _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN),
-         help_inline:  _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER) %>
+  <div class="neutron_tenant_vlan_ranges col-md-offset-0 hide">
+    <%= change_label_width 4, text_f(p, :tenant_vlan_ranges, class: "neutron_tenant_vlan_ranges",
+                                     label:                         _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN),
+                                     help_inline:                   _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER)) %>
   </div>
 
   <h4><%= _('Network Nodes') %> </h4>
 
-  <%=  text_f p, :networker_tenant_interface, label: _(Staypuft::Deployment::NeutronService::NetworkerTenantInterface::HUMAN),
-       help_inline: _(Staypuft::Deployment::NeutronService::NetworkerTenantInterface::HUMAN_AFTER) %>
+  <%= change_label_width 4, text_f(p, :networker_tenant_interface,
+                                   label:       _(Staypuft::Deployment::NeutronService::NetworkerTenantInterface::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NeutronService::NetworkerTenantInterface::HUMAN_AFTER)) %>
 
-  <%=  check_box_f_non_inline(p, :use_external_interface,
-                                :checked_value   => 'true',
-                                :unchecked_value => 'false',
-                                :text            => Staypuft::Deployment::NeutronService::UseExternalInterface::HUMAN)
- %>
+  <%= check_box_f_non_inline(p, :use_external_interface,
+                             :checked_value   => 'true',
+                             :unchecked_value => 'false',
+                             :text            => Staypuft::Deployment::NeutronService::UseExternalInterface::HUMAN)
+  %>
 
-  <div class="neutron_external_interface col-md-offset-2 hide">
-    <%=  text_f p, :external_interface_name, label: _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN),
-         help_inline: _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN_AFTER) %>
+  <div class="neutron_external_interface col-md-offset-0 hide">
+    <%= change_label_width 4, text_f(p, :external_interface_name,
+                                     label:       _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN),
+                                     help_inline: _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN_AFTER)) %>
 
-    <%=  check_box_f_non_inline(p, :use_vlan_for_external_network,
-                                   :checked_value   => 'true',
-                                   :unchecked_value => 'false',
-                                   :text            => Staypuft::Deployment::NeutronService::UseVlanForExternalNetwork::HUMAN)
-   %>
+    <%= check_box_f_non_inline(p, :use_vlan_for_external_network,
+                               :checked_value   => 'true',
+                               :unchecked_value => 'false',
+                               :text            => Staypuft::Deployment::NeutronService::UseVlanForExternalNetwork::HUMAN)
+    %>
 
-    <div class="neutron_external_vlan col-md-offset-2 hide">
-      <%=  text_f p, :vlan_ranges_for_external_network, label: _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN),
-           help_inline: _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN_AFTER) %>
+    <div class="neutron_external_vlan col-md-offset-0 hide">
+      <%= change_label_width 4, text_f(p, :vlan_ranges_for_external_network,
+                                       label:       _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN),
+                                       help_inline: _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN_AFTER)) %>
     </div>
 
   </div>
@@ -50,8 +54,9 @@
 
   <h4><%= _('Compute Nodes') %> </h4>
 
-  <%=  text_f p, :compute_tenant_interface, label: _(Staypuft::Deployment::NeutronService::ComputeTenantInterface::HUMAN),
-       help_inline: _(Staypuft::Deployment::NeutronService::ComputeTenantInterface::HUMAN_AFTER) %>
+  <%= change_label_width 4, text_f(p, :compute_tenant_interface,
+                                   label:       _(Staypuft::Deployment::NeutronService::ComputeTenantInterface::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NeutronService::ComputeTenantInterface::HUMAN_AFTER)) %>
 
   <%= _('NOTE: Best practice is to use a different interface than the interface used for pxe/provisioning the node. This practice is mandatory if VLAN is chosen as the tenant network type.') %>
 
