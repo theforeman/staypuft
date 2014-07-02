@@ -220,15 +220,15 @@ module Staypuft
       cinder_backend_eqlx           = '<%= @host.deployment.cinder.equallogic_backend? %>'
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
-      cinder_san_ip                 = '<%= #@host.deployment.cinder.san_ip %>'
-      cinder_san_login              = '<%= #@host.deployment.cinder.san_login %>'
-      cinder_san_password           = '<%= #@host.deployment.cinder.san_password %>'
-      cinder_san_thin_provision     = 'false'
-      cinder_eqlx_group_name        = 'group-0'
-      cinder_eqlx_pool              = 'default'
-      cinder_eqlx_use_chap          = 'false'
-      cinder_eqlx_chap_login        = '<%= #@host.deployment.cinder.chap_login %>'
-      cinder_eqlx_chap_password     = '<%= #@host.deployment.cinder.chap_password %>'
+      cinder_san_ip                 = ['<%= #@host.deployment.cinder.san_ip %>']
+      cinder_san_login              = ['<%= #@host.deployment.cinder.san_login %>']
+      cinder_san_password           = ['<%= #@host.deployment.cinder.san_password %>']
+      cinder_san_thin_provision     = ['false']
+      cinder_eqlx_group_name        = ['group-0']
+      cinder_eqlx_pool              = ['default']
+      cinder_eqlx_use_chap          = ['false']
+      cinder_eqlx_chap_login        = ['<%= #@host.deployment.cinder.chap_login %>']
+      cinder_eqlx_chap_password     = ['<%= #@host.deployment.cinder.chap_password %>']
 
 
       # effective_value grabs shared password if deployment is in shared password mode,
@@ -326,8 +326,6 @@ module Staypuft
               'swift_storage_ips'                       => [],
               'cinder_nfs_shares'                       => [],
               'cinder_gluster_shares'                   => [],
-              'cinder_gluster_peers'                    => [],
-              'cinder_san_ip'                           => '',
               'controller_admin_host'                   => controller_host,
               'controller_priv_host'                    => controller_host,
               'controller_pub_host'                     => controller_host },
@@ -391,8 +389,6 @@ module Staypuft
               'swift_storage_ips'                       => [],
               'cinder_nfs_shares'                       => [],
               'cinder_gluster_shares'                   => [],
-              'cinder_gluster_peers'                    => [],
-              'cinder_san_ip'                           => '',
               'controller_admin_host'                   => controller_host,
               'controller_priv_host'                    => controller_host,
               'controller_pub_host'                     => controller_host },
@@ -414,7 +410,7 @@ module Staypuft
               'nova_db_password'              => nova_db_pw,
               'nova_user_password'            => nova_user_pw,
               'amqp_password'                 => amqp_pw,
-              'heat_auth_encrypt_key'         => heat_auth_encrypt_key,
+              'heat_auth_encryption_key'      => heat_auth_encrypt_key,
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
               'ceilometer_admin_vip'          => vip_format % :ceilometer,
               'ceilometer_private_vip'        => vip_format % :ceilometer,
@@ -445,7 +441,7 @@ module Staypuft
               'nova_admin_vip'                => vip_format % :nova,
               'nova_private_vip'              => vip_format % :nova,
               'nova_public_vip'               => vip_format % :nova,
-              'qpid_vip'                      => vip_format % :qpid,
+              'amqp_vip'                      => vip_format % :amqp,
               'swift_public_vip'              => vip_format % :swift,
               'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
               'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
@@ -503,8 +499,6 @@ module Staypuft
               'swift_shared_secret' => swift_shared_secret,
               'swift_internal_vip'  => vip_format % :swift,
               'swift_storage_ips'   => [] },
-          'quickstack::pacemaker::mysql'           => {
-              'mysql_root_password' => mysql_root_pw },
           'quickstack::pacemaker::nova'            => {
               'multi_host'                    => 'true',
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
