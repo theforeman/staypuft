@@ -21,23 +21,18 @@ module Staypuft
 
       when :deployment_settings
         @layouts               = ordered_layouts
-        # FIXME: why don't we reset wizard step on the second time through (i.e. after complete?)
-        # now that we're validating associated services when the form is at CONFIGURATION or COMPLETE
-        # changing anything that might affect active services could cause validation problems (i.e.
-        # can't change from Nova to Neutron, since the change to 'neutron' will activate neutron
-        # validation, which of course can't be valid yet since we haven't presented the user with
-        # form step 3. Any downside to setting this back?
-        @deployment.form_step  = Deployment::STEP_SETTINGS unless @deployment.form_complete?
+        # FIXME: validate that deployment is valid when leaving wizard with cancel button
+        @deployment.form_step  = Deployment::STEP_SETTINGS
         @deployment.passwords.attributes = params[:staypuft_deployment].delete(:passwords)
         @deployment.attributes = params[:staypuft_deployment]
 
       when :services_overview
-        @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
+        @deployment.form_step = Deployment::STEP_OVERVIEW
 
       when :services_configuration
         @services_map = [:nova, :neutron, :glance, :cinder]
         if params[:staypuft_deployment]
-          @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
+          @deployment.form_step = Deployment::STEP_CONFIGURATION
           @services_map.each do |service|
             @deployment.send(service).attributes = params[:staypuft_deployment].delete(service)
           end
