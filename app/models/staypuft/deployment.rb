@@ -72,7 +72,7 @@ module Staypuft
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
               networking:    Networking::NOVA,
-              platform:      Platform::RHEL6 }.merge(attributes),
+              platform:      Platform::RHEL7 }.merge(attributes),
             options)
 
       self.hostgroup = Hostgroup.new(name: name, parent: Hostgroup.get_base_hostgroup)
