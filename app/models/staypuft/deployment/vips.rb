@@ -2,7 +2,7 @@ module Staypuft
   class Deployment::VIPS < Deployment::AbstractParamScope
 
     VIP_NAMES = [:ceilometer, :cinder, :db, :glance, :heat, :horizon, :keystone, :loadbalancer,
-                 :nova, :neutron, :qpid, :swift]
+                 :nova, :neutron, :amqp, :swift]
     COUNT     = VIP_NAMES.size
 
     def self.param_scope
