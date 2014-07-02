@@ -8,7 +8,7 @@ module Staypuft
     STEP_COMPLETE      = :complete
     STEP_OVERVIEW      = :overview
 
-    NEW_NAME_PREFIX ="uninitialized_"
+    NEW_NAME_PREFIX = 'uninitialized_'
 
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
@@ -61,6 +61,11 @@ module Staypuft
       after_save { send(name).run_callbacks :save }
     end
 
+    validates_associated :nova, :if => lambda { |d| d.form_step_is_past_configuration? && d.nova.active? }
+    validates_associated :neutron, :if => lambda { |d| d.form_step_is_past_configuration? && d.neutron.active? }
+    # TODO: enable these after the UI tabs are functional.
+    #validates_associated :glance, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.glance.active? }
+    #validates_associated :cinder, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.cinder.active? }
     validates_associated :passwords
 
     def initialize(attributes = {}, options = {})
@@ -115,8 +120,8 @@ module Staypuft
     module Platform
       RHEL7  = 'rhel7'
       RHEL6  = 'rhel6'
-      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux Opestack Platfom 5 with RHEL 7'),
-                 RHEL6 => N_('Red Hat Enterprise Linux Opestack Platfom 5 with RHEL 6') }
+      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 7'),
+                 RHEL6 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 6') }
       TYPES  = LABELS.keys
       HUMAN  = N_('Platform')
     end
@@ -132,7 +137,7 @@ module Staypuft
     # deployment.form_step should be used to check the form step the user is
     # currently on.
     # e.g.
-    # validates :name, :presence => true, :if => :form_step_is_configuation?
+    # validates :name, :presence => true, :if => :form_step_is_configuration?
 
     scoped_search :on => :name, :complete_value => :true
 
@@ -150,6 +155,14 @@ module Staypuft
 
     def deployed?
       self.hosts.any?(&:open_stack_deployed?)
+    end
+
+    def form_step_is_configuration?
+      self.form_step.to_sym == Deployment::STEP_CONFIGURATION
+    end
+
+    def form_step_is_past_configuration?
+      self.form_step_is_configuration? || self.form_complete?
     end
 
     def form_complete?

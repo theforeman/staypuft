@@ -11,6 +11,7 @@ Rails.application.routes.draw do
         post 'deploy'
         get 'populate'
         get 'summary'
+        get 'edit'
         post 'associate_host'
         get 'export_config'
         post 'import_config'

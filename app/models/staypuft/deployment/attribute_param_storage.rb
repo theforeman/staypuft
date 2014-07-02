@@ -21,7 +21,9 @@ module Staypuft
 
         after_save do
           value = send(name)
-          if value.blank?
+          # FIXME: not sure if hard-coding false is correct here, but without it, false was
+          # being set to 'nil', breaking boolean values (empty arrays may prove to be a similar problem)
+          if value.blank? && !(value == false)
             hostgroup.
                 group_parameters.
                 find_by_name(param_name).try(:destroy)

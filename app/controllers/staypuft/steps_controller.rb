@@ -10,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = ordered_layouts
       when :services_configuration
-        @service_hostgroup_map = @deployment.services_hostgroup_map
+        @services_map = [:nova, :neutron, :glance, :cinder]
       end
 
       render_wizard
@@ -21,27 +21,20 @@ module Staypuft
 
       when :deployment_settings
         @layouts               = ordered_layouts
-        @deployment.form_step  = Deployment::STEP_SETTINGS unless @deployment.form_complete?
+        # FIXME: validate that deployment is valid when leaving wizard with cancel button
+        @deployment.form_step  = Deployment::STEP_SETTINGS
         @deployment.passwords.attributes = params[:staypuft_deployment].delete(:passwords)
         @deployment.attributes = params[:staypuft_deployment]
 
       when :services_overview
-        @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
+        @deployment.form_step = Deployment::STEP_OVERVIEW
 
       when :services_configuration
-        # Collect services across all deployment's roles
-        @service_hostgroup_map = @deployment.services_hostgroup_map
+        @services_map = [:nova, :neutron, :glance, :cinder]
         if params[:staypuft_deployment]
-          @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
-          param_data            = params[:staypuft_deployment][:hostgroup_params]
-          param_data.each do |hostgroup_id, hostgroup_params|
-            hostgroup = Hostgroup.find(hostgroup_id)
-            hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
-              puppetclass = Puppetclass.find(puppetclass_id)
-              puppetclass_params.each do |param_name, param_value|
-                hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
-              end
-            end
+          @deployment.form_step = Deployment::STEP_CONFIGURATION
+          @services_map.each do |service|
+            @deployment.send(service).attributes = params[:staypuft_deployment].delete(service)
           end
         end
       else

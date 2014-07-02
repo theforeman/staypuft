@@ -1,5 +1,8 @@
-<% title_actions link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
 <% title _("%s Summary") % @deployment.name %>
+<% content_for(:title_actions) do %>
+  <%= link_to _("Advanced Configuration"), edit_deployment_path(@deployment.id)%>
+  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
+<% end %>
 
 <div class="col-md-12">
   <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
