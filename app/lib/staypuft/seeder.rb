@@ -660,7 +660,9 @@ module Staypuft
                                    LookupKey.search_for(param_key).map { |lk|  (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
             next
           end
-          param.update_attributes! default_value: default_value
+          unless param.update_attributes default_value: default_value
+            Rails.logger.error "param #{param_key} in #{puppetclass_name} default_value: #{default_value.inspect} is invalid"
+          end
         end
       end
     end
