@@ -19,10 +19,16 @@ module Staypuft
         has_one :deployment, through: :hostgroup
       end
 
+
       def open_stack_deployed?
+        !deployment.nil? && !deployment.in_progress? &&
+        open_stack_environment_set? && open_stack_assigned?
+      end
+
+      def open_stack_environment_set?
         open_stack_assigned? &&
-            respond_to?(:environment) &&
-            environment != Environment.get_discovery
+        respond_to?(:environment) &&
+        environment != Environment.get_discovery
       end
 
       def open_stack_assigned?
