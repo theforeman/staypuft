@@ -44,37 +44,7 @@ module Staypuft
 
     after_validation :check_form_complete
     before_save :update_layout
-
-    def nova
-      @nova_service ||= NovaService.new self
-    end
-
-    after_save { nova.run_callbacks :save }
-
-    def neutron
-      @neutron_service ||= NeutronService.new self
-    end
-
-    after_save { neutron.run_callbacks :save }
-
-    def glance
-      @glance_service ||= GlanceService.new self
-    end
-
-    after_save { glance.run_callbacks :save }
-
-    def cinder
-      @cinder_service ||= CinderService.new self
-    end
-
-    after_save { cinder.run_callbacks :save }
-
-    def passwords
-      @password_service ||= Passwords.new self
-    end
-
-    validates_associated :passwords
-    after_save { passwords.run_callbacks :save }
+    after_save :update_based_on_settings
 
     SCOPES = [[:nova, :@nova_service, NovaService],
               [:neutron, :@neutron_service, NeutronService],
@@ -112,7 +82,6 @@ module Staypuft
       self.glance.set_defaults
       self.cinder.set_defaults
       self.passwords.set_defaults
-
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
     end
@@ -190,34 +159,6 @@ module Staypuft
 
     def self.available_locks
       [:deploy]
-    end
-
-    # After setting or changing layout, update the set of child hostgroups,
-    # adding groups for any roles not already represented, and removing others
-    # no longer needed.
-    def update_hostgroup_list
-      new_layout              = Layout.where(:name => layout_name, :networking => networking).first
-      old_role_hostgroups_arr = deployment_role_hostgroups.to_a
-      new_layout.layout_roles.each do |layout_role|
-        role_hostgroup = deployment_role_hostgroups.where(:role_id => layout_role.role).first_or_initialize do |drh|
-          drh.hostgroup = Hostgroup.new(name: layout_role.role.name, parent: hostgroup)
-        end
-
-        role_hostgroup.hostgroup.add_puppetclasses_from_resource(layout_role.role)
-        layout_role.role.services.each do |service|
-          role_hostgroup.hostgroup.add_puppetclasses_from_resource(service)
-        end
-        role_hostgroup.hostgroup.save!
-
-        role_hostgroup.deploy_order = layout_role.deploy_order
-        role_hostgroup.save!
-
-        old_role_hostgroups_arr.delete(role_hostgroup)
-      end
-      # delete any prior mappings that remain
-      old_role_hostgroups_arr.each do |role_hostgroup|
-        role_hostgroup.hostgroup.destroy
-      end
     end
 
     def services_hostgroup_map
