@@ -264,6 +264,16 @@ module Staypuft
 
       # virtual ip addresses
       vip_format                    = '<%%= @host.deployment.vips.get(:%s) %%>'
+      get_host_format               = '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>'
+
+      amqp_host    = get_host_format % :amqp
+      mysql_host   = get_host_format % :db
+      glance_host  = get_host_format % :glance
+      auth_host    = get_host_format % :keystone
+      neutron_host = get_host_format % :neutron
+      nova_host    = get_host_format % :nova
+
+      controller_host = '<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip %>'
 
       {
           'quickstack::nova_network::controller'   => {
@@ -309,7 +319,18 @@ module Staypuft
               'ceilometer_metering_secret'              => ceilometer_metering,
               'heat_auth_encrypt_key'                   => heat_auth_encrypt_key,
               'horizon_secret_key'                      => horizon_secret_key,
-              'swift_shared_secret'                     => swift_shared_secret },
+              'amqp_host'                               => amqp_host,
+              'mysql_host'                              => mysql_host,
+              'swift_shared_secret'                     => swift_shared_secret,
+              'swift_ringserver_ip'                     => '',
+              'swift_storage_ips'                       => [],
+              'cinder_nfs_shares'                       => [],
+              'cinder_gluster_shares'                   => [],
+              'cinder_gluster_peers'                    => [],
+              'cinder_san_ip'                           => '',
+              'controller_admin_host'                   => controller_host,
+              'controller_priv_host'                    => controller_host,
+              'controller_pub_host'                     => controller_host },
           'quickstack::neutron::controller'        => {
               'amqp_server'                             => amqp_provider,
               'ml2_network_vlan_ranges'                 => ml2_network_vlan_ranges,
@@ -362,7 +383,19 @@ module Staypuft
               'heat_auth_encrypt_key'                   => heat_auth_encrypt_key,
               'horizon_secret_key'                      => horizon_secret_key,
               'swift_shared_secret'                     => swift_shared_secret,
-              'neutron_metadata_proxy_secret'           => neutron_metadata_proxy_secret },
+              'neutron_metadata_proxy_secret'           => neutron_metadata_proxy_secret,
+              'amqp_host'                               => amqp_host,
+              'mysql_host'                              => mysql_host,
+              'swift_shared_secret'                     => swift_shared_secret,
+              'swift_ringserver_ip'                     => '',
+              'swift_storage_ips'                       => [],
+              'cinder_nfs_shares'                       => [],
+              'cinder_gluster_shares'                   => [],
+              'cinder_gluster_peers'                    => [],
+              'cinder_san_ip'                           => '',
+              'controller_admin_host'                   => controller_host,
+              'controller_priv_host'                    => controller_host,
+              'controller_pub_host'                     => controller_host },
           'quickstack::pacemaker::params'          => {
               'include_neutron'               => neutron,
               'neutron'                       => neutron,
@@ -413,7 +446,11 @@ module Staypuft
               'nova_private_vip'              => vip_format % :nova,
               'nova_public_vip'               => vip_format % :nova,
               'qpid_vip'                      => vip_format % :qpid,
-              'swift_public_vip'              => vip_format % :swift },
+              'swift_public_vip'              => vip_format % :swift,
+              'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
+              'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
+          'quickstack::pacemaker::common'          => { # TODO is this correct puppetclass?
+              'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(' ') %>' },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
@@ -459,11 +496,13 @@ module Staypuft
               'admin_token'    => keystone_admin_token },
           'quickstack::pacemaker::horizon'         => {
               'secret_key' => horizon_secret_key },
-          'quickstack::pacemaker::galera'         => {
-              'mysql_root_password' => mysql_root_pw },
+          'quickstack::pacemaker::galera'          => {
+              'mysql_root_password'   => mysql_root_pw,
+              'wsrep_cluster_members' => '<%= @host.deployment.ips.controller_ips %>' },
           'quickstack::pacemaker::swift'           => {
               'swift_shared_secret' => swift_shared_secret,
-              'swift_internal_vip'  => vip_format % :swift },
+              'swift_internal_vip'  => vip_format % :swift,
+              'swift_storage_ips'   => [] },
           'quickstack::pacemaker::mysql'           => {
               'mysql_root_password' => mysql_root_pw },
           'quickstack::pacemaker::nova'            => {
@@ -482,7 +521,10 @@ module Staypuft
               'nova_db_password'              => nova_db_pw,
               'nova_user_password'            => nova_user_pw,
               'amqp_password'                 => amqp_pw,
-              'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
+              'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
+              'amqp_host'                     => amqp_host,
+              'mysql_host'                    => mysql_host,
+              'controller_priv_host'          => controller_host },
           'quickstack::storage_backend::cinder'    => {
               'amqp_server'          => amqp_provider,
               'cinder_db_password'   => cinder_db_pw,
@@ -505,7 +547,12 @@ module Staypuft
               'nova_db_password'           => nova_db_pw,
               'nova_user_password'         => nova_user_pw,
               'amqp_password'              => amqp_pw,
-              'ceilometer_metering_secret' => ceilometer_metering },
+              'ceilometer_metering_secret' => ceilometer_metering,
+              'amqp_host'                  => amqp_host,
+              'mysql_host'                 => mysql_host,
+              'glance_host'                => glance_host,
+              'auth_host'                  => auth_host,
+              'nova_host'                  => nova_host },
           'quickstack::neutron::compute'           => {
               'amqp_server'                => amqp_provider,
               'enable_tunneling'           => enable_tunneling,
@@ -521,7 +568,13 @@ module Staypuft
               'nova_db_password'           => nova_db_pw,
               'nova_user_password'         => nova_user_pw,
               'amqp_password'              => amqp_pw,
-              'ceilometer_metering_secret' => ceilometer_metering },
+              'ceilometer_metering_secret' => ceilometer_metering,
+              'amqp_host'                  => amqp_host,
+              'mysql_host'                 => mysql_host,
+              'glance_host'                => glance_host,
+              'auth_host'                  => auth_host,
+              'neutron_host'               => neutron_host,
+              'nova_host'                  => nova_host },
           'quickstack::pacemaker::rsync::keystone' => {
               'keystone_private_vip' => vip_format % :keystone } }
     end
@@ -603,7 +656,8 @@ module Staypuft
         params.each do |param_key, default_value|
           param = puppetclass.class_params.find_by_key(param_key)
           unless param
-            Rails.logger.error "missing param #{param_key} in #{puppetclass_name}"
+            Rails.logger.error "missing param #{param_key} in #{puppetclass_name} trying to set default_value: #{default_value.inspect} found in puppetclasses: " +
+                                   LookupKey.search_for(param_key).map { |lk| lk.param_class.name }.inspect
             next
           end
           param.update_attributes! default_value: default_value

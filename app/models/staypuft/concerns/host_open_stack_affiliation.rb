@@ -9,10 +9,12 @@ module Staypuft
               where(DeploymentRoleHostgroup.table_name => { deployment_id: deployment })
         end)
 
-        scope(:in_role, lambda do |role|
+        scope(:in_roles, lambda do |*roles|
           joins(hostgroup: :deployment_role_hostgroup).
-              where(DeploymentRoleHostgroup.table_name => { role_id: role })
+              where(DeploymentRoleHostgroup.table_name => { role_id: roles })
         end)
+
+        scope :in_role, lambda { |role| in_roles(role) }
 
         has_one :deployment, through: :hostgroup
       end

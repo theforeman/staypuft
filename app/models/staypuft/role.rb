@@ -21,5 +21,7 @@ module Staypuft
       joins(:deployment_role_hostgroups).
           where(DeploymentRoleHostgroup.table_name => { deployment_id: deployment })
     end)
+
+    scope(:controller, where(name: Seeder::CONTROLLER_ROLES.map { |h| h.fetch(:name) }))
   end
 end
