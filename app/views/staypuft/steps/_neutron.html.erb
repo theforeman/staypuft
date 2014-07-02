@@ -5,14 +5,14 @@
 <% end %>
 
 <%= f.fields_for :neutron, @deployment.neutron do |p| %>
-  <%= field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
+  <%= change_label_width(4, field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
     Staypuft::Deployment::NeutronService::NetworkSegmentation::LABELS.map do |value, label|
       radio_button_f_non_inline(p, :network_segmentation,
                                 :checked => @deployment.neutron.network_segmentation == value,
                                 :value   => value,
                                 :text    => label)
     end.join
-  end %>
+  end) %>
 
   <div class="neutron_tenant_vlan_ranges col-md-offset-0 hide">
     <%= change_label_width 4, text_f(p, :tenant_vlan_ranges, class: "neutron_tenant_vlan_ranges",
