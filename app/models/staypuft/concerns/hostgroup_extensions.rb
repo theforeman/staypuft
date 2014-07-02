@@ -65,6 +65,19 @@ module Staypuft::Concerns::HostgroupExtensions
     oshosts
   end
 
+  # Returns all hosts associated with this hostgroup with the openstack
+  # deployment environment set.  These can be filtered based by setting
+  # errors=true or errors=false to return only the hosts  with no errors or
+  # with errors respectively.
+  def openstack_hosts(errors=nil)
+    oshosts = hosts.select { |h| h.open_stack_environment_set? }
+
+    unless errors.nil?
+      oshosts.select! { |h| (!errors ^ h.error?) }
+    end
+    oshosts
+  end
+
   module ClassMethods
     def get_base_hostgroup
       Hostgroup.where(:name => Setting[:base_hostgroup]).first or raise 'missing base_hostgroup'
