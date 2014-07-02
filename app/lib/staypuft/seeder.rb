@@ -206,7 +206,7 @@ module Staypuft
       cinder_backend_iscsi        = '<%= @host.deployment.cinder.lvm_backend? %>'
       cinder_backend_nfs          = '<%= @host.deployment.cinder.nfs_backend? %>'
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
-      cinder_nfs_mount_options    = '<%= @host.deployment.cinder.nfs_mount_options %>'
+      cinder_nfs_mount_options    = ''
 
       cinder_backend_rbd                      = '<%= @host.deployment.cinder.ceph_backend? %>'
       # TODO: confirm these params and add them to model where user input is needed

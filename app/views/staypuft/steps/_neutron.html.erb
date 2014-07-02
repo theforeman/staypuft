@@ -1,9 +1,3 @@
-<% if @deployment.neutron.errors.any? %>
-  <% @deployment.neutron.errors.full_messages.each do |msg| %>
-    <li><%= msg %></li>
-  <% end %>
-<% end %>
-
 <%= f.fields_for :neutron, @deployment.neutron do |p| %>
   <%= change_label_width(4, field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
     Staypuft::Deployment::NeutronService::NetworkSegmentation::LABELS.map do |value, label|
