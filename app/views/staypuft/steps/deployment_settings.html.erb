@@ -11,23 +11,47 @@
     <%= text_f f, :name %>
     <%= textarea_f f, :description, :rows => 3 %>
 
-    <%= field(f, :layout_id, :label => _('Deployment Layout')) do
-      @layouts.map do |layout|
-        radio_button_f_non_inline(f, :layout_id,
-                                  :checked => layout.id == @deployment.layout_id,
-                                  :value   => layout.id,
-                                  :text    => "#{layout.name}, #{layout.networking.capitalize} " + _("Networking"))
-      end.join
-    end %>
+    <% { layout_name: Staypuft::Deployment::LayoutName,
+         networking:  Staypuft::Deployment::Networking,
+         #amqp_provider: Staypuft::Deployment::AmqpProvider,
+         #platform:      Staypuft::Deployment::Platform
+       }.
+           each do |attr, constants| %>
 
-    <%= field(f, :layout_id, :label => _('Messaging provider')) do
-      Staypuft::Deployment::AMQP_PROVIDER_LABELS.map do |provider_value, provider_label|
-        radio_button_f_non_inline(f, :amqp_provider,
-                                  :checked => provider_value == @deployment.amqp_provider,
-                                  :value   => provider_value,
-                                  :text    => provider_label)
-      end.join
-    end %>
+      <%= field(f, attr, :label => _(constants::HUMAN)) do
+        constants::LABELS.map do |value, label|
+          radio_button_f_non_inline(f, attr,
+                                    :checked => value == @deployment.send(attr),
+                                    :value   => value,
+                                    :text    => _(label))
+        end.join
+      end %>
+    <% end %>
+
+    <%= f.fields_for :passwords, @deployment.passwords do |p| %>
+      <%= field(p, :mode, :label => _(Staypuft::Deployment::Passwords::Mode::HUMAN)) do
+        Staypuft::Deployment::Passwords::Mode::LABELS.map do |value, label|
+          radio_button_f_non_inline(p, :mode,
+                                    :checked => @deployment.passwords.mode == value,
+                                    :value   => value,
+                                    :text    => label)
+        end.join
+      end %>
+
+      <div class="single_password col-md-offset-0 hide">
+        <%= password_f p, :single_password,
+                       :label       => _("Password"),
+                       :class       => "single_password",
+                       :help_inline => _("Password should be 6 characters or more"),
+                       :placeholder => password_placeholder(f.object) %>
+        <%= password_f p, :single_password_confirmation,
+                       :label       => _("Confirm"),
+                       :class       => "single_password",
+                       :placeholder => password_placeholder(f.object) %>
+      </div>
+    <% end %>
+
+
 
     <div class="form_actions">
       <% if !is_new %>

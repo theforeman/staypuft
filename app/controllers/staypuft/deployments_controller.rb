@@ -7,16 +7,7 @@ module Staypuft
     end
 
     def new
-      base_hostgroup = Hostgroup.get_base_hostgroup
-
-      deployment           = Deployment.new(:name          => Deployment::NEW_NAME_PREFIX+SecureRandom.hex,
-                                            :amqp_provider => Deployment::AMQP_RABBITMQ)
-      deployment.layout    = Layout.where(:name       => "Distributed",
-                                          :networking => "neutron").first
-      deployment_hostgroup = ::Hostgroup.new name: deployment.name, parent: base_hostgroup
-      deployment_hostgroup.save!
-
-      deployment.hostgroup = deployment_hostgroup
+      deployment = Deployment.new(:name => Deployment::NEW_NAME_PREFIX+SecureRandom.hex)
       deployment.save!
 
       redirect_to deployment_steps_path(deployment_id: deployment)
@@ -29,6 +20,12 @@ module Staypuft
     end
 
     def summary
+      @deployment            = Deployment.find(params[:id])
+      @service_hostgroup_map = @deployment.services_hostgroup_map
+    end
+
+    # FIXME: missing update action, there is no way how to submit the edited params
+    def edit
       @deployment            = Deployment.find(params[:id])
       @service_hostgroup_map = @deployment.services_hostgroup_map
     end
