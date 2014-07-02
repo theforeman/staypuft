@@ -99,6 +99,28 @@ $(function () {
     }
   }
 
+  showGlanceNfsNetworkPath();
+  $("input[name='staypuft_deployment[glance][driver_backend]']").change(showGlanceNfsNetworkPath);
+  function showGlanceNfsNetworkPath() {
+    if ($('#staypuft_deployment_glance_driver_backend_nfs').is(":checked")) {
+      $('.glance_nfs_network_path').show();
+    }
+    else {
+      $('.glance_nfs_network_path').hide();
+    }
+  }
+
+  showCinderNfsUri();
+  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderNfsUri);
+  function showCinderNfsUri() {
+    if ($('#staypuft_deployment_cinder_driver_backend_nfs').is(":checked")) {
+      $('.cinder_nfs_uri').show();
+    }
+    else {
+      $('.cinder_nfs_uri').hide();
+    }
+  }
+
   if ($('.configuration').length > 0) {
     $('.configuration').find('li').first().find('a')[0].click();
   }

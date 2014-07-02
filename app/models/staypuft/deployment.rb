@@ -94,9 +94,8 @@ module Staypuft
 
     validates_associated :nova, :if => lambda { |d| d.form_step_is_past_configuration? && d.nova.active? }
     validates_associated :neutron, :if => lambda { |d| d.form_step_is_past_configuration? && d.neutron.active? }
-    # TODO: enable these after the UI tabs are functional.
-    #validates_associated :glance, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.glance.active? }
-    #validates_associated :cinder, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.cinder.active? }
+    validates_associated :glance, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.glance.active? }
+    validates_associated :cinder, :if =>  lambda {|d| d.form_step_is_past_configuration? && d.cinder.active? }
     validates_associated :passwords
 
     def initialize(attributes = {}, options = {})

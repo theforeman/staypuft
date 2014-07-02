@@ -18,7 +18,7 @@ module Staypuft
       TYPES      = LABELS.keys
       HUMAN      = N_('Choose Driver Backend')
     end
-    validates :driver_backend, presence: true, inclusion: { in: DriverBackend::TYPES }
+    validates :driver_backend, presence: true, inclusion: { in: lambda {|c| c.backend_types_for_layout } }
 
     module NfsUri
       HUMAN = N_('NFS URI ("example.com/path/to/mount"):')
@@ -27,14 +27,6 @@ module Staypuft
               :presence => true,
               :if       => :nfs_backend?
     # TODO: uri validation
-
-    module NfsMountOptions
-      HUMAN = N_('NFS mount options"):')
-    end
-    validates :nfs_mount_options,
-              :presence => true,
-              :if       => :nfs_backend?
-    # TODO: mount options validation
 
     # TODO: add ceph UI parameters
 
@@ -71,6 +63,16 @@ module Staypuft
     # TODO: Add back CEPH and EQUALLOGIC as they're suppoirted
     def backend_labels_for_layout
       ret_list = DriverBackend::LABELS.clone
+      ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
+      # TODO: remove this line when Ceph is supported
+      ret_list.delete(DriverBackend::CEPH)
+      # TODO: remove this line when EqualLogic is supported
+      ret_list.delete(DriverBackend::EQUALLOGIC)
+
+      ret_list
+    end
+    def backend_types_for_layout
+      ret_list = DriverBackend::TYPES.clone
       ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
       # TODO: remove this line when Ceph is supported
       ret_list.delete(DriverBackend::CEPH)

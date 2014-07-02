@@ -1,0 +1,14 @@
+<%= f.fields_for :cinder, @deployment.cinder do |p| %>
+  <%= field(p, :driver_backend, :label => _(Staypuft::Deployment::CinderService::DriverBackend::HUMAN)) do
+    @deployment.cinder.backend_labels_for_layout.map do |value, label|
+      radio_button_f_non_inline(p, :driver_backend,
+                                :checked => @deployment.cinder.driver_backend == value,
+                                :value   => value,
+                                :text    => label)
+    end.join
+  end %>
+
+  <div class="cinder_nfs_uri col-md-offset-2 hide">
+    <%=  text_f p, :nfs_uri, class: "cinder_nfs_uri", label: _(Staypuft::Deployment::CinderService::NfsUri::HUMAN) %>
+  </div>
+<%  end %>
