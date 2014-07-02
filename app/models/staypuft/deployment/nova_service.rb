@@ -10,17 +10,17 @@ module Staypuft
     module NetworkManager
       FLAT_DHCP = 'FlatDHCPManager'
       VLAN      = 'VlanManager'
-      LABELS    = { FLAT_DHCP => N_('FlatDHCP'),
+      LABELS    = { FLAT_DHCP => N_('Flat with DHCP'),
                     VLAN      => N_('VLAN') }
       TYPES     = LABELS.keys
-      HUMAN     = N_('Network Type')
+      HUMAN     = N_('Tenant Network Type')
     end
 
     validates :network_manager, presence: true, inclusion: { in: NetworkManager::TYPES }
 
     module VlanRange
       HUMAN       = N_('VLAN Range')
-      HUMAN_AFTER = '[0-4094]'
+      HUMAN_AFTER = '[1-4094] (i.e. 10:100)'
     end
 
     validates :vlan_range,
@@ -30,7 +30,7 @@ module Staypuft
     # TODO: determine whether this is a true range or a single value
 
     module ExternalInterfaceName
-      HUMAN       = N_('External interface connected to')
+      HUMAN       = N_('Which interface to use for external networks:')
       HUMAN_AFTER = N_('(interface) (i.e. eth1)')
     end
 

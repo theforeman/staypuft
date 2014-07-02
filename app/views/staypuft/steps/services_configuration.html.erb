@@ -28,7 +28,7 @@
           %>
             <div class="tab-pane" id="<%= service_name %>">
               <h3><%= _("%s Service Configuration") % service_name.to_s.capitalize %></h3>
-              <% render partial: service_name.to_s, locals: {f: f}%>
+              <%= render partial: service_name.to_s, locals: {f: f}%>
             </div>
             <% end %>
         <% end %>

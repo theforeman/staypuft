@@ -39,6 +39,50 @@ $(function () {
     }
   }
 
+  showNovaVlanRange();
+  $("input[name='staypuft_deployment[nova][network_manager]']").change(showNovaVlanRange);
+  function showNovaVlanRange() {
+    if ($('#staypuft_deployment_nova_network_manager_vlanmanager').is(":checked")) {
+      $('.nova_vlan_range').show();
+    }
+    else {
+      $('.nova_vlan_range').hide();
+    }
+  }
+
+  showNeutronVlanRange();
+  $("input[name='staypuft_deployment[neutron][network_segmentation]']").change(showNeutronVlanRange);
+  function showNeutronVlanRange() {
+    if ($('#staypuft_deployment_neutron_network_segmentation_vlan').is(":checked")) {
+      $('.neutron_tenant_vlan_ranges').show();
+    }
+    else {
+      $('.neutron_tenant_vlan_ranges').hide();
+    }
+  }
+
+  showNeutronExternalInterface();
+  $("input[name='staypuft_deployment[neutron][use_external_interface]']").change(showNeutronExternalInterface);
+  function showNeutronExternalInterface() {
+    if ($('#staypuft_deployment_neutron_use_external_interface').is(":checked")) {
+      $('.neutron_external_interface').show();
+    }
+    else {
+      $('.neutron_external_interface').hide();
+    }
+  }
+
+  showNeutronExternalVlan();
+  $("input[name='staypuft_deployment[neutron][use_vlan_for_external_network]']").change(showNeutronExternalVlan);
+  function showNeutronExternalVlan() {
+    if ($('#staypuft_deployment_neutron_use_vlan_for_external_network').is(":checked")) {
+      $('.neutron_external_vlan').show();
+    }
+    else {
+      $('.neutron_external_vlan').hide();
+    }
+  }
+
   if($('.configuration').length > 0){
     $('.configuration').find('li').first().find('a')[0].click();
   }
