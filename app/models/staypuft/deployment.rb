@@ -81,7 +81,8 @@ module Staypuft
               [:glance, :@glance_service, GlanceService],
               [:cinder, :@cinder_service, CinderService],
               [:passwords, :@passwords, Passwords],
-              [:vips, :@vips, VIPS]]
+              [:vips, :@vips, VIPS],
+              [:ips, :@ips, IPS]]
 
     SCOPES.each do |name, ivar, scope_class|
       define_method name do
