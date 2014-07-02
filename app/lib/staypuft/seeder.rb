@@ -208,13 +208,13 @@ module Staypuft
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = '<%= @host.deployment.cinder.nfs_mount_options %>'
 
-      cinder_backend_rdb                      = '<%= @host.deployment.cinder.ceph_backend? %>'
+      cinder_backend_rbd                      = '<%= @host.deployment.cinder.ceph_backend? %>'
       # TODO: confirm these params and add them to model where user input is needed
-      cinder_rdb_pool                         = 'volumes'
-      cinder_rdb_ceph_conf                    = '/etc/ceph/ceph.conf/'
+      cinder_rbd_pool                         = 'volumes'
+      cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf/'
       cinder_rbd_flatten_volume_from_snapshot = 'false'
       cinder_rbd_max_clone_depth              = '5'
-      cinder_rdb_user                         = 'cinder'
+      cinder_rbd_user                         = 'cinder'
       cinder_rbd_secret_uuid                  = ''
 
       cinder_backend_eqlx           = '<%= @host.deployment.cinder.equallogic_backend? %>'
@@ -277,17 +277,17 @@ module Staypuft
 
       {
           'quickstack::nova_network::controller'   => {
-              'amqp_server'                             => amqp_provider,
+              'amqp_provider'                           => amqp_provider,
               'cinder_backend_iscsi'                    => cinder_backend_iscsi,
               'cinder_backend_nfs'                      => cinder_backend_nfs,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_backend_rdb'                      => cinder_backend_rdb,
-              'cinder_rdb_pool'                         => cinder_rdb_pool,
-              'cinder_rdb_ceph_conf'                    => cinder_rdb_ceph_conf,
+              'cinder_backend_rbd'                      => cinder_backend_rbd,
+              'cinder_rbd_pool'                         => cinder_rbd_pool,
+              'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
               'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
               'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
-              'cinder_rdb_user'                         => cinder_rdb_user,
+              'cinder_rbd_user'                         => cinder_rbd_user,
               'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
               'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_san_ip'                           => cinder_san_ip,
@@ -332,7 +332,7 @@ module Staypuft
               'controller_priv_host'                    => controller_host,
               'controller_pub_host'                     => controller_host },
           'quickstack::neutron::controller'        => {
-              'amqp_server'                             => amqp_provider,
+              'amqp_provider'                           => amqp_provider,
               'ml2_network_vlan_ranges'                 => ml2_network_vlan_ranges,
               'ml2_tenant_network_types'                => ml2_tenant_network_types,
               'ml2_tunnel_id_ranges'                    => ml2_tunnel_id_ranges,
@@ -343,12 +343,12 @@ module Staypuft
               'cinder_backend_nfs'                      => cinder_backend_nfs,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_backend_rdb'                      => cinder_backend_rdb,
-              'cinder_rdb_pool'                         => cinder_rdb_pool,
-              'cinder_rdb_ceph_conf'                    => cinder_rdb_ceph_conf,
+              'cinder_backend_rbd'                      => cinder_backend_rbd,
+              'cinder_rbd_pool'                         => cinder_rbd_pool,
+              'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
               'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
               'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
-              'cinder_rdb_user'                         => cinder_rdb_user,
+              'cinder_rbd_user'                         => cinder_rbd_user,
               'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
               'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_san_ip'                           => cinder_san_ip,
@@ -474,12 +474,12 @@ module Staypuft
               'backend_nfs'                      => cinder_backend_nfs,
               'nfs_shares'                       => cinder_nfs_shares,
               'nfs_mount_options'                => cinder_nfs_mount_options,
-              'backend_rdb'                      => cinder_backend_rdb,
-              'rdb_pool'                         => cinder_rdb_pool,
-              'rdb_ceph_conf'                    => cinder_rdb_ceph_conf,
+              'backend_rbd'                      => cinder_backend_rbd,
+              'rbd_pool'                         => cinder_rbd_pool,
+              'rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
               'rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
               'rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
-              'rdb_user'                         => cinder_rdb_user,
+              'rbd_user'                         => cinder_rbd_user,
               'rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
               'backend_eqlx'                     => cinder_backend_eqlx,
               'san_ip'                           => cinder_san_ip,
@@ -509,7 +509,7 @@ module Staypuft
               'multi_host'                    => 'true',
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
           'quickstack::neutron::networker'         => {
-              'amqp_server'                   => amqp_provider,
+              'amqp_provider'                 => amqp_provider,
               'enable_tunneling'              => enable_tunneling,
               'ovs_bridge_mappings'           => ovs_bridge_mappings,
               'ovs_bridge_uplinks'            => ovs_bridge_uplinks,
@@ -526,12 +526,12 @@ module Staypuft
               'mysql_host'                    => mysql_host,
               'controller_priv_host'          => controller_host },
           'quickstack::storage_backend::cinder'    => {
-              'amqp_server'          => amqp_provider,
+              'amqp_provider'        => amqp_provider,
               'cinder_db_password'   => cinder_db_pw,
               'cinder_user_password' => cinder_user_pw,
               'amqp_password'        => amqp_pw },
           'quickstack::nova_network::compute'      => {
-              'amqp_server'                => amqp_provider,
+              'amqp_provider'              => amqp_provider,
               'network_manager'            => network_manager,
               'network_overrides'          => network_overrides,
               'network_num_networks'       => network_num_networks,
@@ -554,7 +554,7 @@ module Staypuft
               'auth_host'                  => auth_host,
               'nova_host'                  => nova_host },
           'quickstack::neutron::compute'           => {
-              'amqp_server'                => amqp_provider,
+              'amqp_provider'              => amqp_provider,
               'enable_tunneling'           => enable_tunneling,
               'ovs_bridge_mappings'        => compute_ovs_bridge_mappings,
               'ovs_bridge_uplinks'         => compute_ovs_bridge_uplinks,
@@ -657,7 +657,7 @@ module Staypuft
           param = puppetclass.class_params.find_by_key(param_key)
           unless param
             Rails.logger.error "missing param #{param_key} in #{puppetclass_name} trying to set default_value: #{default_value.inspect} found in puppetclasses: " +
-                                   LookupKey.search_for(param_key).map { |lk| lk.param_class.name }.inspect
+                                   LookupKey.search_for(param_key).map { |lk|  (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
             next
           end
           param.update_attributes! default_value: default_value
