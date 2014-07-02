@@ -21,6 +21,12 @@ module Staypuft
 
       when :deployment_settings
         @layouts               = ordered_layouts
+        # FIXME: why don't we reset wizard step on the second time through (i.e. after complete?)
+        # now that we're validating associated services when the form is at CONFIGURATION or COMPLETE
+        # changing anything that might affect active services could cause validation problems (i.e.
+        # can't change from Nova to Neutron, since the change to 'neutron' will activate neutron
+        # validation, which of course can't be valid yet since we haven't presented the user with
+        # form step 3. Any downside to setting this back?
         @deployment.form_step  = Deployment::STEP_SETTINGS unless @deployment.form_complete?
         @deployment.passwords.attributes = params[:staypuft_deployment].delete(:passwords)
         @deployment.attributes = params[:staypuft_deployment]
@@ -29,19 +35,11 @@ module Staypuft
         @deployment.form_step = Deployment::STEP_OVERVIEW unless @deployment.form_complete?
 
       when :services_configuration
-        # Collect services across all deployment's roles
-        @service_hostgroup_map = @deployment.services_hostgroup_map
+        @services_map = [:nova, :neutron, :glance, :cinder]
         if params[:staypuft_deployment]
           @deployment.form_step = Deployment::STEP_CONFIGURATION unless @deployment.form_complete?
-          param_data            = params[:staypuft_deployment][:hostgroup_params]
-          param_data.each do |hostgroup_id, hostgroup_params|
-            hostgroup = Hostgroup.find(hostgroup_id)
-            hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
-              puppetclass = Puppetclass.find(puppetclass_id)
-              puppetclass_params.each do |param_name, param_value|
-                hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
-              end
-            end
+          @services_map.each do |service|
+            @deployment.send(service).attributes = params[:staypuft_deployment].delete(service)
           end
         end
       else
