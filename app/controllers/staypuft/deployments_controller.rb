@@ -24,6 +24,11 @@ module Staypuft
       @service_hostgroup_map = @deployment.services_hostgroup_map
     end
 
+    def edit
+      @deployment            = Deployment.find(params[:id])
+      @service_hostgroup_map = @deployment.services_hostgroup_map
+    end
+
     def destroy
       Deployment.find(params[:id]).destroy
       process_success
