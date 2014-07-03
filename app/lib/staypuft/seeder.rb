@@ -186,10 +186,10 @@ module Staypuft
       ml2_tunnel_id_ranges        = ['10:100000']
       ml2_vni_ranges              = ['10:100000']
       ovs_tunnel_types            = ['vxlan', 'gre']
-      ovs_tunnel_iface            = '<%= @host.deployment.neutron.networker_tenant_interface %>'
+      ovs_tunnel_iface            = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>'
       ovs_bridge_mappings         = '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>'
       ovs_bridge_uplinks          = '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>'
-      compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
+      compute_ovs_tunnel_iface    = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_interface : "" %>'
       compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
       compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
       enable_tunneling            = '<%= @host.deployment.neutron.enable_tunneling?.to_s %>'

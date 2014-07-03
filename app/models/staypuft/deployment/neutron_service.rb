@@ -35,7 +35,7 @@ module Staypuft
               :if       => :vlan_segmentation?
     # TODO: vlan range format validation
 
-    module NetworkerTenantInterface
+    module NetworkerTenantInterface # TODO can be hidden in UI when !#enable_tunneling?
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
@@ -76,7 +76,7 @@ module Staypuft
               :if       => :external_network_vlan?
     # TODO: vlan rangesformat validation
 
-    module ComputeTenantInterface
+    module ComputeTenantInterface # TODO can be hidden in UI when !#enable_tunneling?
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
     end
@@ -86,7 +86,7 @@ module Staypuft
     # TODO: interface name format validation
 
     def set_defaults
-      self.network_segmentation = NetworkSegmentation::VXLAN
+      self.network_segmentation   = NetworkSegmentation::VXLAN
       self.use_external_interface = 'false'
     end
 
