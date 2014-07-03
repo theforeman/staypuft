@@ -446,7 +446,7 @@ module Staypuft
               'swift_public_vip'              => vip_format % :swift,
               'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
               'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
-          'quickstack::pacemaker::common'          => { # TODO is this correct puppetclass?
+          'quickstack::pacemaker::common'          => {
               'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(" ") %>' },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
