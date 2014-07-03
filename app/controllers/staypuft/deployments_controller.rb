@@ -24,7 +24,23 @@ module Staypuft
       @service_hostgroup_map = @deployment.services_hostgroup_map
     end
 
-    # FIXME: missing update action, there is no way how to submit the edited params
+    def update
+      if params[:staypuft_deployment]
+        param_data = params[:staypuft_deployment][:hostgroup_params]
+        param_data.each do |hostgroup_id, hostgroup_params|
+          hostgroup = Hostgroup.find(hostgroup_id)
+          hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
+            puppetclass = Puppetclass.find(puppetclass_id)
+            puppetclass_params.each do |param_name, param_value|
+              hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
+            end
+          end
+        end
+      end
+
+      redirect_to summary_deployment_path(params[:id])
+    end
+
     def edit
       @deployment            = Deployment.find(params[:id])
       @service_hostgroup_map = @deployment.services_hostgroup_map
@@ -55,7 +71,7 @@ module Staypuft
       hostgroup              = ::Hostgroup.find params[:hostgroup_id]
       deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
 
-      hosts_to_assign  = ::Host::Base.find Array(params[:host_ids])
+      hosts_to_assign = ::Host::Base.find Array(params[:host_ids])
 
       unassigned_hosts = hosts_to_assign.reduce([]) do |unassigned_hosts, discovered_host|
         success, host = assign_host_to_hostgroup discovered_host, hostgroup
@@ -80,7 +96,7 @@ module Staypuft
       hostgroup              = ::Hostgroup.find params[:hostgroup_id]
       deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
 
-      hosts_to_unassign  = ::Host::Base.find Array(params[:host_ids])
+      hosts_to_unassign = ::Host::Base.find Array(params[:host_ids])
 
       hosts_to_unassign.each do |host|
         unless host.open_stack_deployed? && deployment_in_progress

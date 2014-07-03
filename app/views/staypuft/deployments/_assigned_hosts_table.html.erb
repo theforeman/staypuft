@@ -10,7 +10,7 @@
         <thead>
           <tr>
             <th class="ca">
-              <%= check_box_tag :check_all %>
+              <%= tag :input, type: 'checkbox', class: 'check_all' %>
             </th>
             <th><%= sort :name, :as => _('Name') %></th>
             <th class="hidden-s hidden-xs"><%= _('Deploying?') %></th>

@@ -1,50 +1,66 @@
-<% title _("%s Deployment - Advanced Configuration") % @deployment.name %>
+<% title _("Edit - %s Configuration Parameters") % @deployment.name %>
 <% content_for(:title_actions) do %>
-  <%= link_to _("Back to Summary"), summary_deployment_path(@deployment.id)%>
+  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id) %>
+  <%= link_to _("Apply"), '',
+              class: "btn btn-primary",
+              id:    'edit_staypuft_deployment_submit' %>
+  <%= link_to _("Cancel"), summary_deployment_path(@deployment.id), :class => "btn btn-danger" %>
 <% end %>
 
+<script>
+  $('#edit_staypuft_deployment_submit').click(function (e) {
+    $('#edit_staypuft_deployment').submit();
+    e.preventDefault();
+  });
+</script>
 
-<div class="col-md-12">
-  <div class="form-group tabbed_side_nav_form row">
-    <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
-      <h3><%= _("Services") %></h3>
-      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
-        <li class="<%= 'active' if i == 0 %>">
-          <a href="#<%= service.name.parameterize.underscore %>" data-toggle="tab">
-            <%= service.name %>
-          </a>
-        </li>
-      <% end %>
-    </ul>
+<%= form_for(@deployment,
+             :url  => deployment_path, :method => 'PUT',
+             :html => { :class => "clearfix", id: 'edit_staypuft_deployment' }) do |f| %>
+  <%= base_errors_for @deployment %>
 
-    <div class="tab-content col-md-9">
-      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
-        <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
-          <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-          <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
-            <% params_hash.each do |param_hash| %>
-              <div class="row">
-                <div class="col-md-4 control-label">
-                  <%= label_tag param_hash[:param_key].key %>
+  <div class="col-md-12">
+    <div class="form-group tabbed_side_nav_form row">
+      <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
+        <h3><%= _("Services") %></h3>
+        <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+          <li class="<%= 'active' if i == 0 %>">
+            <a href="#<%= service.name.parameterize.underscore %>" data-toggle="tab">
+              <%= service.name %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="tab-content col-md-9">
+        <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+          <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
+            <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
+            <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
+              <% params_hash.each do |param_hash| %>
+                <div class="row">
+                  <div class="col-md-4 control-label">
+                    <%= label_tag param_hash[:param_key].key %>
+                  </div>
+                  <div class="col-md-5">
+                    <%= text_field_tag format("staypuft_deployment[hostgroup_params][%s][puppetclass_params][%s][%s]",
+                                              param_hash[:hostgroup].id,
+                                              param_hash[:puppetclass].id,
+                                              param_hash[:param_key].key),
+                                       param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]),
+                                       :class => "form-control",
+                                       :size  => "45" %>
+                  </div>
                 </div>
-                <div class="col-md-5">
-                  <%= text_field_tag format("staypuft_deployment[hostgroup_params][%s][puppetclass_params][%s][%s]",
-                                            param_hash[:hostgroup].id,
-                                            param_hash[:puppetclass].id,
-                                            param_hash[:param_key].key),
-                                     param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]),
-                                     :class => "form-control",
-                                     :size  => "45" %>
-                </div>
-              </div>
-              <br/>
+                <br/>
+              <% end %>
+            <% else %>
+              <p><%= _("No configuration needed for this service.") %></p>
             <% end %>
-          <% else %>
-            <p><%= _("No configuration needed for this service.") %></p>
-          <% end %>
-          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
-        </div>
-      <% end %>
+            <%# render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>

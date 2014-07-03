@@ -179,19 +179,20 @@ module Staypuft
       network_create_networks     = true
 
       # Neutron
-      ovs_vlan_ranges             = '<%= "physnet-tenants:#{@host.deployment.neutron.tenant_vlan_ranges}" %>'
-      ml2_network_vlan_ranges     = [ovs_vlan_ranges]
-      ml2_tenant_network_types    = '<%= @host.deployment.neutron.network_segmentation_list %>'
+      ovs_vlan_ranges             = '<%= @host.deployment.neutron.networker_vlan_ranges %>'
+      compute_ovs_vlan_ranges     = '<%= @host.deployment.neutron.compute_vlan_ranges %>'
+      ml2_network_vlan_ranges     = ovs_vlan_ranges
+      ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation %>']
       ml2_tunnel_id_ranges        = ['10:100000']
       ml2_vni_ranges              = ['10:100000']
       ovs_tunnel_types            = ['vxlan', 'gre']
-      ovs_tunnel_iface            = '<%= @host.deployment.neutron.networker_tenant_interface %>'
-      ovs_bridge_mappings         = '<%= @host.deployment.neutron.controller_ovs_bridge_mappings %>'
-      ovs_bridge_uplinks          = '<%= @host.deployment.neutron.controller_ovs_bridge_uplinks %>'
-      compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
+      ovs_tunnel_iface            = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>'
+      ovs_bridge_mappings         = '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>'
+      ovs_bridge_uplinks          = '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>'
+      compute_ovs_tunnel_iface    = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_interface : "" %>'
       compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
       compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
-      enable_tunneling            = 'true'
+      enable_tunneling            = '<%= @host.deployment.neutron.enable_tunneling?.to_s %>'
 
       # Glance
       backend                     = 'file'
@@ -445,7 +446,7 @@ module Staypuft
               'swift_public_vip'              => vip_format % :swift,
               'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
               'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
-          'quickstack::pacemaker::common'          => { # TODO is this correct puppetclass?
+          'quickstack::pacemaker::common'          => {
               'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(" ") %>' },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
@@ -554,7 +555,7 @@ module Staypuft
               'ovs_bridge_uplinks'         => compute_ovs_bridge_uplinks,
               'ovs_tunnel_iface'           => compute_ovs_tunnel_iface,
               'ovs_tunnel_types'           => ovs_tunnel_types,
-              'ovs_vlan_ranges'            => ovs_vlan_ranges,
+              'ovs_vlan_ranges'            => compute_ovs_vlan_ranges,
               'admin_password'             => admin_pw,
               'ceilometer_user_password'   => ceilometer_user_pw,
               'neutron_db_password'        => neutron_db_pw,
@@ -651,7 +652,7 @@ module Staypuft
           param = puppetclass.class_params.find_by_key(param_key)
           unless param
             Rails.logger.error "missing param #{param_key} in #{puppetclass_name} trying to set default_value: #{default_value.inspect} found in puppetclasses: " +
-                                   LookupKey.search_for(param_key).map { |lk|  (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
+                                   LookupKey.search_for(param_key).map { |lk| (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
             next
           end
           unless param.update_attributes default_value: default_value

@@ -11,11 +11,10 @@
     <%= text_f f, :name %>
     <%= textarea_f f, :description, :rows => 3 %>
 
-    <% { layout_name: Staypuft::Deployment::LayoutName,
-         networking:  Staypuft::Deployment::Networking,
-         # amqp_provider: Staypuft::Deployment::AmqpProvider,
-         # platform:      Staypuft::Deployment::Platform
-       }.
+    <% { layout_name:   Staypuft::Deployment::LayoutName,
+         networking:    Staypuft::Deployment::Networking,
+         amqp_provider: Staypuft::Deployment::AmqpProvider,
+         platform:      Staypuft::Deployment::Platform }.
            each do |attr, constants| %>
 
       <%= field(f, attr, :label => _(constants::HUMAN)) do
@@ -40,14 +39,14 @@
 
       <div class="single_password col-md-offset-0 hide">
         <%= password_f p, :single_password,
-                          :label       => _("Password"),
-                          :class       => "single_password",
-                          :help_inline => _("Password should be 6 characters or more"),
-                          :placeholder => '' %>
+                       :label       => _("Password"),
+                       :class       => "single_password",
+                       :help_inline => _("Password should be 6 characters or more"),
+                       :placeholder => '' %>
         <%= password_f p, :single_password_confirmation,
-                          :label       => _("Confirm"),
-                          :class       => "single_password",
-                          :placeholder => '' %>
+                       :label       => _("Confirm"),
+                       :class       => "single_password",
+                       :placeholder => '' %>
       </div>
     <% end %>
 

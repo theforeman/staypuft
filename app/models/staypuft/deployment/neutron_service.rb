@@ -5,6 +5,9 @@ module Staypuft
     end
 
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
+    INTERFACE_HELP    = N_('(i.e. eth0, em1, etc.)')
+    VLAN_HELP         = N_('[1-4094] (i.e. 10:100)')
+
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
                :use_external_interface, :external_interface_name, :compute_tenant_interface,
@@ -27,7 +30,7 @@ module Staypuft
 
     module TenantVlanRanges
       HUMAN       = N_('Tenant (VM data) VLAN Ranges')
-      HUMAN_AFTER = '[1-4094] (i.e. 10:100)'
+      HUMAN_AFTER = VLAN_HELP
     end
 
     validates :tenant_vlan_ranges,
@@ -37,7 +40,7 @@ module Staypuft
 
     module NetworkerTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
-      HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
+      HUMAN_AFTER = INTERFACE_HELP
     end
 
     validates :networker_tenant_interface,
@@ -52,7 +55,7 @@ module Staypuft
 
     module ExternalInterfaceName
       HUMAN       = N_('External interface connected to')
-      HUMAN_AFTER = N_('(interface) (i.e. eth1)')
+      HUMAN_AFTER = INTERFACE_HELP
     end
 
     validates :external_interface_name,
@@ -68,7 +71,7 @@ module Staypuft
 
     module VlanRangesForExternalNetwork
       HUMAN       = N_('VLAN Range for external network')
-      HUMAN_AFTER = N_('i.e. physnet1:1000:2999')
+      HUMAN_AFTER = N_('i.e. 1000:2999')
     end
 
     validates :vlan_ranges_for_external_network,
@@ -78,7 +81,7 @@ module Staypuft
 
     module ComputeTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
-      HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
+      HUMAN_AFTER = INTERFACE_HELP
     end
 
     validates :compute_tenant_interface,
@@ -86,7 +89,7 @@ module Staypuft
     # TODO: interface name format validation
 
     def set_defaults
-      self.network_segmentation = NetworkSegmentation::VXLAN
+      self.network_segmentation   = NetworkSegmentation::VXLAN
       self.use_external_interface = 'false'
     end
 
@@ -110,26 +113,19 @@ module Staypuft
       [self.network_segmentation, *(SEGMENTATION_LIST - [self.network_segmentation])]
     end
 
-    def controller_ovs_bridge_mappings
-      if self.vlan_segmentation?
-        ["physnet-tenants:br-#{self.networker_tenant_interface}",
-         ('physnet-external:br-ex' if self.use_external_interface?)].compact
-      else
-        []
-      end
+    def networker_ovs_bridge_mappings
+      [("physnet-tenants:br-#{self.networker_tenant_interface}"  unless self.enable_tunneling?),
+       ('physnet-external:br-ex' if self.use_external_interface?)].compact
     end
 
-    def controller_ovs_bridge_uplinks
-      if self.vlan_segmentation?
-        ["br-#{self.networker_tenant_interface}:#{self.networker_tenant_interface}",
-         ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)]
-      else
-        []
-      end
+    def networker_ovs_bridge_uplinks
+      [("br-#{self.networker_tenant_interface}:#{self.networker_tenant_interface}" unless self.enable_tunneling?),
+       ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)
+      ].compact
     end
 
     def compute_ovs_bridge_mappings
-      if self.vlan_segmentation?
+      if !self.enable_tunneling?
         ["physnet-tenants:br-#{self.compute_tenant_interface}"]
       else
         []
@@ -137,28 +133,36 @@ module Staypuft
     end
 
     def compute_ovs_bridge_uplinks
-      if self.vlan_segmentation?
+      if !self.enable_tunneling?
         ["br-#{self.compute_tenant_interface}:#{self.compute_tenant_interface}"]
       else
         []
       end
     end
 
-    # FIXME: mapping is off here -- both external and tenant vlan ranges map to the same back end
-    # params: fix this with morazi in the AM
-    def ml2_network_vlan_ranges
-      if self.external_network_vlan?
-        [self.vlan_ranges_for_external_network]
+    def compute_vlan_ranges
+      if self.vlan_segmentation?
+        ["physnet-tenants:#{self.tenant_vlan_ranges}"]
       else
         []
       end
     end
+
+    def networker_vlan_ranges
+      [("physnet-tenants:#{self.tenant_vlan_ranges}" if self.vlan_segmentation?),
+       ("physnet-external:#{self.vlan_ranges_for_external_network}" if self.external_network_vlan?)].compact
+    end
+
     def vlan_segmentation?
       self.network_segmentation == NetworkSegmentation::VLAN
     end
 
     def external_network_vlan?
       self.use_external_interface? && self.use_vlan_for_external_network?
+    end
+
+    def enable_tunneling?
+      [NetworkSegmentation::VXLAN, NetworkSegmentation::GRE].include?(network_segmentation)
     end
 
   end
