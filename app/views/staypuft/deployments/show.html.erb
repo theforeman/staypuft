@@ -1,4 +1,5 @@
-<% title @deployment.name %>
+<% title(@deployment.name, edit_textfield(@deployment, :name, options={:update_url => deployment_path(@deployment)})) %>
+<% subtitle edit_textfield(@deployment, :description, options={:update_url => deployment_path(@deployment)}) %>
 
 <% content_for(:title_actions) do %>
   <%= link_to(_("Advanced Configuration"), summary_deployment_path(@deployment.id), :class => '') %>

@@ -25,20 +25,31 @@ module Staypuft
     end
 
     def update
-      if params[:staypuft_deployment]
-        param_data = params[:staypuft_deployment][:hostgroup_params]
-        param_data.each do |hostgroup_id, hostgroup_params|
-          hostgroup = Hostgroup.find(hostgroup_id)
-          hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
-            puppetclass = Puppetclass.find(puppetclass_id)
-            puppetclass_params.each do |param_name, param_value|
-              hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
+      respond_to do | format |
+
+        format.html do
+          if params[:staypuft_deployment]
+            param_data = params[:staypuft_deployment][:hostgroup_params]
+            param_data.each do |hostgroup_id, hostgroup_params|
+              hostgroup = Hostgroup.find(hostgroup_id)
+              hostgroup_params[:puppetclass_params].each do |puppetclass_id, puppetclass_params|
+                puppetclass = Puppetclass.find(puppetclass_id)
+                puppetclass_params.each do |param_name, param_value|
+                  hostgroup.set_param_value_if_changed(puppetclass, param_name, param_value)
+                end
+              end
             end
           end
+          redirect_to summary_deployment_path(params[:id])
         end
-      end
 
-      redirect_to summary_deployment_path(params[:id])
+        format.json do
+          @deployment = Deployment.find(params[:id])
+          @deployment.update_attributes(params[:deployment])
+          render :status => 200, :json => @deployment.to_json
+        end
+
+      end
     end
 
     def edit
