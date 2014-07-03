@@ -124,15 +124,10 @@ module Staypuft
       end
     end
 
-    # TODO: if use_external_interface? without VLAN segmentation, do we need the second array
-    # entry only, or should it be []
     def networker_ovs_bridge_uplinks
-      if self.vlan_segmentation?
-        ["br-#{self.networker_tenant_interface}:#{self.networker_tenant_interface}",
-         ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)].compact
-      else
-        []
-      end
+      [("br-#{self.networker_tenant_interface}:#{self.networker_tenant_interface}" if self.vlan_segmentation?),
+       ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)
+      ].compact
     end
 
     def compute_ovs_bridge_mappings
