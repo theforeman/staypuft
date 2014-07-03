@@ -38,7 +38,7 @@ module Staypuft
               :if       => :vlan_segmentation?
     # TODO: vlan range format validation
 
-    module NetworkerTenantInterface # TODO can be hidden in UI when !#enable_tunneling?
+    module NetworkerTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = INTERFACE_HELP
     end
@@ -79,7 +79,7 @@ module Staypuft
               :if       => :external_network_vlan?
     # TODO: vlan rangesformat validation
 
-    module ComputeTenantInterface # TODO can be hidden in UI when !#enable_tunneling?
+    module ComputeTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = INTERFACE_HELP
     end
@@ -113,8 +113,6 @@ module Staypuft
       [self.network_segmentation, *(SEGMENTATION_LIST - [self.network_segmentation])]
     end
 
-    # TODO: if use_external_interface? without VLAN segmentation, do we need the second array
-    # entry only, or should it be []
     def networker_ovs_bridge_mappings
       [("physnet-tenants:br-#{self.networker_tenant_interface}"  unless self.enable_tunneling?),
        ('physnet-external:br-ex' if self.use_external_interface?)].compact
