@@ -24,7 +24,10 @@ module Staypuft
       @service_hostgroup_map = @deployment.services_hostgroup_map
     end
 
-    # FIXME: missing update action, there is no way how to submit the edited params
+    def update
+      # FIXME: missing update action, there is no way how to submit the edited params
+    end
+
     def edit
       @deployment            = Deployment.find(params[:id])
       @service_hostgroup_map = @deployment.services_hostgroup_map
