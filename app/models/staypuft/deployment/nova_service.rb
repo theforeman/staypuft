@@ -4,6 +4,9 @@ module Staypuft
       'nova'
     end
 
+    INTERFACE_HELP    = Deployment::NeutronService::INTERFACE_HELP
+    VLAN_HELP         = Deployment::NeutronService::VLAN_HELP
+
     param_attr :network_manager, :vlan_range, :external_interface_name, :public_floating_range,
                :compute_tenant_interface, :private_fixed_range
 
@@ -20,7 +23,7 @@ module Staypuft
 
     module VlanRange
       HUMAN       = N_('VLAN Range')
-      HUMAN_AFTER = '[1-4094] (i.e. 10:100)'
+      HUMAN_AFTER = VLAN_HELP
     end
 
     validates :vlan_range,
@@ -31,7 +34,7 @@ module Staypuft
 
     module ExternalInterfaceName
       HUMAN       = N_('Which interface to use for external networks:')
-      HUMAN_AFTER = N_('(interface) (i.e. eth1)')
+      HUMAN_AFTER = INTERFACE_HELP
     end
 
     validates :external_interface_name, presence: true
@@ -47,7 +50,7 @@ module Staypuft
 
     module ComputeTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
-      HUMAN_AFTER = N_('(i.e. eth0, em1, etc.)')
+      HUMAN_AFTER = INTERFACE_HELP
     end
 
     validates :compute_tenant_interface,
@@ -56,7 +59,7 @@ module Staypuft
 
     module PrivateFixedRange
       HUMAN       = N_('Private IP range for tenant networks:')
-      HUMAN_AFTER = N_('("10.0.0.0/24", for example)')
+      HUMAN_AFTER = PublicFloatingRange::HUMAN_AFTER
     end
 
     validates :private_fixed_range, presence: true
