@@ -192,7 +192,7 @@ module Staypuft
       compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
       compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
       compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
-      enable_tunneling            = 'true'
+      enable_tunneling            = '<%= @host.deployment.neutron.enable_tunneling?.to_s %>'
 
       # Glance
       backend                     = 'file'
@@ -652,7 +652,7 @@ module Staypuft
           param = puppetclass.class_params.find_by_key(param_key)
           unless param
             Rails.logger.error "missing param #{param_key} in #{puppetclass_name} trying to set default_value: #{default_value.inspect} found in puppetclasses: " +
-                                   LookupKey.search_for(param_key).map { |lk|  (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
+                                   LookupKey.search_for(param_key).map { |lk| (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
             next
           end
           unless param.update_attributes default_value: default_value
