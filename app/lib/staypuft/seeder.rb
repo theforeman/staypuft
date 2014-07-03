@@ -168,7 +168,7 @@ module Staypuft
       # Nova
       network_manager             = '<%= @host.deployment.nova.network_manager %>'
       # multi_host handled inline, since it's two separate static values 'true' and 'True'
-      network_overrides           = '<%= @host.deployment.nova.network_overrides %>'
+      network_overrides           = '<%= @host.deployment.nova.network_overrides.to_yaml %>'
       # TODO: determine whether num_networks and network_size are static or calculated
       network_num_networks        = 1
       network_network_size        = 255
