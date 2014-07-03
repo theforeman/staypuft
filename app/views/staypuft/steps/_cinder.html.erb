@@ -8,7 +8,10 @@
     end.join
   end %>
 
-  <div class="cinder_nfs_uri col-md-offset-2 hide">
-    <%=  text_f p, :nfs_uri, class: "cinder_nfs_uri", label: _(Staypuft::Deployment::CinderService::NfsUri::HUMAN) %>
+  <div class="cinder_nfs_uri col-md-offset-0 hide">
+    <%= text_f p, :nfs_uri, class: "cinder_nfs_uri",
+               label:              _(Staypuft::Deployment::CinderService::NfsUri::HUMAN),
+               help_inline:        _(Staypuft::Deployment::CinderService::NfsUri::HUMAN_AFTER) %>
+
   </div>
-<%  end %>
+<% end %>
