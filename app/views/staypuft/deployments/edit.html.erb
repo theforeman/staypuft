@@ -1,6 +1,7 @@
 <% title _("Edit - %s Configuration Parameters") % @deployment.name %>
 <% content_for(:title_actions) do %>
   <%= link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
+  <%= link_to _("Cancel"), summary_deployment_path(@deployment.id), :class => "btn btn-danger" %>
 <% end %>
 
 
@@ -50,11 +51,11 @@
         <% end %>
       </div>
     </div>
-    <div class="form-actions pull-right">
-      <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
-        <%= _("Apply") %>
-      <% end %>
-      <%= link_to _("Cancel"), summary_deployment_path(@deployment.id), :class => "btn btn-danger" %>
-    </div>
+    <%# TODO pull this up to the title_actions and enable after update added %>
+    <!--<div class="form-actions pull-right">-->
+      <!--<%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>-->
+        <!--<%= _("Apply") %>-->
+      <!--<% end %>-->
+    <!--</div>-->
   </div>
 <% end %>
