@@ -43,11 +43,11 @@
                           :label       => _("Password"),
                           :class       => "single_password",
                           :help_inline => _("Password should be 6 characters or more"),
-                          :placeholder => password_placeholder(f.object) %>
+                          :placeholder => '' %>
         <%= password_f p, :single_password_confirmation,
                           :label       => _("Confirm"),
                           :class       => "single_password",
-                          :placeholder => password_placeholder(f.object) %>
+                          :placeholder => '' %>
       </div>
     <% end %>
 
