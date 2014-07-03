@@ -8,8 +8,9 @@
     end.join
   end %>
 
-  <div class="glance_nfs_network_path col-md-offset-2 hide">
-    <%=  text_f p, :nfs_network_path, class: "glance_nfs_network_path", label: _(Staypuft::Deployment::GlanceService::NfsNetworkPath::HUMAN),
-         help_inline:  _(Staypuft::Deployment::GlanceService::NfsNetworkPath::HUMAN_AFTER) %>
+  <div class="glance_nfs_network_path col-md-offset-0 hide">
+    <%= text_f p, :nfs_network_path, class: "glance_nfs_network_path",
+               label:                       _(Staypuft::Deployment::GlanceService::NfsNetworkPath::HUMAN),
+               help_inline:                 _(Staypuft::Deployment::GlanceService::NfsNetworkPath::HUMAN_AFTER) %>
   </div>
-<%  end %>
+<% end %>

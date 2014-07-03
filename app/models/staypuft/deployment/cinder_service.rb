@@ -21,7 +21,8 @@ module Staypuft
     validates :driver_backend, presence: true, inclusion: { in: lambda {|c| c.backend_types_for_layout } }
 
     module NfsUri
-      HUMAN = N_('NFS URI ("example.com/path/to/mount"):')
+      HUMAN = N_('NFS URI:')
+      HUMAN_AFTER = N_('("example.com/path/to/mount")')
     end
     validates :nfs_uri,
               :presence => true,
