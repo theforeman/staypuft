@@ -1,36 +1,26 @@
 <% title @deployment.name %>
 
 <% content_for(:title_actions) do %>
+  <%= link_to(_("Advanced Configuration"), summary_deployment_path(@deployment.id), :class => '') %>
+
+  <% if @deployment.in_progress? %>
+    <%= display_link_if_authorized(
+            _('Deploy in progress'),
+            hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
+            :class => 'btn-info') %>
+  <% else %>
+    <%= link_to(_("Deploy"),
+                "",
+                :class         => %w(btn btn-primary),
+                :'data-toggle' => "modal",
+                :'data-target' => "#deploy_modal") %>
+  <% end %>
 
   <%= link_to(_("Revisit Setup Wizard"), if @deployment.deployed?
                            deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
                          else
                            deployment_steps_path(deployment_id: @deployment)
                          end) %>
-  <div class="btn-group dropdown keep-open">
-    <button type="button" class="btn btn-default dropdown-toggle" role="button" href="#"
-            data-toggle="dropdown" data-target="#">
-      <%= _('Configuration') %>
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu dropdown keep-open" role="menu">
-      <li><%= link_to(_("Summary"), summary_deployment_path(@deployment.id), :class => '') %></li>
-      <li><%= link_to _("Advanced Configuration"), edit_deployment_path(@deployment.id)%></li>
-      <li>
-        <%= link_to(icon_text("cloud-upload", _("Import")),
-                    {},
-                    { :remote => true,
-                      :rel    => 'popover',
-                      :data   => { 'content'        => "#{render partial: 'import_form'}",
-                                   'original-title' => _('Import Config'),
-                                   'placement'      => 'left'} }) %>
-      </li>
-      <li>
-        <%= link_to(icon_text("cloud-download", _("Export")),
-                    export_config_deployment_path(@deployment.id)) %>
-      </li>
-    </ul>
-  </div>
 
   <% if Rails.env.development? %>
     <div class="btn-group">
@@ -51,20 +41,6 @@
       </ul>
     </div>
   <% end %>
-
-  <% if @deployment.in_progress? %>
-    <%= display_link_if_authorized(
-            _('Deploy in progress'),
-            hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
-            :class => 'btn-info') %>
-  <% else %>
-    <%= link_to(_("Deploy"),
-                "",
-                :class         => %w(btn btn-primary),
-                :'data-toggle' => "modal",
-                :'data-target' => "#deploy_modal") %>
-  <% end %>
-
 
   <%= help_path %>
 <% end %>

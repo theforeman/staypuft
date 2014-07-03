@@ -1,6 +1,8 @@
-<% title _("%s Deployment - Advanced Configuration") % @deployment.name %>
+<% title _("Edit - %s Configuration Parameters") % @deployment.name %>
 <% content_for(:title_actions) do %>
-  <%= link_to _("Back to Summary"), summary_deployment_path(@deployment.id)%>
+  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
+  <%= link_to _("Cancel"), summary_deployment_path(@deployment.id)%>
+  <%= link_to _("Apply"), summary_deployment_path(@deployment.id), :class => "btn-primary"%>
 <% end %>
 
 

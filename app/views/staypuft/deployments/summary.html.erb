@@ -1,30 +1,53 @@
-<% title _("%s Summary") % @deployment.name %>
+<% title _("%s Configuration Parameters") % @deployment.name %>
 <% content_for(:title_actions) do %>
-  <%= link_to _("Advanced Configuration"), edit_deployment_path(@deployment.id)%>
   <%= link_to _("Back to Deployment"), deployment_path(@deployment.id)%>
+  <%= link_to(icon_text("cloud-upload", _("Import")),
+              {},
+              { :remote => true,
+                :rel    => 'popover',
+                :data   => { 'content'        => "#{render partial: 'import_form'}",
+                             'original-title' => _('Import Config'),
+                             'placement'      => 'left'} }) %>
+  <%= link_to(icon_text("cloud-download", _("Export")),
+              export_config_deployment_path(@deployment.id)) %>
+  <%= link_to _("Edit"), edit_deployment_path(@deployment.id)%>
 <% end %>
 
 <div class="col-md-12">
-  <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
-    <div class="well <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
-      <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
-      <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
-        <% params_hash.each do |param_hash| %>
-        <div class="row">
-          <div class="col-md-3 text-right">
-            <%= label_tag param_hash[:param_key].key %>
-          </div>
-          <div class="col-md-9">
-            <%= content_tag "staypuft_deployment[hostgroup_params][#{param_hash[:hostgroup].id}][puppetclass_params][#{param_hash[:puppetclass].id}][#{param_hash[:param_key].key}]", param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]), :class=>"" %>
-          </div>
-        </div>
-        <br/>
-        <% end %>
-      <% else %>
-        <div class="row">
-          <p class="col-md-12"><%= _("No configuration for this service.") %></p>
+  <div class="form-group tabbed_side_nav_form row">
+    <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
+      <h3><%= _("Services") %></h3>
+      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+        <li class="<%= 'active' if i == 0 %>">
+          <a href="#<%= service.name.parameterize.underscore %>" data-toggle="tab">
+            <%= service.name %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="tab-content col-md-9">
+      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+        <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
+          <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
+          <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>
+            <% params_hash.each do |param_hash| %>
+              <div class="row">
+                <div class="col-md-4 control-label">
+                  <%= label_tag param_hash[:param_key].key %>
+                </div>
+                <div class="col-md-5">
+                  <p class="form-control-static"><%= param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]) %></p>
+                </div>
+              </div>
+              <br/>
+            <% end %>
+          <% else %>
+            <p><%= _("No configuration needed for this service.") %></p>
+          <% end %>
+          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
         </div>
       <% end %>
     </div>
-  <% end %>
+  </div>
 </div>
