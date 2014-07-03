@@ -158,7 +158,7 @@ module Staypuft
 
     def networker_vlan_ranges
       [("physnet-tenants:#{self.tenant_vlan_ranges}" if self.vlan_segmentation?),
-        "physnet-external:#{self.vlan_ranges_for_external_network}" if self.external_network_vlan??)].compact
+       ("physnet-external:#{self.vlan_ranges_for_external_network}" if self.external_network_vlan?)].compact
     end
 
     def vlan_segmentation?
