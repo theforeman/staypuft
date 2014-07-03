@@ -446,7 +446,7 @@ module Staypuft
               'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
               'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
           'quickstack::pacemaker::common'          => { # TODO is this correct puppetclass?
-              'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(' ') %>' },
+              'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(" ") %>' },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
