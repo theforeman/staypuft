@@ -71,7 +71,7 @@ module Staypuft
 
     module VlanRangesForExternalNetwork
       HUMAN       = N_('VLAN Range for external network')
-      HUMAN_AFTER = N_('i.e. physnet1:1000:2999')
+      HUMAN_AFTER = N_('i.e. 1000:2999')
     end
 
     validates :vlan_ranges_for_external_network,
@@ -113,7 +113,9 @@ module Staypuft
       [self.network_segmentation, *(SEGMENTATION_LIST - [self.network_segmentation])]
     end
 
-    def controller_ovs_bridge_mappings
+    # TODO: if use_external_interface? without VLAN segmentation, do we need the second array
+    # entry only, or should it be []
+    def networker_ovs_bridge_mappings
       if self.vlan_segmentation?
         ["physnet-tenants:br-#{self.networker_tenant_interface}",
          ('physnet-external:br-ex' if self.use_external_interface?)].compact
@@ -122,10 +124,12 @@ module Staypuft
       end
     end
 
-    def controller_ovs_bridge_uplinks
+    # TODO: if use_external_interface? without VLAN segmentation, do we need the second array
+    # entry only, or should it be []
+    def networker_ovs_bridge_uplinks
       if self.vlan_segmentation?
         ["br-#{self.networker_tenant_interface}:#{self.networker_tenant_interface}",
-         ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)]
+         ("br-ex:#{self.external_interface_name}" if self.use_external_interface?)].compact
       else
         []
       end
@@ -147,15 +151,19 @@ module Staypuft
       end
     end
 
-    # FIXME: mapping is off here -- both external and tenant vlan ranges map to the same back end
-    # params: fix this with morazi in the AM
-    def ml2_network_vlan_ranges
-      if self.external_network_vlan?
-        [self.vlan_ranges_for_external_network]
+    def compute_vlan_ranges
+      if self.vlan_segmentation?
+        ["physnet-tenants:#{self.tenant_vlan_ranges}"]
       else
         []
       end
     end
+
+    def networker_vlan_ranges
+      [("physnet-tenants:#{self.tenant_vlan_ranges}" if self.vlan_segmentation?),
+        "physnet-external:#{self.vlan_ranges_for_external_network}" if self.external_network_vlan??)].compact
+    end
+
     def vlan_segmentation?
       self.network_segmentation == NetworkSegmentation::VLAN
     end

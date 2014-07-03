@@ -179,15 +179,16 @@ module Staypuft
       network_create_networks     = true
 
       # Neutron
-      ovs_vlan_ranges             = '<%= "physnet-tenants:#{@host.deployment.neutron.tenant_vlan_ranges}" %>'
-      ml2_network_vlan_ranges     = [ovs_vlan_ranges]
-      ml2_tenant_network_types    = '<%= @host.deployment.neutron.network_segmentation_list %>'
+      ovs_vlan_ranges             = '<%= @host.deployment.neutron.networker_vlan_ranges %>'
+      compute_ovs_vlan_ranges     = '<%= @host.deployment.neutron.compute_vlan_ranges %>'
+      ml2_network_vlan_ranges     = ovs_vlan_ranges
+      ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation %>']
       ml2_tunnel_id_ranges        = ['10:100000']
       ml2_vni_ranges              = ['10:100000']
       ovs_tunnel_types            = ['vxlan', 'gre']
       ovs_tunnel_iface            = '<%= @host.deployment.neutron.networker_tenant_interface %>'
-      ovs_bridge_mappings         = '<%= @host.deployment.neutron.controller_ovs_bridge_mappings %>'
-      ovs_bridge_uplinks          = '<%= @host.deployment.neutron.controller_ovs_bridge_uplinks %>'
+      ovs_bridge_mappings         = '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>'
+      ovs_bridge_uplinks          = '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>'
       compute_ovs_tunnel_iface    = '<%= @host.deployment.neutron.compute_tenant_interface %>'
       compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
       compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
@@ -554,7 +555,7 @@ module Staypuft
               'ovs_bridge_uplinks'         => compute_ovs_bridge_uplinks,
               'ovs_tunnel_iface'           => compute_ovs_tunnel_iface,
               'ovs_tunnel_types'           => ovs_tunnel_types,
-              'ovs_vlan_ranges'            => ovs_vlan_ranges,
+              'ovs_vlan_ranges'            => compute_ovs_vlan_ranges,
               'admin_password'             => admin_pw,
               'ceilometer_user_password'   => ceilometer_user_pw,
               'neutron_db_password'        => neutron_db_pw,
