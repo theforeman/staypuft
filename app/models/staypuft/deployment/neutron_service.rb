@@ -172,5 +172,9 @@ module Staypuft
       self.use_external_interface? && self.use_vlan_for_external_network?
     end
 
+    def enable_tunneling?
+      [NetworkSegmentation::VXLAN, NetworkSegmentation::GRE].include?(network_segmentation)
+    end
+
   end
 end
