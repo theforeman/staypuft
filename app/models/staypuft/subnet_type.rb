@@ -6,5 +6,8 @@ module Staypuft
     has_many :layouts, :through => :layout_subnet_types
 
     attr_accessible :name
+
+    has_many :subnet_typings
+    has_many :subnets, :through => :subnet_typings
   end
 end

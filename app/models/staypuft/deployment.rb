@@ -40,6 +40,10 @@ module Staypuft
     has_many :services, :through => :roles
     has_many :hosts, :through => :child_hostgroups
 
+    has_many :subnet_typings
+    has_many :subnet_types, :through => :subnet_typings
+    has_many :subnets, :through => :subnet_typings
+
     validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true

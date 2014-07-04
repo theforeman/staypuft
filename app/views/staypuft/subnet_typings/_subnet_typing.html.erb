@@ -1,0 +1,6 @@
+<% subnet = subnet_typing.subnet %>
+<li id="<%= dom_id(subnet_typing) %>">
+  <%= subnet.name %> (<%= subnet.network_address %>)
+  <%= link_to(image_tag('false.png'), subnet_typing_path(subnet_typing),
+              :method => :delete, :remote => true) %>
+</li>

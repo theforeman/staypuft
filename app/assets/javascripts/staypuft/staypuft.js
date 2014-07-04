@@ -11,6 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require_tree .
+//= require jquery-ui
 
 $(function () {
   // Check all checkboxes in table

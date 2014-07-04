@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <table class="table table-bordered table-striped table-two-pane">
+    <table class="table table-bordered table-striped table-two-pane" id="subnets_table">
       <tr>
         <th><%= sort :name, :as => s_("Subnet|Name") %></th>
         <th><%= sort :network, :as => s_("Subnet|Network") %></th>
@@ -27,23 +27,56 @@
         <th><%= _("DHCP Proxy") %></th>
         <th></th>
       </tr>
-      <% for subnet in @subnets %>
-        <tr>
-          <td><%= link_to_if_authorized h(subnet.name), hash_for_edit_subnet_path(:id => subnet, :redirect => request.url + '#edit').merge(:auth_object => subnet, :authorizer => authorizer) %></td>
-          <td><%= subnet.network_address %></td>
-          <td><%= subnet.domains.to_sentence %></td>
-          <td><%= subnet.vlanid %></td>
-          <td><%= subnet.dhcp %></td>
-          <td align="right">
-            <%= display_delete_if_authorized hash_for_subnet_path(:id => subnet, :redirect => request.url).merge(:auth_object => subnet, :authorizer => authorizer), :confirm => _("Delete %s?") % subnet.name %>
-          </td>
-        </tr>
-      <% end %>
+      <tbody>
+        <% for subnet in @subnets %>
+          <tr data-subnet-id="<%= subnet.id %>">
+            <td><%= link_to_if_authorized h(subnet.name), hash_for_edit_subnet_path(:id => subnet, :redirect => request.url + '#edit').merge(:auth_object => subnet, :authorizer => authorizer) %></td>
+            <td><%= subnet.network_address %></td>
+            <td><%= subnet.domains.to_sentence %></td>
+            <td><%= subnet.vlanid %></td>
+            <td><%= subnet.dhcp %></td>
+            <td align="right">
+              <%= display_delete_if_authorized hash_for_subnet_path(:id => subnet, :redirect => request.url).merge(:auth_object => subnet, :authorizer => authorizer), :confirm => _("Delete %s?") % subnet.name %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
 
     <br />
     <%= form_for(@deployment, :url => wizard_path, :method => 'PUT', :html => {:class => ''}) do |f| %>
       <%= base_errors_for @deployment %>
+
+      <% @deployment.layout.subnet_types.each do |subnet_type| %>
+        <div class="well subnet_type" data-subnet-type-id="<%= subnet_type.id %>" id="<%= dom_id(subnet_type) %>">
+          <h4><%= subnet_type.name %></h4>
+          <ul>
+            <%= render subnet_type.subnet_typings.where(:deployment_id => @deployment.id) %>
+          </ul>
+        </div>
+      <% end %>
+
+      <script>
+        $(function() {
+          $("#subnets_table tbody tr").draggable({
+            appendTo: "body",
+            helper: "clone"
+          });
+          $("div.subnet_type").droppable({
+            activeClass: "ui-state-default",
+            hoverClass: "ui-state-hover",
+            accept: "#subnets_table tbody tr",
+            drop: function(event, ui) {
+              $.ajax({
+                type: 'POST',
+                url: '<%= url_for subnet_typings_path(:deployment_id => @deployment) %>',
+                data: 'subnet_type_id=' + $(this).data('subnet-type-id') + '&subnet_id=' + ui.draggable.data('subnet-id'),
+                dataType: 'script'
+              });
+            }
+          });
+        });
+      </script>
 
       <div class="form_actions">
         <a class="btn btn-default" href="<%= previous_wizard_path %>">
