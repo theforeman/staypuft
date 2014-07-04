@@ -652,7 +652,10 @@ module Staypuft
           param = puppetclass.class_params.find_by_key(param_key)
           unless param
             Rails.logger.error "missing param #{param_key} in #{puppetclass_name} trying to set default_value: #{default_value.inspect} found in puppetclasses: " +
-                                   LookupKey.search_for(param_key).map { |lk| (c = (lk.param_class || lk.puppetclass)).nil? ? "class not found" : c.name }.inspect
+                                   LookupKey.
+                                       smart_class_parameters.
+                                       search_for("key = #{param_key}").
+                                       map { |lk| lk.param_class.name }.inspect
             next
           end
           unless param.update_attributes default_value: default_value
