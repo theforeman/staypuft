@@ -4,6 +4,8 @@ module Staypuft
       'glance'
     end
 
+    NFS_HELP = N_('(<server>:<local path>)')
+
     param_attr :driver_backend, :nfs_network_path, :gluster_network_path,
                :gluster_backup_volfile_servers
 
@@ -20,7 +22,7 @@ module Staypuft
 
     module NfsNetworkPath
       HUMAN       = N_('network path')
-      HUMAN_AFTER = '(server:localpath)'
+      HUMAN_AFTER = NFS_HELP
     end
 
     validates :nfs_network_path,
