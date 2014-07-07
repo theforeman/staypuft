@@ -101,6 +101,15 @@
       </div>
       <div class="modal-body">
         <%= (_("This action will initiate the deployment of %s ") % "<strong>#{@deployment.name}</strong>").html_safe %>
+        <div class="deploy-changes">
+          <strong><%= _("Resulting OpenStack Deployment") %>:</strong>
+          <% @deployment.child_hostgroups.each do |child_hostgroup| %>
+            <div <%= "class=text-muted".html_safe if child_hostgroup.hosts.count == 0 %>>
+              <strong><%= "#{child_hostgroup.hosts.count} x" %></strong>
+              <%= "#{child_hostgroup.name}" %>
+            </div>
+          <% end %>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
