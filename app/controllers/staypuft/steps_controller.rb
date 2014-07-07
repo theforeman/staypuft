@@ -43,6 +43,9 @@ module Staypuft
             @deployment.send(service).attributes = params[:staypuft_deployment].delete(service)
           end
         end
+      when :network_configuration
+        @deployment.form_step = Deployment::STEP_NETWORKING
+        @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
       else
         raise 'unknown step'
       end
