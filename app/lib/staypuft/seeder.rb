@@ -169,9 +169,10 @@ module Staypuft
       network_manager             = '<%= @host.deployment.nova.network_manager %>'
       # multi_host handled inline, since it's two separate static values 'true' and 'True'
       network_overrides           = '<%= @host.deployment.nova.network_overrides.to_yaml %>'
-      # TODO: determine whether num_networks and network_size are static or calculated
+      # TODO: num_networks should be calculated based on a specified VLAN range.
+      # Alternatively, it could be explicitly set by the user in combination
+      # with a starting VLAN ID.
       network_num_networks        = 1
-      network_network_size        = 255
       network_fixed_range         = '<%= @host.deployment.nova.private_fixed_range %>'
       network_floating_range      = '<%= @host.deployment.nova.public_floating_range %>'
       network_private_iface       = '<%= @host.deployment.nova.compute_tenant_interface %>'
@@ -530,7 +531,6 @@ module Staypuft
               'network_manager'            => network_manager,
               'network_overrides'          => network_overrides,
               'network_num_networks'       => network_num_networks,
-              'network_network_size'       => network_network_size,
               'network_fixed_range'        => network_fixed_range,
               'network_floating_range'     => network_floating_range,
               'network_private_iface'      => network_private_iface,
