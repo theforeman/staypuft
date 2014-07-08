@@ -31,18 +31,6 @@
                                      label:       _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN),
                                      help_inline: _(Staypuft::Deployment::NeutronService::ExternalInterfaceName::HUMAN_AFTER)) %>
 
-    <%= check_box_f_non_inline(p, :use_vlan_for_external_network,
-                               :checked_value   => 'true',
-                               :unchecked_value => 'false',
-                               :text            => Staypuft::Deployment::NeutronService::UseVlanForExternalNetwork::HUMAN)
-    %>
-
-    <div class="neutron_external_vlan col-md-offset-0 hide">
-      <%= change_label_width 4, text_f(p, :vlan_ranges_for_external_network,
-                                       label:       _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN),
-                                       help_inline: _(Staypuft::Deployment::NeutronService::VlanRangesForExternalNetwork::HUMAN_AFTER)) %>
-    </div>
-
   </div>
 
 

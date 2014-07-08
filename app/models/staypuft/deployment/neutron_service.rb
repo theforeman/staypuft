@@ -10,8 +10,7 @@ module Staypuft
 
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
-               :use_external_interface, :external_interface_name, :compute_tenant_interface,
-               :use_vlan_for_external_network, :vlan_ranges_for_external_network
+               :use_external_interface, :external_interface_name, :compute_tenant_interface
 
     module NetworkSegmentation
       VXLAN  = 'vxlan'
@@ -63,22 +62,6 @@ module Staypuft
               :if       => :use_external_interface?
     # TODO: interface name format validation
 
-    module UseVlanForExternalNetwork
-      HUMAN = N_('Configure VLAN for external network')
-    end
-
-    validates :use_vlan_for_external_network, inclusion: { in: [true, false, 'true', 'false'] }
-
-    module VlanRangesForExternalNetwork
-      HUMAN       = N_('VLAN Range for external network')
-      HUMAN_AFTER = N_('i.e. 1000:2999')
-    end
-
-    validates :vlan_ranges_for_external_network,
-              :presence => true,
-              :if       => :external_network_vlan?
-    # TODO: vlan rangesformat validation
-
     module ComputeTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
       HUMAN_AFTER = INTERFACE_HELP
@@ -106,11 +89,6 @@ module Staypuft
     # TODO: make this less clumsy w/ consistent handling of true/false values
     def use_external_interface?
       (self.use_external_interface == true) || (self.use_external_interface == 'true')
-    end
-
-    # TODO: make this less clumsy w/ consistent handling of true/false values
-    def use_vlan_for_external_network?
-      (self.use_vlan_for_external_network == true) || (self.use_vlan_for_external_network == 'true')
     end
 
     # return list of supported segmentation options with selected option at the
@@ -156,15 +134,11 @@ module Staypuft
 
     def networker_vlan_ranges
       [("physnet-tenants:#{self.tenant_vlan_ranges}" if self.vlan_segmentation?),
-       ("physnet-external:#{self.vlan_ranges_for_external_network}" if self.external_network_vlan?)].compact
+       "physnet-external"].compact
     end
 
     def vlan_segmentation?
       self.network_segmentation == NetworkSegmentation::VLAN
-    end
-
-    def external_network_vlan?
-      self.use_external_interface? && self.use_vlan_for_external_network?
     end
 
     def enable_tunneling?
