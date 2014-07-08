@@ -148,6 +148,11 @@ module Staypuft
     validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
     validates :platform, presence: true, inclusion: { in: Platform::TYPES }
 
+    class Jail < Safemode::Jail
+      allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
+        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?
+    end
+
     # TODO(mtaylor)
     # Use conditional validations to validate the deployment multi-step form.
     # deployment.form_step should be used to check the form step the user is
@@ -187,6 +192,14 @@ module Staypuft
 
     def ha?
       self.layout_name == LayoutName::HA
+    end
+
+    def nova_networking?
+      networking == Networking::NOVA
+    end
+
+    def neutron_networking?
+      networking == Networking::NEUTRON
     end
 
     private

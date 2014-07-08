@@ -1,6 +1,10 @@
 module Staypuft
   class Deployment::IPS < Deployment::AbstractParamScope
 
+    class Jail < Safemode::Jail
+      allow :controller_ip, :controller_ips, :controller_fqdns
+    end
+
     def controllers
       @controllers ||= Hostgroup.
           includes(:deployment_role_hostgroup).
