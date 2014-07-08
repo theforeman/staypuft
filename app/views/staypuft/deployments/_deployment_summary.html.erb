@@ -1,0 +1,34 @@
+<% if @deployment.in_progress? %>
+  <div class="deployment-overview">
+      <div class="progress-header">
+        <strong class=""><%= _("Deploying") %></strong>
+      </div>
+      <% progress = 100 * @deployment.task.progress %>
+      <%= "#{progress.round(1)}% #{_('Complete')}" %>
+      <div class="progress progress-striped <%= 'active' if @deployment.task.state == 'running' %>">
+        <% classes = ['progress-bar',
+                      case @deployment.task.result
+                      when 'success'
+                        'progress-bar-success'
+                      when 'error'
+                        'progress-bar-danger'
+                      else
+                        nil
+                      end]
+        %>
+        <div class="<%= classes.join ' ' %>"
+             role="progressbar"
+             aria-valuenow="<%= progress %>"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             style="width: <%= progress %>%;">
+          <span class="sr-only"><%= progress %>% Complete</span>
+        </div>
+      </div>
+      <div>
+        <%= display_link_if_authorized(
+              _('Show more details'),
+              hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+      </div>
+    </div>
+<% end %>

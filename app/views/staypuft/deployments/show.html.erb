@@ -86,6 +86,7 @@
                                                                   :hostgroup => @hostgroup,
                                                                   :child_hostgroup => child_hostgroup } %>
     <% end %>
+    <%= render :partial => "deployment_summary", :locals => { :deployment => @deployment } %>
   </div>
 </div>
 

@@ -98,6 +98,12 @@ module Staypuft
       ForemanTasks::Lock.locked? self, nil
     end
 
+    # Helper method for getting the in progress foreman task for this
+    # deployment.
+    def task
+      in_progress? ? ForemanTasks::Lock.colliding_locks(self, nil).first.task : nil
+    end
+
     # Returns all deployed hosts with no errors (default behaviour).  Set
     # errors=true to return all deployed hosts that have errors
     def deployed_hosts(hostgroup, errors=false)
