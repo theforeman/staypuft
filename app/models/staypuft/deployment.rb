@@ -71,7 +71,7 @@ module Staypuft
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
               layout_name:   LayoutName::NON_HA,
-              networking:    Networking::NOVA,
+              networking:    Networking::NEUTRON,
               platform:      Platform::RHEL7 }.merge(attributes),
             options)
 
@@ -119,7 +119,7 @@ module Staypuft
     module Networking
       NOVA    = 'nova'
       NEUTRON = 'neutron'
-      LABELS  = { NOVA => N_('Nova Network'), NEUTRON => N_('Neutron Networking') }
+      LABELS  = { NEUTRON => N_('Neutron Networking'), NOVA => N_('Nova Network') }
       TYPES   = LABELS.keys
       HUMAN   = N_('Networking')
     end
