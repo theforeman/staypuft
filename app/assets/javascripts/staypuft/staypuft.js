@@ -88,17 +88,6 @@ $(function () {
     }
   }
 
-  showNeutronExternalVlan();
-  $("input[name='staypuft_deployment[neutron][use_vlan_for_external_network]']").change(showNeutronExternalVlan);
-  function showNeutronExternalVlan() {
-    if ($('#staypuft_deployment_neutron_use_vlan_for_external_network').is(":checked")) {
-      $('.neutron_external_vlan').fadeIn(duration);
-    }
-    else {
-      $('.neutron_external_vlan').fadeOut(duration)
-    }
-  }
-
   showGlanceNfsNetworkPath();
   $("input[name='staypuft_deployment[glance][driver_backend]']").change(showGlanceNfsNetworkPath);
   function showGlanceNfsNetworkPath() {
