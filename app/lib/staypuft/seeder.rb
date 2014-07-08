@@ -163,16 +163,16 @@ module Staypuft
 
     def functional_dependencies
       amqp_provider               = '<%= @host.deployment.amqp_provider %>'
-      neutron                     = '<%= @host.deployment.networking == Staypuft::Deployment::Networking::NEUTRON %>'
+      neutron                     = '<%= @host.deployment.neutron_networking? %>'
 
       # Nova
       network_manager             = '<%= @host.deployment.nova.network_manager %>'
       # multi_host handled inline, since it's two separate static values 'true' and 'True'
-      network_overrides           = '<%= @host.deployment.nova.network_overrides.to_yaml %>'
+      network_overrides           = '<%= @host.deployment.nova.network_overrides %>'
       # TODO: num_networks should be calculated based on a specified VLAN range.
       # Alternatively, it could be explicitly set by the user in combination
       # with a starting VLAN ID.
-      network_num_networks        = 1
+      network_num_networks        = '<%= @host.deployment.nova.num_networks %>'
       network_fixed_range         = '<%= @host.deployment.nova.private_fixed_range %>'
       network_floating_range      = '<%= @host.deployment.nova.public_floating_range %>'
       network_private_iface       = '<%= @host.deployment.nova.compute_tenant_interface %>'

@@ -88,6 +88,12 @@ module Staypuft
               :presence => true
     # TODO: interface name format validation
 
+    class Jail < Safemode::Jail
+      allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
+        :networker_tenant_interface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
+        :compute_tenant_interface, :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks
+    end
+
     def set_defaults
       self.network_segmentation   = NetworkSegmentation::VXLAN
       self.use_external_interface = 'false'

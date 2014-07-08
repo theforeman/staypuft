@@ -43,3 +43,7 @@ module Staypuft
     end
   end
 end
+
+class ::Host::Managed::Jail < Safemode::Jail
+  allow :deployment
+end

@@ -34,6 +34,10 @@ module Staypuft
     # TODO: add EqualLogic UI parameters
 
 
+    class Jail < Safemode::Jail
+      allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?
+    end
+
     def set_defaults
       self.driver_backend = DriverBackend::LVM
     end

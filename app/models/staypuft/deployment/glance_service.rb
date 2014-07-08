@@ -30,6 +30,10 @@ module Staypuft
               :if       => :nfs_backend?
     # TODO: network_path validation
 
+    class Jail < Safemode::Jail
+      allow :driver_backend, :pcmk_fs_device, :pcmk_fs_dir, :pcmk_fs_options
+    end
+
     def set_defaults
       self.driver_backend = DriverBackend::LOCAL
     end

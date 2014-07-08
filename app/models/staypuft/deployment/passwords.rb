@@ -40,6 +40,11 @@ module Staypuft
               :if           => :single_mode?,
               :length       => { minimum: 6 }
 
+    class Jail < Safemode::Jail
+      allow :effective_value, :ceilometer_metering_secret, :heat_auth_encrypt_key,
+        :horizon_secret_key, :swift_shared_secret, :neutron_metadata_proxy_secret
+    end
+
     def set_defaults
       self.mode = Mode::RANDOM
       PASSWORD_LIST.each do |password_field|

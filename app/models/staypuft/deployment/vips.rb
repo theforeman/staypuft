@@ -13,6 +13,10 @@ module Staypuft
 
     HUMAN = N_('Virtual IP addresses range')
 
+    class Jail < Safemode::Jail
+      allow :get
+    end
+
     def range
       (user_range || default_range)
       # TODO reserve the IP addresses

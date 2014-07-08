@@ -80,7 +80,17 @@ module Staypuft
     def network_overrides
       { 'force_dhcp_release' => false }.tap do |h|
         h.update 'vlan_start' => self.vlan_range.split(':')[0] if self.vlan_manager?
-      end
+      end.to_yaml
+    end
+
+    # TODO: make this dynamic
+    def num_networks
+      1
+    end
+
+    class Jail < Safemode::Jail
+      allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
+        :compute_tenant_interface, :external_interface_name, :num_networks
     end
 
   end
