@@ -88,6 +88,14 @@ module Staypuft
 
     extend AttributeParamStorage
 
+    # Helper method for looking up a Deployment based on a foreman task
+    def self.find_by_foreman_task(foreman_task)
+      Deployment.find(ForemanTasks::Lock.where(task_id: foreman_task.id,
+                                               name: :deploy,
+                                               resource_type: 'Staypuft::Deployment')
+                                               .first.resource_id)
+    end
+
     # Returns a list of hosts that are currently being deployed.
     def in_progress_hosts(hostgroup)
       return in_progress? ? hostgroup.openstack_hosts : {}
