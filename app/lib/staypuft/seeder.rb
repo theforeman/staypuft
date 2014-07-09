@@ -557,6 +557,8 @@ module Staypuft
               'amqp_password'        => amqp_pw },
           'quickstack::nova_network::compute'      => {
               'amqp_provider'              => amqp_provider,
+              'cinder_backend_gluster'     => cinder_backend_gluster,
+              'cinder_backend_nfs'         => cinder_backend_nfs,
               'network_manager'            => network_manager,
               'network_overrides'          => network_overrides,
               'network_num_networks'       => network_num_networks,
@@ -579,6 +581,8 @@ module Staypuft
               'nova_host'                  => nova_host },
           'quickstack::neutron::compute'           => {
               'amqp_provider'              => amqp_provider,
+              'cinder_backend_gluster'     => cinder_backend_gluster,
+              'cinder_backend_nfs'         => cinder_backend_nfs,
               'enable_tunneling'           => enable_tunneling,
               'ovs_bridge_mappings'        => compute_ovs_bridge_mappings,
               'ovs_bridge_uplinks'         => compute_ovs_bridge_uplinks,
