@@ -35,8 +35,10 @@ module Staypuft::Concerns::LookupKeyExtensions
   end
 
   def value_before_type_cast_with_limpet(value)
-    value_before_type_cast_without_limpet(value).tap do |v|
-      v.gsub!(LIMPET_FORMAT_REGEXP, '<%=') if has_erb? v
+    if has_erb? value
+      value.gsub(LIMPET_FORMAT_REGEXP, '<%=')
+    else
+      value_before_type_cast_without_limpet(value)
     end
   end
 
