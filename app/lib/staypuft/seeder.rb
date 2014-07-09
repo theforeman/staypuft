@@ -202,15 +202,23 @@ module Staypuft
       pcmk_fs_dir                 = '<%= @host.deployment.glance.pcmk_fs_dir %>'
       pcmk_fs_manage              = 'true'
       pcmk_fs_options             = '<%= @host.deployment.glance.pcmk_fs_options %>'
+      glance_rbd_store_user       = 'glance'
+      glance_rbd_store_pool       = 'images' 
 
       # Cinder
       volume                      = true
+      cinder_backend_gluster      = false
+      cinder_backend_gluster_name = 'gluster_backend'
       cinder_backend_iscsi        = '<%= @host.deployment.cinder.lvm_backend? %>'
+      cinder_backend_iscsi_name   = 'iscsi_backend'
       cinder_backend_nfs          = '<%= @host.deployment.cinder.nfs_backend? %>'
+      cinder_backend_nfs_name     = 'nfs_backend'
+      cinder_multiple_backends    = false
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = ''
 
       cinder_backend_rbd                      = '<%= @host.deployment.cinder.ceph_backend? %>'
+      cinder_backend_rbd_name                 = 'rbd_backend'
       # TODO: confirm these params and add them to model where user input is needed
       cinder_rbd_pool                         = 'volumes'
       cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf/'
@@ -220,6 +228,7 @@ module Staypuft
       cinder_rbd_secret_uuid                  = ''
 
       cinder_backend_eqlx           = '<%= @host.deployment.cinder.equallogic_backend? %>'
+      cinder_backend_eqlx_name      = ['eqlx_backend']
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
       cinder_san_ip                 = [''] # ['<%= #@host.deployment.cinder.san_ip %>']
@@ -280,18 +289,25 @@ module Staypuft
       {
           'quickstack::nova_network::controller'   => {
               'amqp_provider'                           => amqp_provider,
+              'cinder_backend_gluster'                  => cinder_backend_gluster,
+              'cinder_backend_gluster_name'             => cinder_backend_gluster_name,
               'cinder_backend_iscsi'                    => cinder_backend_iscsi,
+              'cinder_backend_iscsi_name'               => cinder_backend_iscsi_name,
               'cinder_backend_nfs'                      => cinder_backend_nfs,
+              'cinder_backend_nfs_name'                 => cinder_backend_nfs_name,
+              'cinder_backend_rbd'                      => cinder_backend_rbd,
+              'cinder_backend_rbd_name'                 => cinder_backend_rbd_name,
+              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
+              'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
+              'cinder_multiple_backends'                => cinder_multiple_backends,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_backend_rbd'                      => cinder_backend_rbd,
               'cinder_rbd_pool'                         => cinder_rbd_pool,
               'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
               'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
               'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
               'cinder_rbd_user'                         => cinder_rbd_user,
               'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
-              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_san_ip'                           => cinder_san_ip,
               'cinder_san_login'                        => cinder_san_login,
               'cinder_san_password'                     => cinder_san_password,
@@ -302,6 +318,8 @@ module Staypuft
               'cinder_eqlx_chap_login'                  => cinder_eqlx_chap_login,
               'cinder_eqlx_chap_password'               => cinder_eqlx_chap_password,
               'glance_backend'                          => backend,
+              'glance_rbd_store_user'                   => glance_rbd_store_user,
+              'glance_rbd_store_pool'                   => glance_rbd_store_pool,
               'admin_password'                          => admin_pw,
               'ceilometer_user_password'                => ceilometer_user_pw,
               'cinder_db_password'                      => cinder_db_pw,
@@ -339,18 +357,25 @@ module Staypuft
               'ml2_vni_ranges'                          => ml2_vni_ranges,
               'ovs_vlan_ranges'                         => ovs_vlan_ranges,
               'enable_tunneling'                        => enable_tunneling,
+              'cinder_backend_gluster'                  => cinder_backend_gluster,
+              'cinder_backend_gluster_name'             => cinder_backend_gluster_name,
               'cinder_backend_iscsi'                    => cinder_backend_iscsi,
+              'cinder_backend_iscsi_name'               => cinder_backend_iscsi_name,
               'cinder_backend_nfs'                      => cinder_backend_nfs,
+              'cinder_backend_nfs_name'                 => cinder_backend_nfs_name,
+              'cinder_backend_rbd'                      => cinder_backend_rbd,
+              'cinder_backend_rbd_name'                 => cinder_backend_rbd_name,
+              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
+              'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
+              'cinder_multiple_backends'                => cinder_multiple_backends,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_backend_rbd'                      => cinder_backend_rbd,
               'cinder_rbd_pool'                         => cinder_rbd_pool,
               'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
               'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
               'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
               'cinder_rbd_user'                         => cinder_rbd_user,
               'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
-              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_san_ip'                           => cinder_san_ip,
               'cinder_san_login'                        => cinder_san_login,
               'cinder_san_password'                     => cinder_san_password,
@@ -361,6 +386,8 @@ module Staypuft
               'cinder_eqlx_chap_login'                  => cinder_eqlx_chap_login,
               'cinder_eqlx_chap_password'               => cinder_eqlx_chap_password,
               'glance_backend'                          => backend,
+              'glance_rbd_store_user'                   => glance_rbd_store_user,
+              'glance_rbd_store_pool'                   => glance_rbd_store_pool,
               'admin_password'                          => admin_pw,
               'ceilometer_user_password'                => ceilometer_user_pw,
               'cinder_db_password'                      => cinder_db_pw,
@@ -470,6 +497,7 @@ module Staypuft
               'volume'                           => volume,
               'backend_iscsi'                    => cinder_backend_iscsi,
               'backend_nfs'                      => cinder_backend_nfs,
+              'backend_gluster'                  => cinder_backend_gluster,
               'nfs_shares'                       => cinder_nfs_shares,
               'nfs_mount_options'                => cinder_nfs_mount_options,
               'backend_rbd'                      => cinder_backend_rbd,
