@@ -41,10 +41,16 @@
                                             param_hash[:hostgroup].id,
                                             param_hash[:puppetclass].id,
                                             param_hash[:param_key].key),
-                                     param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]),
+                                     value     = param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]),
                                      :class    => "form-control",
                                      :size     => "45",
                                      disabled: true %>
+                  <% if Staypuft::Concerns::LookupKeyExtensions.has_erb? value %>
+                    <span class="help-block">
+                      <%= _('evaluates to: ') %>
+                      <%= Staypuft::Concerns::LookupKeyExtensions.evaluate_value param_hash[:hostgroup], value %>
+                    </span>
+                  <% end %>
                 </div>
               </div>
               <br/>
@@ -52,7 +58,7 @@
           <% else %>
             <p><%= _("No configuration needed for this service.") %></p>
           <% end %>
-          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first } %>
+          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first }  %>
         </div>
       <% end %>
     </div>
