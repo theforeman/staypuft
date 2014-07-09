@@ -1,5 +1,10 @@
 module Staypuft
   module ApplicationHelper
+
+    def subtitle(page_subtitle)
+      content_for(:subtitle, page_subtitle.to_s)
+    end
+
     def radio_button_f_non_inline(f, attr, options = {})
       text  = options.delete(:text)
       value = options.delete(:value)
