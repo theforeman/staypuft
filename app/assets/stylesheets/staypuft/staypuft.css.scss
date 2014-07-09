@@ -9,26 +9,47 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require_tree .
  */
 
-//@import "bootstrap";
+@import "bootstrap_and_overrides";
+@import "bootstrap/buttons";
+@import "bootstrap/forms";
 
-div.title h1 {
-  padding-left: 0;
+.subtitle {
+  padding: 0px 15px;
 }
 
-div.title form {
-  font-size: 16px;
+span.editable, span.editable:hover {
+  background-color: transparent;
+  .spinner-placeholder{
+    margin:0;
+    background-repeat: no-repeat;
+    background-position: center center;
+    float: left;
+    padding: 0 150px;
+  }
+  form {
+    float: left;
+    @extend .form-inline;
+  }
+  input {
+    @extend .form-control;
+    width: auto !important;
+    margin-right: 10px;
+  }
+  button {
+    @extend .btn;
+    @extend .btn-default;
+    margin-right: 10px;
+    &:not(:last-child) {
+      @extend .btn-primary;
+    }
+  }
 }
 
-span.edit_textfield input {
-  width: 50% !important;
-}
-
-span.edit_textfield button {
-  margin-left: 5px;
-}
+// span.edit_textfield button {
+//   margin-left: 5px;
+// }
 
 .service-box {
   width: 200px;
