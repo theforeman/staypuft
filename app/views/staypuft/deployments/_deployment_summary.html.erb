@@ -7,7 +7,7 @@
       <table>
         <tr>
           <td>Horizon URL</td>
-          <td>http://localhost:9090/horizon</td>
+          <td><%= link_to @deployment.horizon_url, @deployment.horizon_url %></td>
         </tr>
         <tr>
           <td>Username</td>
@@ -15,7 +15,7 @@
         </tr>
         <tr>
           <td>Password</td>
-          <td>********</td>
+          <td><%= @deployment.passwords.admin %></td>
         </tr>
       </table>
   </div>

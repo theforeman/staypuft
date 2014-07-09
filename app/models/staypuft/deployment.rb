@@ -216,6 +216,10 @@ module Staypuft
       networking == Networking::NEUTRON
     end
 
+    def horizon_url
+      "http://#{ha? ? self.vips.get(:horizon) : self.ips.controller_ip}"
+    end
+
     private
 
     def update_layout
