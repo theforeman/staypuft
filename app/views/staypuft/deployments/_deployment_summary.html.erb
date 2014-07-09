@@ -1,4 +1,25 @@
-<% if @deployment.in_progress? %>
+<% if @deployment.deployed? %>
+  <div class="deployment-overview">
+      <div class="glyphicon glyphicon-check deployed"></div>
+      <div class="progress-header">
+        <strong class="text-muted"><%= _("Deployed") %></strong>
+      </div>
+      <table>
+        <tr>
+          <td>Horizon URL</td>
+          <td>http://localhost:9090/horizon</td>
+        </tr>
+        <tr>
+          <td>Username</td>
+          <td>admin</td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td>********</td>
+        </tr>
+      </table>
+  </div>
+<% elsif @deployment.in_progress? %>
   <div class="deployment-overview">
       <div class="progress-header">
         <strong class=""><%= _("Deploying") %></strong>
