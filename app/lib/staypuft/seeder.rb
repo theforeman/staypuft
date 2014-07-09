@@ -472,6 +472,7 @@ module Staypuft
               'nova_public_vip'               => vip_format % :nova,
               'amqp_vip'                      => vip_format % :amqp,
               'swift_public_vip'              => vip_format % :swift,
+              'cluster_control_ip'            => '<%= @host.deployment.ips.controller_ip %>' },
               'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
               'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
           'quickstack::pacemaker::common'          => {
