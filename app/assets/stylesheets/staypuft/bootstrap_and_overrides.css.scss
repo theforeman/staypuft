@@ -87,8 +87,7 @@
 
 .tabbed_side_nav_table{
   .nav {
-    padding-top: 5px;
-    padding-right: 4px;
+    padding: 5px 4px 0px 15px;
     & > li.activated {
       z-index: 1;
       &:after, &:before {

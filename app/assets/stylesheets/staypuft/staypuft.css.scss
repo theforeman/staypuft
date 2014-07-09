@@ -15,8 +15,13 @@
 @import "bootstrap/buttons";
 @import "bootstrap/forms";
 
-.subtitle {
-  padding: 0px 15px;
+.top_actions {
+  //same margin as h1 (title)
+  margin: 20px 0 10px;
+}
+
+.title h1 {
+  word-wrap: break-word;
 }
 
 span.editable, span.editable:hover {

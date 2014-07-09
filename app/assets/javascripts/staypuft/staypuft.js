@@ -40,7 +40,7 @@ $(function () {
   $('.tabbed_side_nav_table').on('click', 'button.close', function() {
     $(this).closest('.tab-pane.active').removeClass('active');
     $(this).closest('.tabbed_side_nav_table').find('.activated').removeClass('activated');
-  })
+  });
 
   var duration = 150;
 

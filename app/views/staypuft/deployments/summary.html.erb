@@ -1,16 +1,17 @@
 <% title _("%s Configuration Parameters") % @deployment.name %>
-<% content_for(:title_actions) do %>
-  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btn-link" %>
+<% content_for(:top_actions) do %>
+  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btn btn-link" %>
   <%= link_to(icon_text("cloud-upload", _("Import")),
               {},
-              { :remote => true,
+              { :class => "btn btn-default",
+                :remote => true,
                 :rel    => 'popover',
                 :data   => { 'content'        => "#{render partial: 'import_form'}",
                              'original-title' => _('Import Config'),
                              'placement'      => 'left' } }) %>
   <%= link_to(icon_text("cloud-download", _("Export")),
-              export_config_deployment_path(@deployment.id)) %>
-  <%= link_to _("Edit"), edit_deployment_path(@deployment.id) %>
+              export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
+  <%= link_to _("Edit"), edit_deployment_path(@deployment.id), :class => "btn btn-default" %>
 <% end %>
 
 <div class="col-md-12">

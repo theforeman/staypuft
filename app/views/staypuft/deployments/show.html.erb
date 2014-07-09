@@ -1,26 +1,19 @@
 <% title(@deployment.name, edit_textfield(@deployment, :name, options={:update_url => deployment_path(@deployment)})) %>
 <% subtitle edit_textfield(@deployment, :description, options={:update_url => deployment_path(@deployment)}) %>
 
-<% content_for(:title_actions) do %>
-  <%= link_to(_("Advanced Configuration"), summary_deployment_path(@deployment.id), :class => 'btn-link') %>
+<% content_for(:top_actions) do %>
+  <%= link_to(_("Advanced Configuration"), summary_deployment_path(@deployment.id), :class => 'btn btn-link') %>
   <%= link_to(_("Revisit Setup Wizard"), if @deployment.deployed?
                                            deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
                                          else
                                            deployment_steps_path(deployment_id: @deployment)
-                                         end) %>
+                                         end, :class => "btn btn-default") %>
 
-  <% if @deployment.in_progress? %>
-    <%= display_link_if_authorized(
-            _('Deploy in progress'),
-            hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
-            :class => 'btn-info') %>
-  <% else %>
-    <%= link_to(_("Deploy"),
-                "",
-                :class         => %w(btn btn-primary),
-                :'data-toggle' => "modal",
-                :'data-target' => "#deploy_modal") %>
-  <% end %>
+  <%= link_to(_("Deploy"),
+              "",
+              :class         => @deployment.in_progress? ? %w(btn btn-primary disabled) : %w(btn btn-primary),
+              :'data-toggle' => "modal",
+              :'data-target' => "#deploy_modal") %>
 
   <% if Rails.env.development? %>
     <div class="btn-group">
