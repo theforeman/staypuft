@@ -108,7 +108,7 @@
         <%= (_("This action will initiate the deployment of %s ") % "<strong>#{@deployment.name}</strong>").html_safe %>
         <div class="deploy-changes">
           <strong><%= _("Resulting OpenStack Deployment") %>:</strong>
-          <% @deployment.child_hostgroups.each do |child_hostgroup| %>
+          <% @deployment.child_hostgroups.deploy_order.each do |child_hostgroup| %>
             <div <%= "class=text-muted".html_safe if child_hostgroup.hosts.count == 0 %>>
               <strong><%= "#{child_hostgroup.hosts.count} x" %></strong>
               <%= "#{child_hostgroup.name}" %>
@@ -128,3 +128,4 @@
   </div>
 </div>
 <%= render :partial => "deployment_access_all_details_dialogue", :locals => { :deployment => @deployment } %>
+
