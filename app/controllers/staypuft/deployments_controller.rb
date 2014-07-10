@@ -65,7 +65,7 @@ module Staypuft
     def deploy
       deployment = Deployment.find(params[:id])
       task       = ForemanTasks.async_task ::Actions::Staypuft::Deployment::Deploy, deployment
-      redirect_to foreman_tasks_task_url(id: task)
+      redirect_to deployment_path(deployment)
     end
 
     # TODO remove, it's temporary

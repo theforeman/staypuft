@@ -1,11 +1,16 @@
 module Staypuft
   class Deployment::Passwords < Deployment::AbstractParamScope
-    PASSWORD_LIST = :admin, :ceilometer_user, :cinder_db, :cinder_user,
-        :glance_db, :glance_user, :heat_db, :heat_user, :heat_cfn_user, :mysql_root,
-        :keystone_db, :keystone_user, :neutron_db, :neutron_user, :nova_db, :nova_user,
-        :swift_admin, :swift_user, :amqp, :amqp_nssdb, :keystone_admin_token,
-        :ceilometer_metering_secret, :heat_auth_encrypt_key, :horizon_secret_key,
-        :swift_shared_secret, :neutron_metadata_proxy_secret
+
+    USER_SERVICES_PASSWORDS = :admin, :ceilometer_user, :cinder_user, :glance_user, :heat_user,
+        :heat_cfn_user, :keystone_user, :neutron_user, :nova_user, :swift_user, :swift_admin, :amqp
+
+    DB_SERVICES_PASSWORDS = :cinder_db, :glance_db, :heat_db, :mysql_root, :keystone_db,
+        :neutron_db, :nova_db, :amqp_nssdb
+
+    OTHER_PASSWORDS = :keystone_admin_token, :ceilometer_metering_secret, :heat_auth_encrypt_key,
+        :horizon_secret_key, :swift_shared_secret, :neutron_metadata_proxy_secret
+
+    PASSWORD_LIST = USER_SERVICES_PASSWORDS + DB_SERVICES_PASSWORDS + OTHER_PASSWORDS
 
     OTHER_ATTRS_LIST = :mode, :single_password
 
@@ -66,6 +71,21 @@ module Staypuft
 
     def id # compatibility with password_f
       single_password
+    end
+
+    def services_passwords(filter=nil)
+      list = case filter
+             when :user
+               USER_SERVICES_PASSWORDS
+             when :db
+               DB_SERVICES_PASSWORDS
+             else
+               PASSWORD_LIST
+             end
+
+      list.inject({}) do |h,name|
+        h.update name => single_mode? ? single_password : self.send(name)
+      end
     end
   end
 end

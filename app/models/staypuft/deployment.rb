@@ -88,6 +88,14 @@ module Staypuft
 
     extend AttributeParamStorage
 
+    # Helper method for looking up a Deployment based on a foreman task
+    def self.find_by_foreman_task(foreman_task)
+      Deployment.find(ForemanTasks::Lock.where(task_id: foreman_task.id,
+                                               name: :deploy,
+                                               resource_type: 'Staypuft::Deployment')
+                                               .first.resource_id)
+    end
+
     # Returns a list of hosts that are currently being deployed.
     def in_progress_hosts(hostgroup)
       return in_progress? ? hostgroup.openstack_hosts : {}
@@ -96,6 +104,12 @@ module Staypuft
     # Helper method for checking whether this deployment is in progress or not.
     def in_progress?
       ForemanTasks::Lock.locked? self, nil
+    end
+
+    # Helper method for getting the in progress foreman task for this
+    # deployment.
+    def task
+      in_progress? ? ForemanTasks::Lock.colliding_locks(self, nil).first.task : nil
     end
 
     # Returns all deployed hosts with no errors (default behaviour).  Set
@@ -200,6 +214,14 @@ module Staypuft
 
     def neutron_networking?
       networking == Networking::NEUTRON
+    end
+
+    def horizon_url
+      if ha?
+        "http://#{self.vips.get(:horizon)}"
+      else
+        self.ips.controller_ips.empty? ? nil : "http://#{self.ips.controller_ip}"
+      end
     end
 
     private

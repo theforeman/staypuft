@@ -60,7 +60,11 @@
         <div class="col-xs-2">
           <% if child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count > 0 %>
             <a href="#<%= child_hostgroup.name.parameterize.underscore %>_assigned_hosts" data-toggle="tab" class="roles_list">
-              <i class="glyphicon glyphicon-time"></i>
+              <% unless @deployment.in_progress? %>
+                <i class="glyphicon glyphicon-time"></i>
+              <% else %>
+                <%= image_tag '/assets/spinner.gif' %>
+              <% end %>
               <span><%= child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count %></span>
             </a>
           <% end %>
@@ -86,6 +90,7 @@
                                                                   :hostgroup => @hostgroup,
                                                                   :child_hostgroup => child_hostgroup } %>
     <% end %>
+    <%= render :partial => "deployment_summary", :locals => { :deployment => @deployment } %>
   </div>
 </div>
 
@@ -101,6 +106,15 @@
       </div>
       <div class="modal-body">
         <%= (_("This action will initiate the deployment of %s ") % "<strong>#{@deployment.name}</strong>").html_safe %>
+        <div class="deploy-changes">
+          <strong><%= _("Resulting OpenStack Deployment") %>:</strong>
+          <% @deployment.child_hostgroups.deploy_order.each do |child_hostgroup| %>
+            <div <%= "class=text-muted".html_safe if child_hostgroup.hosts.count == 0 %>>
+              <strong><%= "#{child_hostgroup.hosts.count} x" %></strong>
+              <%= "#{child_hostgroup.name}" %>
+            </div>
+          <% end %>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
@@ -113,3 +127,5 @@
     </div>
   </div>
 </div>
+<%= render :partial => "deployment_access_all_details_dialogue", :locals => { :deployment => @deployment } %>
+
