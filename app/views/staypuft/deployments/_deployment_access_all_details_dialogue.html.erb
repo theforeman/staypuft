@@ -1,0 +1,48 @@
+<div class="modal fade" id="all_details_modal" tabindex="-1" role="dialog" aria-labelledby="All Details" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="modal-title" id="all_details_modal_label">
+          <span class="glyphicon glyphicon-cog">
+          </span> <%= _("All Details") %>
+        </h2>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-1">
+              <h4><%= @deployment.ha? ? _("VIP list") : _("Controller IPs") %></h4>
+              <% if @deployment.ha? %>
+                <% Staypuft::Deployment::VIPS::VIP_NAMES.each do | vip_name | %>
+                <div class="row">
+                  <label class="col-sm-4 control-label text-muted"><%= "#{vip_name}:" %></label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static"><%= @deployment.vips.get(vip_name) %></p>
+                  </div>
+                </div>
+                <% end %>
+              <% else %>
+                <% @deployment.ips.controller_ips.each do |ip| %>
+                  <%= ip %>
+                <% end %>
+              <% end %>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-1">
+            <h4><%= _("Service Passwords") %></h4>
+              <% @deployment.passwords.user_services_passwords.each_pair do |user, pw| %>
+                <div class="row">
+                  <label class="col-sm-4 control-label text-muted"><%= "#{user.to_s.split("_")[0].capitalize}:" %></label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static"><%= pw %></p>
+                  </div>
+                </div>
+              <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,6 +9,9 @@ module Staypuft
 
     OTHER_ATTRS_LIST = :mode, :single_password
 
+    USER_SERVICES_PASSWORDS = :ceilometer_user, :cinder_user, :glance_user, :heat_user,
+        :heat_cfn_user, :keystone_user, :neutron_user, :nova_user, :swift_user
+
     def self.param_scope
       'passwords'
     end
@@ -66,6 +69,14 @@ module Staypuft
 
     def id # compatibility with password_f
       single_password
+    end
+
+    def user_services_passwords
+      usp = {}
+      USER_SERVICES_PASSWORDS.each do |user|
+        usp[user] = single_mode? ? single_password : self.send(user) 
+      end
+      usp
     end
   end
 end
