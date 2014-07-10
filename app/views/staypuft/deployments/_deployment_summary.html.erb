@@ -1,55 +1,78 @@
-<% if @deployment.deployed? %>
-  <div class="deployment-overview">
-      <div class="glyphicon glyphicon-check deployed"></div>
-      <div class="progress-header">
-        <strong class="text-muted"><%= _("Deployed") %></strong>
-      </div>
-      <table>
-        <tr>
-          <td>Horizon URL</td>
-          <td><%= link_to @deployment.horizon_url, @deployment.horizon_url %></td>
-        </tr>
-        <tr>
-          <td>Username</td>
-          <td>admin</td>
-        </tr>
-        <tr>
-          <td>Password</td>
-          <td><%= @deployment.passwords.admin %></td>
-        </tr>
-      </table>
-  </div>
-<% elsif @deployment.in_progress? %>
-  <div class="deployment-overview">
-      <div class="progress-header">
-        <strong class=""><%= _("Deploying") %></strong>
-      </div>
-      <% progress = 100 * @deployment.task.progress %>
-      <%= "#{progress.round(1)}% #{_('Complete')}" %>
-      <div class="progress progress-striped <%= 'active' if @deployment.task.state == 'running' %>">
-        <% classes = ['progress-bar',
-                      case @deployment.task.result
-                      when 'success'
-                        'progress-bar-success'
-                      when 'error'
-                        'progress-bar-danger'
-                      else
-                        nil
-                      end]
-        %>
-        <div class="<%= classes.join ' ' %>"
-             role="progressbar"
-             aria-valuenow="<%= progress %>"
-             aria-valuemin="0"
-             aria-valuemax="100"
-             style="width: <%= progress %>%;">
-          <span class="sr-only"><%= progress %>% Complete</span>
-        </div>
-      </div>
-      <div>
-        <%= display_link_if_authorized(
-              _('Show more details'),
-              hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+<div class="deployment_summary_pane">
+  <% if @deployment.deployed? %>
+    <div class="row">
+      <div class="col-sm-12 text-center"><h1 class="glyphicon glyphicon-ok text-muted"></h1></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Deployed") %></h3></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8 col-sm-offset-2">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-4 control-label text-muted"><%= _("Horizon URL") %></label>
+            <div class="col-sm-8">
+              <p class="form-control-static"><%# link_to @deployment.horizon_url, @deployment.horizon_url %></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label text-muted"><%= _("Username") %></label>
+            <div class="col-sm-8">
+              <p class="form-control-static">admin</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label text-muted"><%= _("Password") %></label>
+            <div class="col-sm-8">
+              <p class="form-control-static">
+                <span class="shown_password hide"><%= @deployment.passwords.admin %></span>
+                <span class="hidden_password">********</span>
+                <a href="" id="hidden_password_toggle">
+                  <span class="glyphicon glyphicon-eye-open"></span>
+                  <span class="glyphicon glyphicon-eye-close hide"></span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-<% end %>
+  <% elsif @deployment.in_progress? %>
+    <div class="row">
+      <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Deploying") %></h3></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-sm-offset-3 text-center">
+        <% progress = 100 * @deployment.task.progress %>
+        <%= "#{progress.round(1)}% #{_('Complete')}" %>
+        <div class="progress progress-striped <%= 'active' if @deployment.task.state == 'running' %>">
+          <% classes = ['progress-bar',
+                        case @deployment.task.result
+                        when 'success'
+                          'progress-bar-success'
+                        when 'error'
+                          'progress-bar-danger'
+                        else
+                          nil
+                        end]
+          %>
+          <div class="<%= classes.join ' ' %>"
+               role="progressbar"
+               aria-valuenow="<%= progress %>"
+               aria-valuemin="0"
+               aria-valuemax="100"
+               style="width: <%= progress %>%;">
+            <span class="sr-only"><%= progress %>% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <%= display_link_if_authorized(
+            _('Show more details'),
+            hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+      </div>
+    </div>
+  <% end %>
+</div>

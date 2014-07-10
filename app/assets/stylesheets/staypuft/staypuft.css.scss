@@ -22,6 +22,7 @@
 
 .title h1 {
   word-wrap: break-word;
+}
 
 div.deployed {
   width: 80px;
@@ -78,6 +79,18 @@ span.editable, span.editable:hover {
       @extend .btn-primary;
     }
   }
+}
+
+.deployment_summary_pane {
+  padding-top: 60px;
+}
+
+div.title form {
+  font-size: 16px;
+}
+
+span.edit_textfield input {
+  width: 50% !important;
 }
 
 // span.edit_textfield button {

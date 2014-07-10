@@ -42,6 +42,12 @@ $(function () {
     $(this).closest('.tabbed_side_nav_table').find('.activated').removeClass('activated');
   });
 
+  $('#hidden_password_toggle').click(function(e) {
+    e.preventDefault();
+    $(this).children('.glyphicon-eye-open, .glyphicon-eye-close').toggleClass('hide');
+    $(this).siblings('.hidden_password, .shown_password').toggleClass('hide');
+  });
+
   var duration = 150;
 
   showPasswords();
