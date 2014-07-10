@@ -6,8 +6,7 @@ module Staypuft
 
     NFS_HELP = N_('(<server>:<local path>)')
 
-    param_attr :driver_backend, :nfs_network_path, :gluster_network_path,
-               :gluster_backup_volfile_servers
+    param_attr :driver_backend, :nfs_network_path
 
     module DriverBackend
       LOCAL   = 'local'
@@ -85,6 +84,10 @@ module Staypuft
       ret_list = DriverBackend::TYPES.clone
       ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
       ret_list
+    end
+
+    def param_hash
+      { "driver_backend" => driver_backend, "nfs_network_path" => nfs_network_path}
     end
 
   end

@@ -145,5 +145,14 @@ module Staypuft
       [NetworkSegmentation::VXLAN, NetworkSegmentation::GRE].include?(network_segmentation)
     end
 
+    def param_hash
+      { 'network_segmentation'       => network_segmentation,
+        'tenant_vlan_ranges'         => tenant_vlan_ranges,
+        'networker_tenant_interface' => networker_tenant_interface,
+        'use_external_interface'     => use_external_interface,
+        'external_interface_name'    => external_interface_name,
+        'compute_tenant_interface'   => compute_tenant_interface }
+    end
+
   end
 end

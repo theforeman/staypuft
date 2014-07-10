@@ -4,7 +4,7 @@ module Staypuft
       'cinder'
     end
 
-    param_attr :driver_backend, :nfs_uri, :nfs_mount_options
+    param_attr :driver_backend, :nfs_uri
 
     module DriverBackend
       LVM        = 'lvm'
@@ -85,6 +85,10 @@ module Staypuft
       ret_list.delete(DriverBackend::EQUALLOGIC)
 
       ret_list
+    end
+
+    def param_hash
+      { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri}
     end
 
   end
