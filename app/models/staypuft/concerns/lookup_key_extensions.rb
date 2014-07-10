@@ -30,8 +30,19 @@ module Staypuft::Concerns::LookupKeyExtensions
     self.send(method, value) rescue raise TypeError
   end
 
-  def has_erb? value
+  def self.has_erb?(value)
     value =~ /<%.*%>/
+  end
+
+  def has_erb?(value)
+    Staypuft::Concerns::LookupKeyExtensions.has_erb? value
+  end
+
+  def self.evaluate_value(hostgroup, value)
+    host = Host::Managed.new(hostgroup: hostgroup, name: 'renderer')
+    SafeRender.new(:variables => { :host => host }).parse(value)
+  rescue => e
+    "ERROR: #{e.message} (#{e.class})"
   end
 
   def value_before_type_cast_with_limpet(value)
