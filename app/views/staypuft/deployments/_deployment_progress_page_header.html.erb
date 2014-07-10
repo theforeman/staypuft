@@ -1,9 +1,11 @@
-<div style='width: 70%; display: inline-block'>
-  <h1 style='margin-top: 0'>Deployment Status</h1>
-</div>
-
-<div style='display: inline-block; float: right'>
-  <% if Staypuft::Deployment.find_by_foreman_task(@task) %>
-    <%= link_to _('Return to deployment'), deployment_path(Staypuft::Deployment.find_by_foreman_task(@task)) %>
-  <% end %>
-</div>
+<% if @deployment = Staypuft::Deployment.find_by_foreman_task(@task) %>
+  <div style='width: 70%; display: inline-block'>
+    <h1 style='margin-top: 0'>Deployment Status</h1>
+  </div>
+  
+  <div style='display: inline-block; float: right'>
+    <% if Staypuft::Deployment.find_by_foreman_task(@task) %>
+      <%= link_to _('Return to deployment'), deployment_path(@deployment) %>
+    <% end %>
+  </div>
+<% end %>
