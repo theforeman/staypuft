@@ -34,7 +34,7 @@
             <h4><%= _("User Passwords") %></h4>
               <% @deployment.passwords.services_passwords(:user).each_pair do |user, pw| %>
                 <div class="row">
-                  <label class="col-sm-4 control-label text-muted"><%= "#{user.to_s.split("_")[0].capitalize}:" %></label>
+                  <label class="col-sm-4 control-label text-muted"><%= "#{user.to_s.gsub('_', ' ').split('user')[0].capitalize}:" %></label>
                   <div class="col-sm-8">
                     <p class="form-control-static"><%= pw %></p>
                   </div>
@@ -48,7 +48,7 @@
             <h4><%= _("Database Passwords") %></h4>
               <% @deployment.passwords.services_passwords(:db).each_pair do |user, pw| %>
                 <div class="row">
-                  <label class="col-sm-4 control-label text-muted"><%= "#{user.to_s.split("_")[0].capitalize}:" %></label>
+                  <label class="col-sm-4 control-label text-muted"><%= "#{user.to_s.gsub('_', ' ').split('db')[0].capitalize}:" %></label>
                   <div class="col-sm-8">
                     <p class="form-control-static"><%= pw %></p>
                   </div>
