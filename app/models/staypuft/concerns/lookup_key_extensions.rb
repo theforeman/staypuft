@@ -77,6 +77,10 @@ module Staypuft::Concerns::LookupKeyExtensions
         else
           value
         end
+      rescue => exc
+        # TODO fix in foreman
+        Rails.logger.error "There was error rendering string: #{string.inspect}\n#{exc} (#{exc.class})\n#{exc.backtrace.join("\n")}"
+        raise exc
       end
     end
   end
