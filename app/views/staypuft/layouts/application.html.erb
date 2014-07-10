@@ -5,27 +5,40 @@
     <%= content_tag('div', flash[:notice],  :class => 'flash hide notice')  if flash[:notice] %>
     <%= render 'common/notice' unless @notices.empty? %>
     <div id="content" class="container">
-      <% unless @page_header.blank? %>
-        <div class="title row form-group">
-          <h1 class="col-md-8"><%=h @page_header %></h1>
+      <div class="title row form-group">
+        <div class="col-sm-12">
+          <div class="pull-left">
+            <h1 class=""><%=h @page_header if @page_header.present? %></h1>
+            <% if content_for? :subtitle %>
+              <div class="subtitle">
+                <%= yield(:subtitle) %>
+              </div>
+            <% end %>
+          </div>
+          <% if content_for? :top_actions %>
+            <div class="top_actions pull-right">
+              <div class="btn-toolbar pull-right">
+                <%= yield(:top_actions) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <% if content_for?(:search_bar) || content_for?(:title_actions) %>
+        <div class="row">
+          <div class="title_filter <%= searchable? ? "col-md-6" : "col-md-4" %>">
+            <%= render "common/searchbar" if searchable? %>
+            <%= yield(:search_bar) %>&nbsp;
+          </div>
+          <div id="title_action" class="<%= searchable? ? "col-md-6" : "col-md-8" %>">
+            <div class="btn-toolbar pull-right"><%=h yield(:title_actions) %></div>
+          </div>
         </div>
       <% end %>
-      <div class="subtitle row form-group">
-        <%= yield(:subtitle) %>
-      </div>
-      <div class="row">
-        <div class="title_filter <%= searchable? ? "col-md-6" : "col-md-4" %>">
-          <%= render "common/searchbar" if searchable? %>
-          <%= yield(:search_bar) %>&nbsp;
-        </div>
-        <div id="title_action" class="<%= searchable? ? "col-md-6" : "col-md-8" %>">
-          <div class="btn-toolbar pull-right"><%=h yield(:title_actions) %></div>
-        </div>
-      </div>
 
       <%= yield %>
     </div>
   </div>
 <% end %>
-    
+
 <%= render :template => 'layouts/base' %>

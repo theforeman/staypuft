@@ -1,6 +1,6 @@
 <% title _("Edit - %s Configuration Parameters") % @deployment.name %>
-<% content_for(:title_actions) do %>
-  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btb-link" %>
+<% content_for(:top_actions) do %>
+  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btn btn-link" %>
   <%= link_to _("Apply"), '',
               class: "btn btn-primary",
               id:    'edit_staypuft_deployment_submit' %>
