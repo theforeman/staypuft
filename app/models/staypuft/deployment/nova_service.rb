@@ -79,13 +79,24 @@ module Staypuft
 
     def network_overrides
       { 'force_dhcp_release' => false }.tap do |h|
-        h.update 'vlan_start' => self.vlan_range.split(':')[0] if self.vlan_manager?
+        h.update 'vlan_start' => vlan_start if self.vlan_manager?
       end.to_yaml
     end
 
-    # TODO: make this dynamic
+    def vlan_range_arr
+      arr = self.vlan_range.split(':')
+    end
+
+    def vlan_start
+      vlan_range_arr[0]
+    end
+
     def num_networks
-      1
+      if self.vlan_manager?
+        vlan_range_arr[1].to_i - vlan_range_arr[0].to_i + 1
+      else
+        1
+      end
     end
 
     class Jail < Safemode::Jail
