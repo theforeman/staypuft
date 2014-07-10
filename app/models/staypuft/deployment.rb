@@ -217,7 +217,11 @@ module Staypuft
     end
 
     def horizon_url
-      "http://#{ha? ? self.vips.get(:horizon) : self.ips.controller_ip}"
+      if ha?
+        "http://#{self.vips.get(:horizon)}"
+      else
+        self.ips.controller_ips.empty? ? nil : "http://#{self.ips.controller_ip}"
+      end
     end
 
     private
