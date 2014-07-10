@@ -74,9 +74,13 @@
     </div>
     <div class="row">
       <div class="col-sm-12 text-center">
-        <%= display_link_if_authorized(
-            _('Show more details'),
-            hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+        <% if @deployment.task %>
+          <%= display_link_if_authorized(
+              _('Show more details'),
+              hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+        <% else %>
+          <%= _("Deployment task has been unlocked") %>
+        <% end %>
       </div>
     </div>
   <% else %>

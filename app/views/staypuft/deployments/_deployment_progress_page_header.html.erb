@@ -3,5 +3,7 @@
 </div>
 
 <div style='display: inline-block; float: right'>
-  <%= link_to _('Return to deployment'), deployment_path(Staypuft::Deployment.find_by_foreman_task(@task)) %>
+  <% if Staypuft::Deployment.find_by_foreman_task(@task) %>
+    <%= link_to _('Return to deployment'), deployment_path(Staypuft::Deployment.find_by_foreman_task(@task)) %>
+  <% end %>
 </div>
