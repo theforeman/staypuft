@@ -37,8 +37,8 @@
             </div>
           </div>
         </form>
-        <div class="row  text-center">
-          <%= link_to(_("Access all details"), "", :'data-toggle' => "modal", :'data-target' => "#all_details_modal") %>
+        <div class="row text-center">
+          <%= link_to(_("Access all details"), "", :'data-toggle' => "modal", :'data-target' => "#all_details_modal", :class => "btn btn-default") %>
         </div>
       </div>
     </div>
@@ -78,6 +78,10 @@
             _('Show more details'),
             hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
       </div>
+    </div>
+  <% else %>
+    <div class="row">
+      <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Not deployed, yet.") %></h3></div>
     </div>
   <% end %>
 </div>

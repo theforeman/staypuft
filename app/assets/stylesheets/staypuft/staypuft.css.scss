@@ -24,35 +24,6 @@
   word-wrap: break-word;
 }
 
-div.deployed {
-  width: 80px;
-  height: 80px;
-  maring: 10px;
-}
-
-div.deployment-overview table {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-div.deployment-overview td {
-  text-align: left;
-  padding: 5px 10px 0px 10px;
-}
-
-div.progress-header {
-  margin-bottom: 20px;
-  font-size: 25px;
-}
-
-div.deployment-overview {
-  margin-top: 70px;
-  width: 45%;
-  margin-left: auto ;
-  margin-right: auto ;
-  text-align: center;
-}
-
 span.editable, span.editable:hover {
   background-color: transparent;
   .spinner-placeholder{
@@ -84,18 +55,6 @@ span.editable, span.editable:hover {
 .deployment_summary_pane {
   padding-top: 60px;
 }
-
-div.title form {
-  font-size: 16px;
-}
-
-span.edit_textfield input {
-  width: 50% !important;
-}
-
-// span.edit_textfield button {
-//   margin-left: 5px;
-// }
 
 .service-box {
   width: 200px;
