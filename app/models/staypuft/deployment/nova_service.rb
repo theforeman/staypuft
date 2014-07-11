@@ -137,6 +137,15 @@ module Staypuft
       end
     end
 
+    def param_hash
+      { 'network_manager'          => network_manager,
+        'vlan_range'               => vlan_range,
+        'external_interface_name'  => external_interface_name,
+        'public_floating_range'    => public_floating_range,
+        'compute_tenant_interface' => compute_tenant_interface,
+        'private_fixed_range'      => private_fixed_range }
+    end
+
     class Jail < Safemode::Jail
       allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
         :compute_tenant_interface, :external_interface_name, :num_networks

@@ -87,5 +87,9 @@ module Staypuft
         h.update name => single_mode? ? single_password : self.send(name)
       end
     end
+
+    def param_hash
+      { "mode" => mode, "single_password" => single_password}
+    end
   end
 end

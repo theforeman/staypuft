@@ -10,6 +10,10 @@ module Staypuft
 
     NEW_NAME_PREFIX = 'uninitialized_'
 
+    # supporting import/export
+    EXPORT_PARAMS   = [:amqp_provider, :networking, :layout_name, :platform]
+    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords] 
+
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
     after_save :update_hostgroup_name
