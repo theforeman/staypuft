@@ -617,9 +617,9 @@ module Staypuft
         else
           raise
         end
-        [key_type, key_value]
       end
       # If we need to handle actual number classes like Fixnum, add those here
+      [key_type, key_value]
     end
 
     def seed_layouts
@@ -695,7 +695,7 @@ module Staypuft
           end
           param_type, param_value = get_key_type_and_value(default_value)
           unless param.update_attributes key_type: param_type, default_value: param_value
-            Rails.logger.error "param #{param_key} in #{puppetclass_name} default_value: #{default_value.inspect} is invalid"
+            Rails.logger.error "param #{param_key} in #{puppetclass_name} default_value: #{param_value.inspect} is invalid"
           end
         end
       end
