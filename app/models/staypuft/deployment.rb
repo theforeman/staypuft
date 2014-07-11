@@ -228,6 +228,13 @@ module Staypuft
       end
     end
 
+    def controller_hostgroup
+      Hostgroup.includes(:deployment_role_hostgroup).
+        where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
+                                                      role_id:       Staypuft::Role.controller }).
+        first
+    end
+
     private
 
     def update_layout

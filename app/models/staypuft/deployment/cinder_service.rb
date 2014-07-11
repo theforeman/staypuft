@@ -5,6 +5,7 @@ module Staypuft
     end
 
     param_attr :driver_backend, :nfs_uri
+    after_save :set_lvm_ptable
 
     module DriverBackend
       LVM        = 'lvm'
@@ -91,5 +92,25 @@ module Staypuft
       { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri}
     end
 
+    def lvm_ptable
+      Ptable.find_by_name('LVM with cinder-volumes')
+    end
+
+    private
+
+    def set_lvm_ptable
+      if (hostgroup = deployment.controller_hostgroup)
+        ptable = lvm_ptable
+       if (lvm_backend? && ptable.nil?)
+          Rails.logger.error "Missing Partition Table 'LVM with cinder-volumes'"
+        end
+        if (lvm_backend? && ptable)
+          hostgroup.ptable = ptable
+        else
+          hostgroup.ptable = nil
+        end
+        hostgroup.save!
+      end
+    end
   end
 end
