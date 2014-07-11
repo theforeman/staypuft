@@ -21,11 +21,6 @@ module Staypuft
         'swift_ext4_device'            => '/dev/sdc2',
         'swift_local_interface'        => 'eth3',
         'swift_loopback'               => true,
-        'swift_ring_server'            => '192.168.203.1',
-        'controller_admin_host'        => '172.16.0.1',
-        'controller_priv_host'         => '172.16.0.1',
-        'controller_pub_host'          => '172.16.1.1',
-        'mysql_host'                   => '172.16.0.1',
         'mysql_virtual_ip'             => '192.168.200.220',
         'mysql_bind_address'           => '0.0.0.0',
         'mysql_virt_ip_nic'            => 'eth1',
@@ -34,7 +29,6 @@ module Staypuft
         'mysql_shared_storage_type'    => 'nfs',
         'mysql_resource_group_name'    => 'mysqlgrp',
         'mysql_clu_member_addrs'       => '192.168.203.11 192.168.203.12 192.168.203.13',
-        'amqp_host'                    => '172.16.0.1',
         'amqp_username'                => 'openstack',
         'admin_email'                  => "admin@#{Facter.value(:domain)}",
         'enable_ovs_agent'             => 'true',
@@ -43,14 +37,12 @@ module Staypuft
         'auto_assign_floating_ip'      => 'true',
         'cisco_vswitch_plugin'         => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
         'cisco_nexus_plugin'           => 'neutron.plugins.cisco.nexus.cisco_nexus_plugin_v2.NexusPlugin',
-        'nexus_config'                 => {},
+        'nexus_config'                 => { :hash => {}},
         'nexus_credentials'            => [],
         'provider_vlan_auto_create'    => 'false',
         'provider_vlan_auto_trunk'     => 'false',
         'backend_server_names'         => [],
         'backend_server_addrs'         => [],
-        'lb_backend_server_names'      => [],
-        'lb_backend_server_addrs'      => [],
         'configure_ovswitch'           => 'true',
         'neutron'                      => 'false',
         'ssl'                          => 'false',
@@ -160,45 +152,53 @@ module Staypuft
 
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
 
+    def get_host_format(param_name)
+      { :string => '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>' % param_name }
+    end
+
+    # virtual ip addresses
+    def vip_format(param_name)
+      { :string => '<%%= @host.deployment.vips.get(:%s) %%>' % param_name }
+    end
 
     def functional_dependencies
-      amqp_provider               = '<%= @host.deployment.amqp_provider %>'
-      neutron                     = '<%= @host.deployment.neutron_networking? %>'
+      amqp_provider               = { :string => '<%= @host.deployment.amqp_provider %>' }
+      neutron                     = { :string => '<%= @host.deployment.neutron_networking? %>' }
 
       # Nova
-      network_manager             = '<%= @host.deployment.nova.network_manager %>'
+      network_manager             = { :string => '<%= @host.deployment.nova.network_manager %>' }
       # multi_host handled inline, since it's two separate static values 'true' and 'True'
-      network_overrides           = '<%= @host.deployment.nova.network_overrides %>'
-      network_num_networks        = '<%= @host.deployment.nova.num_networks %>'
-      network_fixed_range         = '<%= @host.deployment.nova.private_fixed_range %>'
-      network_floating_range      = '<%= @host.deployment.nova.public_floating_range %>'
-      network_private_iface       = '<%= @host.deployment.nova.compute_tenant_interface %>'
-      network_public_iface        = '<%= @host.deployment.nova.external_interface_name %>'
+      network_overrides           = { :hash =>   '<%= @host.deployment.nova.network_overrides %>' }
+      network_num_networks        = { :string => '<%= @host.deployment.nova.num_networks %>' }
+      network_fixed_range         = { :string => '<%= @host.deployment.nova.private_fixed_range %>' }
+      network_floating_range      = { :string => '<%= @host.deployment.nova.public_floating_range %>' }
+      network_private_iface       = { :string => '<%= @host.deployment.nova.compute_tenant_interface %>' }
+      network_public_iface        = { :string => '<%= @host.deployment.nova.external_interface_name %>' }
       network_create_networks     = true
 
       # Neutron
-      ovs_vlan_ranges             = '<%= @host.deployment.neutron.networker_vlan_ranges %>'
-      compute_ovs_vlan_ranges     = '<%= @host.deployment.neutron.compute_vlan_ranges %>'
+      ovs_vlan_ranges             = { :array =>  '<%= @host.deployment.neutron.networker_vlan_ranges %>' }
+      compute_ovs_vlan_ranges     = { :array =>  '<%= @host.deployment.neutron.compute_vlan_ranges %>' }
       ml2_network_vlan_ranges     = ovs_vlan_ranges
       ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation %>']
       ml2_tunnel_id_ranges        = ['10:100000']
       ml2_vni_ranges              = ['10:100000']
       ovs_tunnel_types            = ['vxlan', 'gre']
-      ovs_tunnel_iface            = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>'
-      ovs_bridge_mappings         = '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>'
-      ovs_bridge_uplinks          = '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>'
-      compute_ovs_tunnel_iface    = '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_interface : "" %>'
-      compute_ovs_bridge_mappings = '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>'
-      compute_ovs_bridge_uplinks  = '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>'
-      enable_tunneling            = '<%= @host.deployment.neutron.enable_tunneling?.to_s %>'
+      ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>' }
+      ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>' }
+      ovs_bridge_uplinks          = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>' }
+      compute_ovs_tunnel_iface    = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_interface : "" %>' }
+      compute_ovs_bridge_mappings = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>' }
+      compute_ovs_bridge_uplinks  = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>' }
+      enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
 
       # Glance
       backend                     = 'file'
-      pcmk_fs_type                = '<%= @host.deployment.glance.driver_backend %>'
-      pcmk_fs_device              = '<%= @host.deployment.glance.pcmk_fs_device %>'
-      pcmk_fs_dir                 = '<%= @host.deployment.glance.pcmk_fs_dir %>'
+      pcmk_fs_type                = { :string => '<%= @host.deployment.glance.driver_backend %>' }
+      pcmk_fs_device              = { :string => '<%= @host.deployment.glance.pcmk_fs_device %>' }
+      pcmk_fs_dir                 = { :string => '<%= @host.deployment.glance.pcmk_fs_dir %>' }
       pcmk_fs_manage              = 'true'
-      pcmk_fs_options             = '<%= @host.deployment.glance.pcmk_fs_options %>'
+      pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
       glance_rbd_store_user       = 'glance'
       glance_rbd_store_pool       = 'images' 
 
@@ -206,15 +206,15 @@ module Staypuft
       volume                      = true
       cinder_backend_gluster      = false
       cinder_backend_gluster_name = 'gluster_backend'
-      cinder_backend_iscsi        = '<%= @host.deployment.cinder.lvm_backend? %>'
+      cinder_backend_iscsi        = { :string => '<%= @host.deployment.cinder.lvm_backend? %>' }
       cinder_backend_iscsi_name   = 'iscsi_backend'
-      cinder_backend_nfs          = '<%= @host.deployment.cinder.nfs_backend? %>'
+      cinder_backend_nfs          = { :string => '<%= @host.deployment.cinder.nfs_backend? %>' }
       cinder_backend_nfs_name     = 'nfs_backend'
       cinder_multiple_backends    = false
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = ''
 
-      cinder_backend_rbd                      = '<%= @host.deployment.cinder.ceph_backend? %>'
+      cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
       cinder_backend_rbd_name                 = 'rbd_backend'
       # TODO: confirm these params and add them to model where user input is needed
       cinder_rbd_pool                         = 'volumes'
@@ -224,7 +224,7 @@ module Staypuft
       cinder_rbd_user                         = 'cinder'
       cinder_rbd_secret_uuid                  = ''
 
-      cinder_backend_eqlx           = '<%= @host.deployment.cinder.equallogic_backend? %>'
+      cinder_backend_eqlx           = { :string => '<%= @host.deployment.cinder.equallogic_backend? %>' }
       cinder_backend_eqlx_name      = ['eqlx_backend']
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
@@ -241,47 +241,44 @@ module Staypuft
 
       # effective_value grabs shared password if deployment is in shared password mode,
       # otherwise use the service-specific one
-      admin_pw                      = '<%= @host.deployment.passwords.effective_value(:admin) %>'
-      ceilometer_user_pw            = '<%= @host.deployment.passwords.effective_value(:ceilometer_user) %>'
-      cinder_db_pw                  = '<%= @host.deployment.passwords.effective_value(:cinder_db) %>'
-      cinder_user_pw                = '<%= @host.deployment.passwords.effective_value(:cinder_user) %>'
-      glance_db_pw                  = '<%= @host.deployment.passwords.effective_value(:glance_db) %>'
-      glance_user_pw                = '<%= @host.deployment.passwords.effective_value(:glance_user) %>'
-      heat_db_pw                    = '<%= @host.deployment.passwords.effective_value(:heat_db) %>'
-      heat_user_pw                  = '<%= @host.deployment.passwords.effective_value(:heat_user) %>'
-      heat_cfn_user_pw              = '<%= @host.deployment.passwords.effective_value(:heat_cfn_user) %>'
-      keystone_db_pw                = '<%= @host.deployment.passwords.effective_value(:keystone_db) %>'
-      keystone_user_pw              = '<%= @host.deployment.passwords.effective_value(:keystone_user) %>'
-      mysql_root_pw                 = '<%= @host.deployment.passwords.effective_value(:mysql_root) %>'
-      neutron_db_pw                 = '<%= @host.deployment.passwords.effective_value(:neutron_db) %>'
-      neutron_user_pw               = '<%= @host.deployment.passwords.effective_value(:neutron_user) %>'
-      nova_db_pw                    = '<%= @host.deployment.passwords.effective_value(:nova_db) %>'
-      nova_user_pw                  = '<%= @host.deployment.passwords.effective_value(:nova_user) %>'
-      swift_admin_pw                = '<%= @host.deployment.passwords.effective_value(:swift_admin) %>'
-      swift_user_pw                 = '<%= @host.deployment.passwords.effective_value(:swift_user) %>'
-      amqp_pw                       = '<%= @host.deployment.passwords.effective_value(:amqp) %>'
-      amqp_nssdb_pw                 = '<%= @host.deployment.passwords.effective_value(:amqp_nssdb) %>'
-      keystone_admin_token          = '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>'
+      admin_pw                      = { :string => '<%= @host.deployment.passwords.effective_value(:admin) %>' }
+      ceilometer_user_pw            = { :string => '<%= @host.deployment.passwords.effective_value(:ceilometer_user) %>' }
+      cinder_db_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:cinder_db) %>' }
+      cinder_user_pw                = { :string => '<%= @host.deployment.passwords.effective_value(:cinder_user) %>' }
+      glance_db_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:glance_db) %>' }
+      glance_user_pw                = { :string => '<%= @host.deployment.passwords.effective_value(:glance_user) %>' }
+      heat_db_pw                    = { :string => '<%= @host.deployment.passwords.effective_value(:heat_db) %>' }
+      heat_user_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:heat_user) %>' }
+      heat_cfn_user_pw              = { :string => '<%= @host.deployment.passwords.effective_value(:heat_cfn_user) %>' }
+      keystone_db_pw                = { :string => '<%= @host.deployment.passwords.effective_value(:keystone_db) %>' }
+      keystone_user_pw              = { :string => '<%= @host.deployment.passwords.effective_value(:keystone_user) %>' }
+      mysql_root_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:mysql_root) %>' }
+      neutron_db_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:neutron_db) %>' }
+      neutron_user_pw               = { :string => '<%= @host.deployment.passwords.effective_value(:neutron_user) %>' }
+      nova_db_pw                    = { :string => '<%= @host.deployment.passwords.effective_value(:nova_db) %>' }
+      nova_user_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:nova_user) %>' }
+      swift_admin_pw                = { :string => '<%= @host.deployment.passwords.effective_value(:swift_admin) %>' }
+      swift_user_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:swift_user) %>' }
+      amqp_pw                       = { :string => '<%= @host.deployment.passwords.effective_value(:amqp) %>' }
+      amqp_nssdb_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:amqp_nssdb) %>' }
+      keystone_admin_token          = { :string => '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>' }
 
       #these don't share the user-supplied password value; they're always a random per param value
-      ceilometer_metering           = '<%= @host.deployment.passwords.ceilometer_metering_secret %>'
-      heat_auth_encrypt_key         = '<%= @host.deployment.passwords.heat_auth_encrypt_key %>'
-      horizon_secret_key            = '<%= @host.deployment.passwords.horizon_secret_key %>'
-      swift_shared_secret           = '<%= @host.deployment.passwords.swift_shared_secret %>'
-      neutron_metadata_proxy_secret = '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>'
+      ceilometer_metering           = { :string => '<%= @host.deployment.passwords.ceilometer_metering_secret %>' }
+      heat_auth_encrypt_key         = { :string => '<%= @host.deployment.passwords.heat_auth_encrypt_key %>' }
+      horizon_secret_key            = { :string => '<%= @host.deployment.passwords.horizon_secret_key %>' }
+      swift_shared_secret           = { :string => '<%= @host.deployment.passwords.swift_shared_secret %>' }
+      neutron_metadata_proxy_secret = { :string => '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>' }
 
-      # virtual ip addresses
-      vip_format                    = '<%%= @host.deployment.vips.get(:%s) %%>'
-      get_host_format               = '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>'
 
-      amqp_host    = get_host_format % :amqp
-      mysql_host   = get_host_format % :db
-      glance_host  = get_host_format % :glance
-      auth_host    = get_host_format % :keystone
-      neutron_host = get_host_format % :neutron
-      nova_host    = get_host_format % :nova
+      amqp_host    = get_host_format :amqp
+      mysql_host   = get_host_format :db
+      glance_host  = get_host_format :glance
+      auth_host    = get_host_format :keystone
+      neutron_host = get_host_format :neutron
+      nova_host    = get_host_format :nova
 
-      controller_host = '<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip %>'
+      controller_host = { :string => '<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip %>'}
 
       {
           'quickstack::nova_network::controller'   => {
@@ -340,7 +337,7 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => '<%= @host.deployment.ips.controller_ips %>',
+              'swift_storage_ips'                       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
               'cinder_nfs_shares'                       => [],
               'cinder_gluster_shares'                   => [],
               'controller_admin_host'                   => controller_host,
@@ -412,7 +409,7 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => '<%= @host.deployment.ips.controller_ips %>',
+              'swift_storage_ips'                       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
               'cinder_nfs_shares'                       => [],
               'cinder_gluster_shares'                   => [],
               'controller_admin_host'                   => controller_host,
@@ -438,43 +435,43 @@ module Staypuft
               'amqp_password'                 => amqp_pw,
               'heat_auth_encryption_key'      => heat_auth_encrypt_key,
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
-              'ceilometer_admin_vip'          => vip_format % :ceilometer,
-              'ceilometer_private_vip'        => vip_format % :ceilometer,
-              'ceilometer_public_vip'         => vip_format % :ceilometer,
-              'cinder_admin_vip'              => vip_format % :cinder,
-              'cinder_private_vip'            => vip_format % :cinder,
-              'cinder_public_vip'             => vip_format % :cinder,
-              'db_vip'                        => vip_format % :db,
-              'glance_admin_vip'              => vip_format % :glance,
-              'glance_private_vip'            => vip_format % :glance,
-              'glance_public_vip'             => vip_format % :glance,
-              'heat_admin_vip'                => vip_format % :heat,
-              'heat_private_vip'              => vip_format % :heat,
-              'heat_public_vip'               => vip_format % :heat,
-              'heat_cfn_admin_vip'            => vip_format % :heat_cfn,
-              'heat_cfn_private_vip'          => vip_format % :heat_cfn,
-              'heat_cfn_public_vip'           => vip_format % :heat_cfn,
-              'horizon_admin_vip'             => vip_format % :horizon,
-              'horizon_private_vip'           => vip_format % :horizon,
-              'horizon_public_vip'            => vip_format % :horizon,
-              'keystone_admin_vip'            => vip_format % :keystone,
-              'keystone_private_vip'          => vip_format % :keystone,
-              'keystone_public_vip'           => vip_format % :keystone,
-              'loadbalancer_vip'              => vip_format % :loadbalancer,
-              'neutron_admin_vip'             => vip_format % :neutron,
-              'neutron_private_vip'           => vip_format % :neutron,
-              'neutron_public_vip'            => vip_format % :neutron,
-              'nova_admin_vip'                => vip_format % :nova,
-              'nova_private_vip'              => vip_format % :nova,
-              'nova_public_vip'               => vip_format % :nova,
-              'amqp_vip'                      => vip_format % :amqp,
-              'swift_public_vip'              => vip_format % :swift,
-              'private_ip'                    => '<%= @host.ip %>',
-              'cluster_control_ip'            => '<%= @host.deployment.ips.controller_ips.first %>',
-              'lb_backend_server_addrs'       => '<%= @host.deployment.ips.controller_ips %>',
-              'lb_backend_server_names'       => '<%= @host.deployment.ips.controller_fqdns %>' },
+              'ceilometer_admin_vip'          => vip_format(:ceilometer),
+              'ceilometer_private_vip'        => vip_format(:ceilometer),
+              'ceilometer_public_vip'         => vip_format(:ceilometer),
+              'cinder_admin_vip'              => vip_format(:cinder),
+              'cinder_private_vip'            => vip_format(:cinder),
+              'cinder_public_vip'             => vip_format(:cinder),
+              'db_vip'                        => vip_format(:db),
+              'glance_admin_vip'              => vip_format(:glance),
+              'glance_private_vip'            => vip_format(:glance),
+              'glance_public_vip'             => vip_format(:glance),
+              'heat_admin_vip'                => vip_format(:heat),
+              'heat_private_vip'              => vip_format(:heat),
+              'heat_public_vip'               => vip_format(:heat),
+              'heat_cfn_admin_vip'            => vip_format(:heat_cfn),
+              'heat_cfn_private_vip'          => vip_format(:heat_cfn),
+              'heat_cfn_public_vip'           => vip_format(:heat_cfn),
+              'horizon_admin_vip'             => vip_format(:horizon),
+              'horizon_private_vip'           => vip_format(:horizon),
+              'horizon_public_vip'            => vip_format(:horizon),
+              'keystone_admin_vip'            => vip_format(:keystone),
+              'keystone_private_vip'          => vip_format(:keystone),
+              'keystone_public_vip'           => vip_format(:keystone),
+              'loadbalancer_vip'              => vip_format(:loadbalancer),
+              'neutron_admin_vip'             => vip_format(:neutron),
+              'neutron_private_vip'           => vip_format(:neutron),
+              'neutron_public_vip'            => vip_format(:neutron),
+              'nova_admin_vip'                => vip_format(:nova),
+              'nova_private_vip'              => vip_format(:nova),
+              'nova_public_vip'               => vip_format(:nova),
+              'amqp_vip'                      => vip_format(:amqp),
+              'swift_public_vip'              => vip_format(:swift),
+              'private_ip'                    => { :string => '<%= @host.ip %>' },
+              'cluster_control_ip'            => { :string => '<%= @host.deployment.ips.controller_ips.first %>' },
+              'lb_backend_server_addrs'       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
+              'lb_backend_server_names'       => { :array => '<%= @host.deployment.ips.controller_fqdns %>' } },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => '<%= @host.deployment.ips.controller_ips.join(" ") %>' },
+              'pacemaker_cluster_members' => { :string => '<%= @host.deployment.ips.controller_ips.join(" ") %>' } },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
@@ -523,10 +520,10 @@ module Staypuft
               'secret_key' => horizon_secret_key },
           'quickstack::pacemaker::galera'          => {
               'mysql_root_password'   => mysql_root_pw,
-              'wsrep_cluster_members' => '<%= @host.deployment.ips.controller_ips %>' },
+              'wsrep_cluster_members' => { :array => '<%= @host.deployment.ips.controller_ips %>' } },
           'quickstack::pacemaker::swift'           => {
               'swift_shared_secret' => swift_shared_secret,
-              'swift_internal_vip'  => vip_format % :swift,
+              'swift_internal_vip'  => vip_format(:swift),
               'swift_storage_ips'   => [] },
           'quickstack::pacemaker::nova'            => {
               'multi_host'                    => 'true',
@@ -602,18 +599,25 @@ module Staypuft
               'neutron_host'               => neutron_host,
               'nova_host'                  => nova_host },
           'quickstack::pacemaker::rsync::keystone' => {
-              'keystone_private_vip' => vip_format % :keystone } }
+              'keystone_private_vip' => vip_format(:keystone) } }
     end
 
-    def get_key_type(value)
+    def get_key_type_and_value(value)
       key_list   = LookupKey::KEY_TYPES
-      value_type = value.class.to_s.downcase
-      if key_list.include?(value_type)
-        value_type
-      elsif [FalseClass, TrueClass].include? value.class
-        'boolean'
+      if value.class == Hash
+        key_type = value.keys.first.to_s
+        key_value = value.values.first
       else
-        raise
+        key_value = value
+        value_type = value.class.to_s.downcase
+        if key_list.include?(value_type)
+          key_type = value_type
+        elsif [FalseClass, TrueClass].include? value.class
+          key_type = 'boolean'
+        else
+          raise
+        end
+        [key_type, key_value]
       end
       # If we need to handle actual number classes like Fixnum, add those here
     end
@@ -689,7 +693,8 @@ module Staypuft
                                        map { |lk| lk.param_class.name }.inspect
             next
           end
-          unless param.update_attributes default_value: default_value
+          param_type, param_value = get_key_type_and_value(default_value)
+          unless param.update_attributes key_type: param_type, default_value: param_value
             Rails.logger.error "param #{param_key} in #{puppetclass_name} default_value: #{default_value.inspect} is invalid"
           end
         end
@@ -714,8 +719,7 @@ module Staypuft
     def apply_astapor_defaults(puppet_class)
       puppet_class.class_params.each do |param|
         if ASTAPOR_PARAMS.include?(param.key)
-          param.key_type      = get_key_type(ASTAPOR_PARAMS[param.key])
-          param.default_value = ASTAPOR_PARAMS[param.key]
+          param.key_type, param.default_value = get_key_type_and_value(ASTAPOR_PARAMS[param.key])
         end
         param.override = true
         param.save!
