@@ -9,7 +9,9 @@
          edit_textfield(@deployment,
                         :name,
                         options={:update_url => deployment_path(@deployment)}) +
-         content_tag(:small, _("with High Availability"), :class => "text-muted #{@deployment.ha? ? "" : "hide"}")) %>
+         content_tag(:small,
+                     @deployment.ha? ? _("with High Availability") : _("without High Availability"),
+                     :class => "text-muted")) %>
 <% subtitle edit_textfield(@deployment, :description, options={:update_url => deployment_path(@deployment)}) %>
 
 <% content_for(:top_actions) do %>
