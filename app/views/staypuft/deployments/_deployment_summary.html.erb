@@ -43,33 +43,24 @@
       </div>
     </div>
   <% elsif @deployment.in_progress? %>
+    <script>
+      // Polling for progress bar updates
+      var pollingInterval = 10000;
+      setTimeout(updateProgress, pollingInterval);
+
+      function updateProgress() {
+        var url = $("#deployment_progress_bar").attr("data-poll-url");
+        $.getScript(url);
+        setTimeout(updateProgress, pollingInterval);
+      }
+    </script>
+
     <div class="row">
       <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Deploying") %></h3></div>
     </div>
     <div class="row">
-      <div class="col-sm-6 col-sm-offset-3 text-center">
-        <% @deployment.progress %>
-        <%= "#{@deployment.progress}% #{_('Complete')}" %>
-        <div class="progress progress-striped <%= 'active' if @deployment.task.state == 'running' %>">
-          <% classes = ['progress-bar',
-                        case @deployment.task.result
-                        when 'success'
-                          'progress-bar-success'
-                        when 'error'
-                          'progress-bar-danger'
-                        else
-                          nil
-                        end]
-          %>
-          <div class="<%= classes.join ' ' %>"
-               role="progressbar"
-               aria-valuenow="<%= @deployment.progress %>"
-               aria-valuemin="0"
-               aria-valuemax="100"
-               style="width: <%= @deployment.progress %>%;">
-            <span class="sr-only"><%= @deployment.progress %>% Complete</span>
-          </div>
-        </div>
+      <div class="col-sm-6 col-sm-offset-3 text-center" id="deployment_progress_bar" data-poll-url="<%= deployment_path(@deployment) %>">
+        <%= render :partial => "deployment_progress_bar", :locals => { :deployment => @deployment } %>
       </div>
     </div>
     <div class="row">

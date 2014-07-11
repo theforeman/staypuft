@@ -1,0 +1,27 @@
+<% if deployment.in_progress? %>
+  <%= "#{deployment.progress}% #{_('Complete')}" %>
+  <div class="progress progress-striped <%= 'active' if deployment.task.state == 'running' %>">
+    <% classes = ['progress-bar',
+                  case deployment.task.result
+                  when 'success'
+                    'progress-bar-success'
+                  when 'error'
+                    'progress-bar-danger'
+                  else
+                    nil
+                  end]
+    %>
+    <div class="<%= classes.join ' ' %>"
+         role="progressbar"
+         aria-valuenow="<%= deployment.progress %>"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         style="width: <%= deployment.progress %>%;">
+      <span class="sr-only"><%= deployment.progress %>% Complete</span>
+    </div>
+  </div>
+<% else %>
+  <script>
+    location.reload(true);
+  </script>
+<% end %>

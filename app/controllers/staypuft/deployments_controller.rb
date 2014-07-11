@@ -20,10 +20,7 @@ module Staypuft
           @hostgroup  = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
               @deployment.child_hostgroups.deploy_order.first
         end
-
-        format.json do
-          render :status => 200, :json => @deployment.to_json(:methods => :progress)
-        end
+        format.js {}
       end
     end
 
