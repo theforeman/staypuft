@@ -10,6 +10,44 @@ module Staypuft
     param_attr :network_manager, :vlan_range, :external_interface_name, :public_floating_range,
                :compute_tenant_interface, :private_fixed_range
 
+    class NetworkRangesValidator < ActiveModel::Validator
+      def validate(record)
+        valid_ranges = []
+        [:public_floating_range, :private_fixed_range].each do |range_param|
+          begin
+            unless (range_str = record.send(range_param)).empty?
+              ip_addr = IPAddr.new(range_str)
+              ip_range = ip_addr.to_range
+              if ip_range.begin == ip_range.end
+                record.errors[range_param] << "Specify address range, not single value"
+              else
+                valid_ranges << [range_param, ip_addr]
+              end
+            end
+          rescue
+            record.errors[range_param] << "Invalid Network Range Format"
+          end
+          # don't validate conflicts unless both ranges otherwise passed validation
+          if valid_ranges.size == 2
+            valid_ranges.each_with_index do |param_and_ip, index|
+              this_param_name = param_and_ip[0]
+              this_ip_range = param_and_ip[1].to_range
+
+              other_param_name = valid_ranges[(index+1)%2][0]
+              other_ip_addr = valid_ranges[(index+1)%2][1]
+              ["begin", "end"].each do |action|
+                if (other_ip_addr===this_ip_range.send(action))
+                  record.errors[this_param_name] << "Range #{action} #{this_ip_range.begin} overlaps with range for #{other_param_name.to_s.humanize}"
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+    validates_with NetworkRangesValidator
+
     module NetworkManager
       FLAT_DHCP = 'FlatDHCPManager'
       VLAN      = 'VlanManager'
