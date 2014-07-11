@@ -11,7 +11,7 @@ module Staypuft
           where(DeploymentRoleHostgroup.table_name => { deployment_id: deployment,
                                                         role_id:       Staypuft::Role.controller }).
           first.
-          hosts
+          hosts.order(:id)
     end
 
     def controller_ips
