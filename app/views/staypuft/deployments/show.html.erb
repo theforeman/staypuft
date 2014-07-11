@@ -5,7 +5,11 @@
   </script>
 <% end %>
 
-<% title(@deployment.name, edit_textfield(@deployment, :name, options={:update_url => deployment_path(@deployment)})) %>
+<% title(@deployment.name,
+         edit_textfield(@deployment,
+                        :name,
+                        options={:update_url => deployment_path(@deployment)}) +
+         content_tag(:small, _("with High Availability"), :class => "text-muted #{@deployment.ha? ? "" : "hide"}")) %>
 <% subtitle edit_textfield(@deployment, :description, options={:update_url => deployment_path(@deployment)}) %>
 
 <% content_for(:top_actions) do %>
