@@ -432,6 +432,7 @@ module Staypuft
               'neutron_user_password'         => neutron_user_pw,
               'nova_db_password'              => nova_db_pw,
               'nova_user_password'            => nova_user_pw,
+              'amqp_provider'                 => amqp_provider,
               'amqp_password'                 => amqp_pw,
               'heat_auth_encryption_key'      => heat_auth_encrypt_key,
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
