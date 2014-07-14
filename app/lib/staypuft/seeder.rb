@@ -416,6 +416,7 @@ module Staypuft
               'controller_priv_host'                    => controller_host,
               'controller_pub_host'                     => controller_host },
           'quickstack::pacemaker::params'          => {
+              'include_swift'                 => 'false',
               'include_neutron'               => neutron,
               'neutron'                       => neutron,
               'ceilometer_user_password'      => ceilometer_user_pw,
