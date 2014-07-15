@@ -30,7 +30,7 @@ module Staypuft
     # TODO: network_path validation
 
     class Jail < Safemode::Jail
-      allow :driver_backend, :pcmk_fs_device, :pcmk_fs_dir, :pcmk_fs_options
+      allow :driver_backend, :pcmk_fs_device, :pcmk_fs_options
     end
 
     def set_defaults
@@ -51,18 +51,10 @@ module Staypuft
       self.driver_backend == DriverBackend::NFS
     end
 
-    def network_path
+    def pcmk_fs_device
       if self.nfs_backend?
         self.nfs_network_path
       end
-    end
-
-    def pcmk_fs_device
-      network_path.nil? ? '' : network_path.split(':')[0]
-    end
-
-    def pcmk_fs_dir
-      network_path.nil? ? '' : network_path.split(':')[1]
     end
 
     def pcmk_fs_options
