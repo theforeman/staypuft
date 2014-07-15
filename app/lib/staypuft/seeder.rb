@@ -196,7 +196,7 @@ module Staypuft
       backend                     = 'file'
       pcmk_fs_type                = { :string => '<%= @host.deployment.glance.driver_backend %>' }
       pcmk_fs_device              = { :string => '<%= @host.deployment.glance.pcmk_fs_device %>' }
-      pcmk_fs_dir                 = { :string => '<%= @host.deployment.glance.pcmk_fs_dir %>' }
+      pcmk_fs_dir                 = '/var/lib/glance/images'
       pcmk_fs_manage              = 'true'
       pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
       glance_rbd_store_user       = 'glance'
