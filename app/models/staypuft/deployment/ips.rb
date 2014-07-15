@@ -6,12 +6,7 @@ module Staypuft
     end
 
     def controllers
-      @controllers ||= Hostgroup.
-          includes(:deployment_role_hostgroup).
-          where(DeploymentRoleHostgroup.table_name => { deployment_id: deployment,
-                                                        role_id:       Staypuft::Role.controller }).
-          first.
-          hosts.order(:id)
+      @controllers ||= deployment.controller_hostgroup.hosts.order(:id)
     end
 
     def controller_ips

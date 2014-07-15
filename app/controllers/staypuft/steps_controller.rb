@@ -9,6 +9,10 @@ module Staypuft
       case step
       when :deployment_settings
         @layouts = ordered_layouts
+      when :services_overview
+        if !@deployment.ha? && @deployment.cinder.lvm_ptable.nil?
+          flash[:warning] = "Missing Partition Table 'LVM with cinder-volumes', LVM cinder backend won't work." 
+        end
       when :services_configuration
         @services_map = [:nova, :neutron, :glance, :cinder]
       end
