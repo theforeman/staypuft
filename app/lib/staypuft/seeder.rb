@@ -164,7 +164,7 @@ module Staypuft
     def functional_dependencies
       amqp_provider               = { :string => '<%= @host.deployment.amqp_provider %>' }
       neutron                     = { :string => '<%= @host.deployment.neutron_networking? %>' }
-      ceilometer                  = { :string => '<%= !@host.deployment.ha? %>' }
+      ceilometer                  = { :string => '<%= @host.deployment.non_ha? %>' }
 
       # Nova
       network_manager             = { :string => '<%= @host.deployment.nova.network_manager %>' }
