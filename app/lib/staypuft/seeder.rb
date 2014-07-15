@@ -164,6 +164,7 @@ module Staypuft
     def functional_dependencies
       amqp_provider               = { :string => '<%= @host.deployment.amqp_provider %>' }
       neutron                     = { :string => '<%= @host.deployment.neutron_networking? %>' }
+      ceilometer                  = { :string => '<%= !@host.deployment.ha? %>' }
 
       # Nova
       network_manager             = { :string => '<%= @host.deployment.nova.network_manager %>' }
@@ -554,6 +555,7 @@ module Staypuft
               'amqp_password'        => amqp_pw },
           'quickstack::nova_network::compute'      => {
               'amqp_provider'              => amqp_provider,
+              'ceilometer'                 => ceilometer,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
               'network_manager'            => network_manager,
@@ -578,6 +580,7 @@ module Staypuft
               'nova_host'                  => nova_host },
           'quickstack::neutron::compute'           => {
               'amqp_provider'              => amqp_provider,
+              'ceilometer'                 => ceilometer,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
               'enable_tunneling'           => enable_tunneling,
