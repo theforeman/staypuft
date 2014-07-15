@@ -179,7 +179,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?
+        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?
     end
 
     # TODO(mtaylor)
@@ -221,6 +221,10 @@ module Staypuft
 
     def ha?
       self.layout_name == LayoutName::HA
+    end
+
+    def non_ha?
+      self.layout_name == LayoutName::NON_HA
     end
 
     def nova_networking?
