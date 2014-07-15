@@ -15,8 +15,13 @@ module Staypuft
 
     def show
       @deployment = Deployment.find(params[:id])
-      @hostgroup  = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
-          @deployment.child_hostgroups.deploy_order.first
+      respond_to do | format |
+        format.html do
+          @hostgroup  = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
+              @deployment.child_hostgroups.deploy_order.first
+        end
+        format.js {}
+      end
     end
 
     def summary

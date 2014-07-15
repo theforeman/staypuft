@@ -1,10 +1,3 @@
-<!-- Refresh page every 60 seconds if deployment is in progress -->
-<% if @deployment.in_progress? %>
-  <script>
-    setTimeout("location.reload(true);", 60000);
-  </script>
-<% end %>
-
 <% title(@deployment.name,
          edit_textfield(@deployment,
                         :name,
