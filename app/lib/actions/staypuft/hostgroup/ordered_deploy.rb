@@ -34,7 +34,12 @@ module Actions
         end
 
         def humanized_output
-          planned_actions.map(&:humanized_output).join("\n")
+          action = Hostgroup::Deploy.allocate
+          task_output.map { |to| action.humanized_output to }.join(", ")
+        end
+
+        def task_output
+          planned_actions.map(&:task_output).select { |to| !to[:hosts].empty? }
         end
       end
     end

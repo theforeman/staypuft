@@ -31,7 +31,11 @@ module Actions
         end
 
         def humanized_output
-          planned_actions.map(&:humanized_output).join("\n")
+          planned_actions.first.humanized_output
+        end
+
+        def task_output
+          planned_actions.first.task_output
         end
 
       end

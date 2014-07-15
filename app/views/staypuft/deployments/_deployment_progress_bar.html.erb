@@ -20,6 +20,7 @@
       <span class="sr-only"><%= deployment.progress %>% Complete</span>
     </div>
   </div>
+  <span class="text-muted"><%= @deployment.task.humanized[:output] %></span>
 <% else %>
   <script>
     location.reload(true);
