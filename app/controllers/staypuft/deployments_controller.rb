@@ -16,10 +16,7 @@ module Staypuft
     def show
       @deployment = Deployment.find(params[:id])
       respond_to do | format |
-        format.html do
-          @hostgroup  = ::Hostgroup.find_by_id(params[:hostgroup_id]) ||
-              @deployment.child_hostgroups.deploy_order.first
-        end
+        format.html {}
         format.js {}
       end
     end
@@ -103,8 +100,7 @@ module Staypuft
                     join("\n"))
       end
 
-      redirect_to show_with_hostgroup_selected_deployment_path(
-                      id: deployment, hostgroup_id: hostgroup)
+      redirect_to deployment_path(deployment)
     end
 
     def unassign_host
@@ -123,8 +119,7 @@ module Staypuft
         end
       end
 
-      redirect_to show_with_hostgroup_selected_deployment_path(
-                      id: deployment, hostgroup_id: hostgroup)
+      redirect_to deployment_path(deployment)
     end
 
     def export_config
