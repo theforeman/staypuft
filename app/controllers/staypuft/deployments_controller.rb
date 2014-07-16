@@ -18,7 +18,7 @@ module Staypuft
       respond_to do | format |
         format.html {}
         format.json do
-          render :status => 200, :json => @deployment.to_json(:methods => :progress)
+          render :status => 200, :json => @deployment.to_json(:methods => [:progress, :progress_summary])
         end
       end
     end

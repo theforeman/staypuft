@@ -122,6 +122,10 @@ module Staypuft
       in_progress? ? {} : hostgroup.openstack_hosts(errors)
     end
 
+    def progress_summary
+      self.in_progress? ? self.task.humanized[:output] : nil 
+    end
+
     # Helper method for getting the progress of this deployment
     def progress
       if self.in_progress?
