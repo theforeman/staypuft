@@ -76,6 +76,10 @@
           var progress = response.deployment.progress;
           var $progressBar = $pollElement.find(".progress-bar");
 
+          if(progress == 100) {
+            location.reload(true)
+          }
+
           $pollElement.children('span').text(progress)
 
           $progressBar.attr("aria-valuenow", progress);
