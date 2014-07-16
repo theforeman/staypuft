@@ -32,10 +32,14 @@ module Staypuft
       HUMAN_AFTER = VLAN_HELP
     end
 
+    class NeutronVlanRangesValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::VlanRangeValuesValidator 
+    end
+
     validates :tenant_vlan_ranges,
-              :presence => true,
-              :if       => :vlan_segmentation?
-    # TODO: vlan range format validation
+              :presence            => true,
+              :if                  => :vlan_segmentation?,
+              :neutron_vlan_ranges => true
 
     module NetworkerTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks:')
