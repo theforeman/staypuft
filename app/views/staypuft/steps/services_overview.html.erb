@@ -8,25 +8,8 @@
     <h3><%= _("Deployment Roles & Available Services") %></h3>
     <h4><%= "#{@deployment.layout.name} - #{@deployment.layout.networking.capitalize} " + _("Networking") %></h4>
 
-    <div class="clearfix">
-        <% @deployment.roles_ordered.each do |role| %>
-          <div class="panel panel-default service-box">
-            <div class="panel-heading"><strong><%= role.name %></strong></div>
-            <div class="panel-body">
-              <ul>
-              <% role.services.each do |service| %>
-                <li>
-                <%= f.label service.name.parameterize.underscore.to_sym, service.name, :class=> "inline"  do %>
-                  <%= f.check_box(service.name.parameterize.underscore.to_sym, :checked => true, :disabled => "disabled", :hidden=> true) %>
-                  <%= service.name %>
-                <% end %>
-                </li>
-              <% end %>
-              </ul>
-             </div>
-          </div>
-        <% end %>
-    </div>
+    <%= render partial: @deployment.networking +
+        (if @deployment.ha? then "_ha" else "_non_ha" end)%>
 
     <div class="form_actions">
       <a class="btn btn-default" href="<%= previous_wizard_path %>">
