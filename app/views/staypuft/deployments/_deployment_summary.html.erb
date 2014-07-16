@@ -81,6 +81,7 @@
           $progressBar.attr("aria-valuenow", progress);
           $progressBar.width(progress + "%");
           $progressBar.find("span.sr-only").text(progress + "% Complete");
+          $("#progress-summary").text(response.deployment.progress_summary);
 
           setTimeout(updateProgress, pollingInterval);
         });
