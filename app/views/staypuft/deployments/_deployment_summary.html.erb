@@ -12,7 +12,6 @@
           <% if @deployment.horizon_url %>
             <div class="form-group">
               <label class="col-sm-4 control-label text-muted"><%= _("Horizon URL") %></label>
-
               <div class="col-sm-8">
                 <p class="form-control-static"><%= link_to @deployment.horizon_url, @deployment.horizon_url %></p>
               </div>
@@ -20,14 +19,12 @@
           <% end %>
           <div class="form-group">
             <label class="col-sm-4 control-label text-muted"><%= _("Username") %></label>
-
             <div class="col-sm-8">
               <p class="form-control-static">admin</p>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-4 control-label text-muted"><%= _("Password") %></label>
-
             <div class="col-sm-8">
               <p class="form-control-static">
                 <span class="shown_password hide"><%= @deployment.passwords.admin %></span>
@@ -46,18 +43,6 @@
       </div>
     </div>
   <% elsif @deployment.in_progress? %>
-    <script>
-      // Polling for progress bar updates
-      var pollingInterval = 10000;
-      setTimeout(updateProgress, pollingInterval);
-
-      function updateProgress() {
-        var url = $("#deployment_progress_bar").attr("data-poll-url");
-        $.getScript(url);
-        setTimeout(updateProgress, pollingInterval);
-      }
-    </script>
-
     <div class="row">
       <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Deploying") %></h3></div>
     </div>
@@ -68,15 +53,42 @@
     </div>
     <div class="row">
       <div class="col-sm-12 text-center">
-        <%= display_link_if_authorized(
-                _('Show more details'),
-                hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+        <% if @deployment.task %>
+          <%= display_link_if_authorized(
+              _('Show more details'),
+              hash_for_foreman_tasks_task_path(id: @deployment.task.id)) %>
+        <% else %>
+          <%= _("Deployment task has been unlocked") %>
+        <% end %>
       </div>
     </div>
+    <script>
+      // Polling for progress bar updates
+      var pollingInterval = 10000;
+      var $pollElement = $("#deployment_progress_bar");
+
+      setTimeout(updateProgress, pollingInterval);
+
+      function updateProgress() {
+        var url = $pollElement.data('poll-url');
+
+        $.getJSON(url, function (response) {
+          var progress = response.deployment.progress;
+          var $progressBar = $pollElement.find(".progress-bar");
+
+          $pollElement.children('span').text(progress)
+
+          $progressBar.attr("aria-valuenow", progress);
+          $progressBar.width(progress + "%");
+          $progressBar.find("span.sr-only").text(progress + "% Complete");
+
+          setTimeout(updateProgress, pollingInterval);
+        });
+      }
+    </script>
   <% else %>
     <div class="row">
-      <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Not deployed, yet.") %></h3>
-      </div>
+      <div class="col-sm-12 text-center"><h3 class="text-muted"><%= _("Not deployed, yet.") %></h3></div>
     </div>
   <% end %>
 </div>

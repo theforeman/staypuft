@@ -1,5 +1,5 @@
 <% if deployment.in_progress? %>
-  <%= "#{deployment.progress}% #{_('Complete')}" %>
+  <span><%= deployment.progress %></span><%= "% #{_('Complete')}" %>
   <div class="progress progress-striped <%= 'active' if deployment.task.state == 'running' %>">
     <% classes = ['progress-bar',
                   case deployment.task.result
