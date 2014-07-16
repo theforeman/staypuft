@@ -3,7 +3,7 @@
   <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btn btn-link" %>
   <%= link_to(icon_text("cloud-upload", _("Import")),
               {},
-              { :class => "btn btn-default",
+              { :class  => "btn btn-default",
                 :remote => true,
                 :rel    => 'popover',
                 :data   => { 'content'        => "#{render partial: 'import_form'}",
@@ -11,7 +11,8 @@
                              'placement'      => 'left' } }) %>
   <%= link_to(icon_text("cloud-download", _("Export")),
               export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
-  <%= link_to _("Edit"), edit_deployment_path(@deployment.id), :class => "btn btn-default" %>
+  <%= link_to _("Edit"), edit_deployment_path(@deployment.id),
+              :class => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default) %>
 <% end %>
 
 <div class="col-md-12">
@@ -59,7 +60,7 @@
           <% else %>
             <p><%= _("No configuration needed for this service.") %></p>
           <% end %>
-          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first }  %>
+          <% # render "puppetclasses/classes_parameters", { :obj => service.hostgroups.first }   %>
         </div>
       <% end %>
     </div>

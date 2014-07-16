@@ -31,17 +31,22 @@ module Actions
           end
         end
 
-        def humanized_output
-          # TODO: use Action::Progress.calculate in new dynflow version
+        def task_output
           steps    = planned_actions.inject([]) { |s, a| s + a.steps[1..2] }.compact
           progress = if steps.empty?
-                       'done'
+                       1
                      else
                        total          = steps.map { |s| s.progress_done * s.progress_weight }.reduce(&:+)
                        weighted_count = steps.map(&:progress_weight).reduce(&:+)
-                       format '%3d%%', total / weighted_count * 100
+                       total / weighted_count
                      end
-          format '%s Host: %s', progress, input[:host][:name]
+
+          input[:host].merge progress: progress
+        end
+
+        def humanized_output
+          task_output = self.task_output
+          format '%s %s%%', task_output[:name], (task_output[:progress]*100).to_i
         end
 
       end

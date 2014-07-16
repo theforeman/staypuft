@@ -1,19 +1,21 @@
 <% title(@deployment.name,
          edit_textfield(@deployment,
                         :name,
-                        options={:update_url => deployment_path(@deployment)}) +
-         content_tag(:small,
-                     @deployment.ha? ? _("with High Availability") : _("without High Availability"),
-                     :class => "text-muted")) %>
-<% subtitle edit_textfield(@deployment, :description, options={:update_url => deployment_path(@deployment)}) %>
+                        options={ :update_url => deployment_path(@deployment) }) +
+             content_tag(:small,
+                         @deployment.ha? ? _("with High Availability") : _("without High Availability"),
+                         :class => "text-muted")) %>
+<% subtitle edit_textfield(@deployment, :description, options={ :update_url => deployment_path(@deployment) }) %>
 
 <% content_for(:top_actions) do %>
   <%= link_to(_("Advanced Configuration"), summary_deployment_path(@deployment.id), :class => 'btn btn-link') %>
-  <%= link_to(_("Revisit Setup Wizard"), if @deployment.deployed?
-                                           deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
-                                         else
-                                           deployment_steps_path(deployment_id: @deployment)
-                                         end, :class => "btn btn-default") %>
+  <%= link_to(_("Revisit Setup Wizard"),
+              if @deployment.deployed?
+                deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
+              else
+                deployment_steps_path(deployment_id: @deployment)
+              end,
+              :class         => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default)) %>
 
   <%= link_to(_("Deploy"),
               "",
@@ -86,14 +88,14 @@
 
   <div class="tab-content col-md-8">
     <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
-      <%= render :partial => "free_hosts_table", :locals => { :deployment => @deployment,
-                                                              :hostgroup => @hostgroup,
+      <%= render :partial => "free_hosts_table", :locals => { :deployment      => @deployment,
+                                                              :hostgroup       => @hostgroup,
                                                               :child_hostgroup => child_hostgroup } %>
-      <%= render :partial => "assigned_hosts_table", :locals => { :deployment => @deployment,
-                                                                  :hostgroup => @hostgroup,
+      <%= render :partial => "assigned_hosts_table", :locals => { :deployment      => @deployment,
+                                                                  :hostgroup       => @hostgroup,
                                                                   :child_hostgroup => child_hostgroup } %>
-      <%= render :partial => "deployed_hosts_table", :locals => { :deployment => @deployment,
-                                                                  :hostgroup => @hostgroup,
+      <%= render :partial => "deployed_hosts_table", :locals => { :deployment      => @deployment,
+                                                                  :hostgroup       => @hostgroup,
                                                                   :child_hostgroup => child_hostgroup } %>
     <% end %>
     <%= render :partial => "deployment_summary", :locals => { :deployment => @deployment } %>

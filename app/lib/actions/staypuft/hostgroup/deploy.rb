@@ -36,14 +36,18 @@ module Actions
           input[:name]
         end
 
-        def humanized_output
-          format "Hostgroup: %s\n%s", input[:name],
-                 planned_actions.
-                     map(&:humanized_output).
-                     compact.
-                     tap { |lines| lines << '-' if lines.empty? }.
-                     map { |l| '  ' + l }.
-                     join("\n")
+        def task_output
+          task_outputs = planned_actions.map(&:task_output)
+          progress     = if task_outputs.size == 0
+                           1
+                         else
+                           task_outputs.map { |to| to[:progress] }.reduce(&:+).to_f / task_outputs.size
+                         end
+          { id: input[:id], name: input[:name], progress: progress, hosts: task_outputs }
+        end
+
+        def humanized_output(task_output = self.task_output)
+          format '%s %s%%', task_output[:name], (task_output[:progress]*100).to_i
         end
 
       end
