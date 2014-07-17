@@ -17,7 +17,9 @@ module Staypuft
       @deployment = Deployment.find(params[:id])
       respond_to do | format |
         format.html {}
-        format.js {}
+        format.json do
+          render :status => 200, :json => @deployment.to_json(:methods => [:progress, :progress_summary])
+        end
       end
     end
 
