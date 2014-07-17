@@ -9,7 +9,7 @@
     <h4><%= "#{@deployment.layout.name} - #{@deployment.layout.networking.capitalize} " + _("Networking") %></h4>
 
     <%= render partial: @deployment.networking +
-        (if @deployment.ha? then "_ha" else "_non_ha" end)%>
+        (@deployment.ha? ? "_ha" : "_non_ha")%>
 
     <div class="form_actions">
       <a class="btn btn-default" href="<%= previous_wizard_path %>">
