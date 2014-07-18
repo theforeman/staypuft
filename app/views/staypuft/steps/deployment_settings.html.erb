@@ -48,24 +48,11 @@
                        :class       => "single_password",
                        :placeholder => '' %>
       </div>
+
+      <%= render :partial => "wizard_form_buttons", 
+                 :locals => { :deployment => @deployment,
+                              :step => Staypuft::Deployment::STEP_SETTINGS } %>
+
     <% end %>
-
-
-
-    <div class="form_actions">
-      <% if !is_new %>
-        <%= link_to _("Cancel"), deployment_path(@deployment),
-                    :class => "btn btn-danger" %>
-      <% else %>
-        <%= link_to _("Cancel"), deployment_path(@deployment),
-                    :method  => :delete,
-                    :confirm => _("This will clear whole deployment configuration. Are you sure?"),
-                    :class   => "btn btn-danger" %>
-      <% end %>
-      <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
-        <%= _("Next") %>
-        <span class="glyphicon glyphicon-chevron-right"></span>
-      <% end %>
-    </div>
   <% end %>
 <% end %>

@@ -1,0 +1,33 @@
+<!-- Render Wizard Form Cancel/Back/Submit Buttons -->
+<div class="form_actions right" style="text-align: right">
+
+  <!-- Render Cancel Button -->
+  <% if is_new && step == Staypuft::Deployment::STEP_SETTINGS %>
+    <%= link_to _("Cancel"), deployment_path(@deployment),
+                :method  => :delete,
+                :confirm => _("This will clear whole deployment configuration. Are you sure?"),
+                :class   => "btn btn-danger" %>
+  <% else %>
+      <%= link_to _("Cancel"), deployment_path(@deployment),
+                  :class => "btn btn-danger" %>
+  <% end %>
+
+  <!-- Render Back Button -->
+  <% unless step == Staypuft::Deployment::STEP_SETTINGS %>
+    <a class="btn btn-default" href="<%= previous_wizard_path %>">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <%= _("Back") %>
+    </a>
+  <% end %>
+
+  <!-- Render Next/Submit Button -->
+  <%= button_tag(:type => 'submit', :class => "btn btn-primary") do %>
+    <% if step == Staypuft::Deployment::STEP_CONFIGURATION %>
+      <%= _("Submit") %>
+    <% else %>
+      <%= _("Next") %>
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    <% end %>
+  <% end %>
+
+</div>
