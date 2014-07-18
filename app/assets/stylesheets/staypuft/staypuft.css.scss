@@ -15,6 +15,12 @@
 @import "bootstrap/buttons";
 @import "bootstrap/forms";
 
+.deployment-wizard .wizard {
+  width: 100%;
+  float: left;
+  padding-left: 0;
+}
+
 .top_actions {
   //same margin as h1 (title)
   margin: 20px 0 10px;

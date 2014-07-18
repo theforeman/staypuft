@@ -1,6 +1,7 @@
 <%= render :layout => 'title' do %>
   <%= alert_if_deployed %>
 
+  <div class="deployment-wizard">
   <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
     <%= base_errors_for @deployment %>
 
@@ -15,4 +16,6 @@
                :locals => { :deployment => @deployment,
                             :step => Staypuft::Deployment::STEP_OVERVIEW } %>
   <% end %>
+  </div>
+
 <% end %>
