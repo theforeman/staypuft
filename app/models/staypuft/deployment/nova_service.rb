@@ -71,7 +71,7 @@ module Staypuft
     # TODO: determine whether this is a true range or a single value
 
     module ExternalInterfaceName
-      HUMAN       = N_('Which interface to use for external networks:')
+      HUMAN       = N_('Which interface to use for external networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 
@@ -79,7 +79,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module PublicFloatingRange
-      HUMAN       = N_('Floating IP range for external network:')
+      HUMAN       = N_('Floating IP range for external network')
       HUMAN_AFTER = N_('("10.0.0.0/24", for example)')
     end
 
@@ -87,7 +87,7 @@ module Staypuft
     # TODO: interface format validation
 
     module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN       = N_('Which interface to use for tenant networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 
@@ -96,7 +96,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module PrivateFixedRange
-      HUMAN       = N_('Private IP range for tenant networks:')
+      HUMAN       = N_('Private IP range for tenant networks')
       HUMAN_AFTER = PublicFloatingRange::HUMAN_AFTER
     end
 
