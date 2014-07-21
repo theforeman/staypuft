@@ -1,0 +1,7 @@
+<h4 class="pull-left"><%= header %></h4>
+<button type="button" class="close pull-right" aria-hidden="true">&nbsp;&nbsp;×</button>
+<% if assign_text %>
+  <%= submit_tag assign_text, :class => "btn btn-primary btn-sm pull-right" %>
+<% end %>
+<p class="clearfix"></p>
+<%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>

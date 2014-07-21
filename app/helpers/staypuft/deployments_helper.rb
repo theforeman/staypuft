@@ -49,6 +49,11 @@ module Staypuft
                     :class                 => "label label-light " + style,
                     :"data-original-title" => _(label) }) + link_to(trunc("  #{host}", 32), path)
     end
+
+    # discovered hosts don't have interfaces yet
+    def host_nics(host)
+      host.respond_to?(:interfaces) ? host.interfaces.physical.order(:identifier).map {|i| html_escape(i.identifier)}.join(tag(:br)).html_safe : ''
+    end
   end
 
 end
