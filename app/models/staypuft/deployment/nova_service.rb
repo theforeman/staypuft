@@ -80,7 +80,7 @@ module Staypuft
 
     module PublicFloatingRange
       HUMAN       = N_('Floating IP range for external network')
-      HUMAN_AFTER = N_('("10.0.0.0/24", for example)')
+      HUMAN_AFTER = N_('(e.g. "10.0.0.0/24")')
     end
 
     validates :public_floating_range, presence: true
