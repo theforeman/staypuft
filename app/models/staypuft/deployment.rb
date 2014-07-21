@@ -146,7 +146,7 @@ module Staypuft
       QPID     = 'qpid'
       LABELS   = { RABBITMQ => N_('RabbitMQ'), QPID => N_('Qpid') }
       TYPES    = LABELS.keys
-      HUMAN    = N_('Messaging provider')
+      HUMAN    = N_('Messaging Provider')
     end
 
     module Networking

@@ -28,7 +28,7 @@ module Staypuft
     validates :network_segmentation, presence: true, inclusion: { in: NetworkSegmentation::TYPES }
 
     module TenantVlanRanges
-      HUMAN       = N_('Tenant (VM data) VLAN Ranges')
+      HUMAN       = N_('Tenant (VM Data) VLAN Ranges')
       HUMAN_AFTER = VLAN_HELP
     end
 
