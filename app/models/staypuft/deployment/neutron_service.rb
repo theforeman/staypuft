@@ -38,7 +38,7 @@ module Staypuft
     # TODO: vlan range format validation
 
     module NetworkerTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN       = N_('Which interface to use for tenant networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 
@@ -63,7 +63,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN       = N_('Which interface to use for tenant networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 

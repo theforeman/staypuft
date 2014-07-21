@@ -1,71 +1,61 @@
 <%= render :layout => 'title' do %>
   <%= alert_if_deployed %>
 
-  <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
-    <%= base_errors_for @deployment %>
-
-    <div class="wizard-container">
-      <%= deployment_wizard 1 %>
-    </div>
-
-    <%= text_f f, :name %>
-    <%= textarea_f f, :description, :rows => 3 %>
-
-    <% { layout_name:   Staypuft::Deployment::LayoutName,
-         networking:    Staypuft::Deployment::Networking,
-         amqp_provider: Staypuft::Deployment::AmqpProvider,
-         platform:      Staypuft::Deployment::Platform }.
-           each do |attr, constants| %>
-
-      <%= field(f, attr, :label => _(constants::HUMAN)) do
-        constants::LABELS.map do |value, label|
-          radio_button_f_non_inline(f, attr,
-                                    :checked => value == @deployment.send(attr),
-                                    :value   => value,
-                                    :text    => _(label))
-        end.join
-      end %>
-    <% end %>
-
-    <%= f.fields_for :passwords, @deployment.passwords do |p| %>
-      <%= field(p, :mode, :label => _(Staypuft::Deployment::Passwords::Mode::HUMAN)) do
-        Staypuft::Deployment::Passwords::Mode::LABELS.map do |value, label|
-          radio_button_f_non_inline(p, :mode,
-                                    :checked => @deployment.passwords.mode == value,
-                                    :value   => value,
-                                    :text    => label)
-        end.join
-      end %>
-
-      <div class="single_password col-md-offset-0 hide">
-        <%= password_f p, :single_password,
-                       :label       => _("Password"),
-                       :class       => "single_password",
-                       :help_inline => _("Password should be 6 characters or more"),
-                       :placeholder => '' %>
-        <%= password_f p, :single_password_confirmation,
-                       :label       => _("Confirm"),
-                       :class       => "single_password",
-                       :placeholder => '' %>
+  <div class="deployment-wizard">
+    <%= form_for(@deployment, :url => wizard_path, :method => 'PUT') do |f| %>
+      <%= base_errors_for @deployment %>
+  
+      <div class="wizard-container">
+        <%= deployment_wizard 1 %>
       </div>
+  
+      <%= text_f f, :name %>
+      <%= textarea_f f, :description, :rows => 3 %>
+  
+      <% { layout_name:   Staypuft::Deployment::LayoutName,
+           networking:    Staypuft::Deployment::Networking,
+           amqp_provider: Staypuft::Deployment::AmqpProvider,
+           platform:      Staypuft::Deployment::Platform }.
+             each do |attr, constants| %>
+  
+        <%= field(f, attr, :label => _(constants::HUMAN)) do
+          constants::LABELS.map do |value, label|
+            radio_button_f_non_inline(f, attr,
+                                      :checked => value == @deployment.send(attr),
+                                      :value   => value,
+                                      :text    => _(label))
+          end.join
+        end %>
+      <% end %>
+  
+      <%= f.fields_for :passwords, @deployment.passwords do |p| %>
+        <%= field(p, :mode, :label => _(Staypuft::Deployment::Passwords::Mode::HUMAN)) do
+          Staypuft::Deployment::Passwords::Mode::LABELS.map do |value, label|
+            radio_button_f_non_inline(p, :mode,
+                                      :checked => @deployment.passwords.mode == value,
+                                      :value   => value,
+                                      :text    => label)
+          end.join
+        end %>
+  
+        <div class="single_password col-md-offset-0 hide">
+          <%= password_f p, :single_password,
+                         :label       => _("Password"),
+                         :class       => "single_password",
+                         :help_inline => _("Password should be 6 characters or more"),
+                         :placeholder => '' %>
+          <%= password_f p, :single_password_confirmation,
+                         :label       => _("Confirm"),
+                         :class       => "single_password",
+                         :placeholder => '' %>
+        </div>
+  
+        <%= render :partial => "wizard_form_buttons", 
+                   :locals => { :deployment => @deployment,
+                                :step => Staypuft::Deployment::STEP_SETTINGS } %>
+  
+      <% end %>
     <% end %>
+  </div>
 
-
-
-    <div class="form_actions">
-      <% if !is_new %>
-        <%= link_to _("Cancel"), deployment_path(@deployment),
-                    :class => "btn btn-danger" %>
-      <% else %>
-        <%= link_to _("Cancel"), deployment_path(@deployment),
-                    :method  => :delete,
-                    :confirm => _("This will clear whole deployment configuration. Are you sure?"),
-                    :class   => "btn btn-danger" %>
-      <% end %>
-      <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
-        <%= _("Next") %>
-        <span class="glyphicon glyphicon-chevron-right"></span>
-      <% end %>
-    </div>
-  <% end %>
 <% end %>
