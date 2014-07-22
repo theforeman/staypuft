@@ -64,11 +64,14 @@ module Staypuft
       HUMAN_AFTER = VLAN_HELP
     end
 
+    class NovaVlanRangeValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::VlanRangeValuesValidator
+    end
+
     validates :vlan_range,
-              :presence => true,
-              :if       => :vlan_manager?
-    # TODO: vlan range format validation
-    # TODO: determine whether this is a true range or a single value
+              :presence        => true,
+              :if              => :vlan_manager?,
+              :nova_vlan_range => true
 
     module ExternalInterfaceName
       HUMAN       = N_('Which interface to use for external networks')
