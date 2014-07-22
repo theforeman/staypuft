@@ -5,11 +5,12 @@ Gem::Specification.new do |s|
   s.name        = 'staypuft'
   s.version     = Staypuft::VERSION
   s.date        = Date.today.to_s
+  s.license     = 'GPL-3.0+' 
   s.authors     = ['Staypuft team']
   s.email       = ['foreman-dev+staypuft@googlegroups.com']
   s.homepage    = 'https://github.com/theforeman/staypuft'
   s.summary     = 'OpenStack Foreman Installer'
-  s.description = 'OpenStack Foreman Installer'
+  s.description = 'OpenStack Foreman Installer Plugin'
 
   s.files      = (Dir['{app,config,db,lib, doc}/**/*'] + %w(LICENSE Rakefile README.md)) &
       `git ls-files`.split
