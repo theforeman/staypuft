@@ -8,9 +8,18 @@ module Staypuft
       @saved = @subnet_typing.save
     end
 
+    def update
+      @subnet_typing = SubnetTyping.find(params[:id])
+      @subnet_type = @subnet_typing.subnet_type
+      @subnet = Subnet.find(params[:subnet_id])
+      @subnet_typing.subnet = @subnet
+      @saved = @subnet_typing.save
+    end
+
     def destroy
-      @subnet_typing = SubnetTyping.find(params[:id]).destroy
-      @destroyed = @subnet_typing
+      @subnet_typing = SubnetTyping.find(params[:id])
+      @subnet_type = @subnet_typing.subnet_type
+      @destroyed = @subnet_typing.destroy
     end
   end
 end

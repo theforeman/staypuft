@@ -18,6 +18,6 @@ Rails.application.routes.draw do
       resources :steps
     end
 
-    resources :subnet_typings, :only => [:create, :destroy]
+    resources :subnet_typings, :only => [:create, :destroy, :update]
   end
 end

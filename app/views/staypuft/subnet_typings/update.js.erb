@@ -1,8 +1,10 @@
 <% if @saved %>
-  $("#<%= dom_id(@subnet_type) %>").remove();
+  $("#<%= dom_id(@subnet_type) %>").remove()
   $("#<%= dom_id(@subnet) %>_drop_zone div.subnet-types").prepend('<%=j render :partial => 'staypuft/subnet_types/subnet_type_pull',
     :object => @subnet_type,
     :as => 'subnet_type',
     :locals => { :subnet_typing => @subnet_typing } %>');
-  $("#<%= dom_id(@subnet_type) %>").draggable({revert: 'invalid'});
+  $("#<%= dom_id(@subnet_type) %>").draggable({
+    revert: 'invalid'
+  });
 <% end %>

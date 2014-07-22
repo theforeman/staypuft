@@ -264,6 +264,10 @@ module Staypuft
         first
     end
 
+    def unassigned_subnet_types
+      self.layout.subnet_types - self.subnet_types
+    end
+
     private
 
     def update_layout
@@ -281,7 +285,7 @@ module Staypuft
       missing = self.layout.subnet_types.select { |t| !associated_subnet_types.include?(t) }
       unless missing.empty?
         errors.add :base,
-                   _("Some subnet types are missing association of a subnet. Please drag and drop a subnet to following types: %s") % missing.map(&:name).join(', ')
+                   _("Some subnet types are missing association of a subnet. Please drag and drop following types: %s") % missing.map(&:name).join(', ')
       end
     end
 

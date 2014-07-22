@@ -123,3 +123,38 @@ span.editable, span.editable:hover {
     }
   }
 }
+
+.subnet-type-pull, .empty-zone {
+  height: 40px;
+  float: left;
+  min-width: 100px;
+  text-align: center;
+  margin-left: 10px;
+  line-height: 40px;
+  background-color: #f5f5f5;
+  border-color: #000;
+  border-width: 1px;
+}
+
+.subnet-type-pull {
+  cursor: pointer;
+  z-index: 1;
+  border-style: solid;
+}
+
+.empty-zone {
+  border-style: dashed;
+}
+
+.subnet-drop-zone {
+  border: 1px solid black;
+  height: 90px;
+  margin-bottom: 10px;
+
+  .name {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+}

@@ -9,8 +9,10 @@ module Staypuft
     validate :one_subnet_per_type
 
     def one_subnet_per_type
-      if self.class.where(:deployment_id => self.deployment_id,
-                          :subnet_type_id => self.subnet_type_id).any?
+      if self.class.
+          where(:deployment_id => self.deployment_id,
+                :subnet_type_id => self.subnet_type_id).
+          where(['id <> ?', self.id]).any?
         errors.add :subnet_id
       end
     end
