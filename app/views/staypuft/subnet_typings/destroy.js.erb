@@ -2,6 +2,7 @@
   $('#<%= dom_id(@subnet_type) %>').remove();
   $("#subnet_types").append('<%=j render :partial => 'staypuft/subnet_types/subnet_type_pull',
       :object => @subnet_type,
+      :locals => { :deployment => @deployment },
       :as => 'subnet_type' %>');
   $("#<%= dom_id(@subnet_type) %>").draggable({revert: 'invalid'});
 <% end %>

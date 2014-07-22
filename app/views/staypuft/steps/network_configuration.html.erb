@@ -1,4 +1,4 @@
-<%= javascript 'subnets_assignment' %>
+<%= javascript 'staypuft/subnets_assignment' %>
 
 <%= render :layout => 'title' do %>
   <%= alert_if_deployed %>
@@ -13,7 +13,7 @@
         <%= base_errors_for @deployment %>
         <h4><%= _("Available Roles") %></h4>
         <% @deployment.unassigned_subnet_types.each do |subnet_type| %>
-          <%= render 'staypuft/subnet_types/subnet_type_pull', :subnet_type => subnet_type %>
+          <%= render 'staypuft/subnet_types/subnet_type_pull', :subnet_type => subnet_type, :deployment => @deployment %>
         <% end %>
       </div>
     </div>

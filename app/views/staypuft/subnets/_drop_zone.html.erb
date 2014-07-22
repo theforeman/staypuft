@@ -7,7 +7,7 @@
     <% deployment.subnet_typings.where(["#{Staypuft::SubnetTyping.table_name}.subnet_id = ?", subnet.id]).each do |typing| %>
     <%= render :partial => 'staypuft/subnet_types/subnet_type_pull',
                :object => typing.subnet_type,
-               :locals => { :subnet_typing => typing },
+               :locals => { :subnet_typing => typing, :deployment => deployment },
                :as => :subnet_type %>
     <% end %>
 

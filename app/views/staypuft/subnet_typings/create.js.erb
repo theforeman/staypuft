@@ -3,6 +3,6 @@
   $("#<%= dom_id(@subnet) %>_drop_zone div.subnet-types").prepend('<%=j render :partial => 'staypuft/subnet_types/subnet_type_pull',
     :object => @subnet_type,
     :as => 'subnet_type',
-    :locals => { :subnet_typing => @subnet_typing } %>');
+    :locals => { :subnet_typing => @subnet_typing, :deployment => @deployment } %>');
   $("#<%= dom_id(@subnet_type) %>").draggable({revert: 'invalid'});
 <% end %>

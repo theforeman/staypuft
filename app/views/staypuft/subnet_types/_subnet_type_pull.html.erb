@@ -3,6 +3,7 @@
 <div class="subnet-type-pull <%= typing.nil? ? 'new' : 'existing' %>" id="<%= dom_id(subnet_type) %>"
      data-subnet-type-id="<%= subnet_type.id %>"
      data-delete-url="<%= url_for subnet_typing_path(typing) if typing %>"
-     data-update-url="<%= url_for subnet_typing_path(typing) if typing %>">
+     data-update-url="<%= url_for subnet_typing_path(typing) if typing %>"
+     data-create-url="<%= url_for subnet_typings_path(:deployment_id => deployment) %>">
   <%= subnet_type.name %>
 </div>

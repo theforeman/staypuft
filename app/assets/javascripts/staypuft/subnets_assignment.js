@@ -11,7 +11,7 @@ $(function() {
       if(ui.draggable.hasClass('new')) {
         $.ajax({
           type: 'POST',
-          url: '<%= url_for subnet_typings_path(:deployment_id => @deployment) %>',
+          url: ui.draggable.data('create-url'),
           data: 'subnet_type_id=' + ui.draggable.data('subnet-type-id') + '&subnet_id=' + $(this).data('subnet-id'),
           dataType: 'script'
         })
