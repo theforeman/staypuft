@@ -94,12 +94,16 @@ module Staypuft
       end
 
       unless unassigned_hosts.empty?
-        flash[:warning] = 'Unassigned hosts: ' + unassigned_hosts.map(&:name_was).join(', ')
-        Rails.logger.warn(
-            "Unassigned hosts: \n" +
-                unassigned_hosts.
+        unassigned_messages = 'Unassigned hosts: <ul>' + unassigned_hosts.
+                    map { |h| format '<li>%s <ul>%s</ul></li>', h.name_was, h.errors.full_messages.map {|msg|
+                                     "<li>#{msg}</li>"}.join}.
+                    join + '</ul>'
+
+        flash[:error] = unassigned_messages
+        Rails.logger.warn('Unassigned hosts:\n' + unassigned_hosts.
                     map { |h| format '%s (%s)', h.name_was, h.errors.full_messages.join(',') }.
-                    join("\n"))
+                    join("\n") 
+)
       end
 
       redirect_to deployment_path(deployment)
