@@ -42,3 +42,9 @@
     <%= help_path %>
   <% end %>
 <% end %>
+
+<% sub_nav = [ {:title => _("Overview"), :target_id => '#overview', :active => true},
+               {:title => _("Hosts"), :target_id => '#hosts'},
+               {:title => _("Networking"), :target_id => '#networking'},
+               {:title => _("Advanced Configuration"), :target_id => '#advance_configuration'} ] %>
+<%= tabbed_nav_menu(sub_nav, 'deployment-sub-nav', 'nav nav-tabs') %>
