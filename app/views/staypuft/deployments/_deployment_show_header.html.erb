@@ -7,6 +7,11 @@
                          :class => "text-muted")) %>
 
 <% content_for(:top_actions) do %>
+  <%= link_to(_("Deploy"),
+              "",
+              :class         => @deployment.in_progress? ? %w(btn btn-primary disabled) : %w(btn btn-primary),
+              :'data-toggle' => "modal",
+              :'data-target' => "#deploy_modal") %>
   <%= link_to(_("Revisit Setup Wizard"),
               if @deployment.deployed?
                 deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
@@ -14,12 +19,6 @@
                 deployment_steps_path(deployment_id: @deployment)
               end,
               :class         => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default)) %>
-
-  <%= link_to(_("Deploy"),
-              "",
-              :class         => @deployment.in_progress? ? %w(btn btn-primary disabled) : %w(btn btn-primary),
-              :'data-toggle' => "modal",
-              :'data-target' => "#deploy_modal") %>
 
   <% if Rails.env.development? %>
     <div class="btn-group">
