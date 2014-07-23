@@ -1,2 +1,22 @@
 <%= render :partial => "deployment_show_header", :locals => { :deployment => @deployment } %>
-<%= render :partial => "deployment_overview", :locals => { :deployment => @deployment } %>
+
+<% sub_nav = [ {:title => _("Overview"), :target_id => '#overview', :active => true},
+               {:title => _("Hosts"), :target_id => '#hosts'},
+               {:title => _("Networking"), :target_id => '#networking'},
+             {:title => _("Advanced Configuration"), :target_id => '#advanced_configuration'} ] %>
+<%= tabbed_nav_menu(sub_nav, 'sub-navigation', 'nav nav-tabs') %>
+
+<div id="sub-navigation-tabs"  class="tab-content">
+  <div class="tab-pane active in" id="overview">
+    <%= render :partial => "deployment_overview", :locals => { :deployment => @deployment } %>
+  </div>
+  <div class="tab-pane" id="hosts">
+    <%= render :partial => "deployment_hosts", :locals => { :deployment => @deployment } %>
+  </div>
+  <div class="tab-pane active in" id="networking">
+    <%= render :partial => "deployment_networking", :locals => { :deployment => @deployment } %>
+  </div>
+  <div class="tab-pane" id="advanced_configuration">
+    <%= render :partial => "advanced_configuration", :locals => { :deployment => @deployment } %>
+  </div>
+</div>
