@@ -15,6 +15,17 @@
 @import "bootstrap/buttons";
 @import "bootstrap/forms";
 
+ul.inner-nav {
+  border: 0 !important;
+}
+
+li.inner-nav a {
+  border: 0 !important;
+}
+
+li.inner-nav.active a {
+  text-decoration:underline;
+}
 .deployment-wizard .wizard {
   width: 100%;
   float: left;
