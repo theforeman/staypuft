@@ -1,16 +1,22 @@
-<%= link_to(icon_text("cloud-upload", _("Import")),
-            {},
-            { :class  => "btn btn-default",
-              :remote => true,
-              :rel    => 'popover',
-              :data   => { 'content'        => "#{render partial: 'import_form'}",
-                           'original-title' => _('Import Config'),
-                           'placement'      => 'left' } }) %>
-<%= link_to(icon_text("cloud-download", _("Export")),
-            export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
-<%= link_to _("Edit"), edit_deployment_path(@deployment.id),
-            :class => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default) %>
 
+<div class="col-md-12">
+  <div class="pull-right">
+    <%= link_to(icon_text("cloud-upload", _("Import")),
+                {},
+                { :class  => "btn btn-default",
+                  :remote => true,
+                  :rel    => 'popover',
+                  :data   => { 'content'        => "#{render partial: 'import_form'}",
+                               'original-title' => _('Import Config'),
+                               'placement'      => 'left' } }) %>
+    <%= link_to(icon_text("cloud-download", _("Export")),
+                export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
+    <%= link_to _("Edit"), edit_deployment_path(@deployment.id),
+                :class => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default) %>
+  </div>
+</div>
+<br />
+<br />
 <div class="col-md-12">
   <div class="form-group tabbed_side_nav_form row">
     <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
