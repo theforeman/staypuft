@@ -10,7 +10,7 @@ module Staypuft
         menu_items.each do | item |
           concat(content_tag(:li, link_to(item[:title], "#{item[:target_id]}",
                                           :data => { :id => item[:target_id], :toggle => 'tab' }),
-                                          :class => ('active' if item[:active]) ))
+                                          :class => item[:active] ? "#{item[:class]} active" : item[:class] ))
         end
       end
     end
