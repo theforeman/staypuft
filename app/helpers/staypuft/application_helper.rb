@@ -5,6 +5,16 @@ module Staypuft
       content_for(:subtitle, page_subtitle.to_s)
     end
 
+    def tabbed_nav_menu(menu_items, id=nil, class_name=nil)
+      content_tag(:ul, :class => class_name, :id => id) do
+        menu_items.each do | item |
+          concat(content_tag(:li, link_to(item[:title], "#{item[:target_id]}",
+                                          :data => { :id => item[:target_id], :toggle => 'tab' }),
+                                          :class => ('active' if item[:active]) ))
+        end
+      end
+    end
+
     def radio_button_f_non_inline(f, attr, options = {})
       text  = options.delete(:text)
       value = options.delete(:value)
