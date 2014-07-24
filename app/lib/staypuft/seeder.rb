@@ -182,8 +182,8 @@ module Staypuft
       ml2_network_vlan_ranges     = ovs_vlan_ranges
       tenant_network_type         = '<%= @host.deployment.neutron.network_segmentation %>'
       ml2_tenant_network_types    = [ tenant_network_type ]
-      ml2_tunnel_id_ranges        = ['10:100000']
-      ml2_vni_ranges              = ['10:100000']
+      ml2_tunnel_id_ranges        = ['10:1000']
+      ml2_vni_ranges              = ['10:1000']
       ovs_tunnel_types            = ['vxlan', 'gre']
       ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>' }
       ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>' }
