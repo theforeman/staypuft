@@ -213,7 +213,7 @@ module Staypuft
       cinder_backend_nfs_name     = 'nfs_backend'
       cinder_multiple_backends    = false
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
-      cinder_nfs_mount_options    = ''
+      cinder_nfs_mount_options    = 'nosharecache'
 
       cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
       cinder_backend_rbd_name                 = 'rbd_backend'
