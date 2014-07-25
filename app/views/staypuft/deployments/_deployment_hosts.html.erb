@@ -6,7 +6,7 @@
                {:title => "#{_('Assigned')} (#{assigned_hosts.count})", :target_id => '#assigned-hosts', :class => "inner-nav"},
                {:title => "#{_('Free')} (#{free_hosts.count})", :target_id => '#free-hosts', :class => "inner-nav"} ] %>
 
-<%= tabbed_nav_menu(sub_nav, 'hosts-navigation', 'nav nav-tabs inner-nav') %>
+<%= tabbed_nav_menu(sub_nav, 'hosts-navigation', 'nav nav-tabs inner-nav', 'sub-tab') %>
 
 <div id="sub-navigation-tabs"  class="tab-content">
   <div class="tab-pane active in" id="deployed-hosts">

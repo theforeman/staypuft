@@ -5,11 +5,12 @@ module Staypuft
       content_for(:subtitle, page_subtitle.to_s)
     end
 
-    def tabbed_nav_menu(menu_items, id=nil, class_name=nil)
+    def tabbed_nav_menu(menu_items, id=nil, class_name=nil, subclass_name=nil)
       content_tag(:ul, :class => class_name, :id => id) do
         menu_items.each do | item |
           concat(content_tag(:li, link_to(item[:title], "#{item[:target_id]}",
-                                          :data => { :id => item[:target_id], :toggle => 'tab' }),
+                                          :class => subclass_name,
+                                          :data => { :id => item[:target_id], :toggle => 'tab'}),
                                           :class => item[:active] ? "#{item[:class]} active" : item[:class] ))
         end
       end
