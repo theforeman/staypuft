@@ -124,22 +124,52 @@ span.editable, span.editable:hover {
   }
 }
 
+$pull_line_height: 40px;
 .subnet-type-pull, .empty-zone {
-  height: 40px;
+  height: $pull_line_height;
+  line-height: $pull_line_height;
+}
+
+.subnet-type-pull, .subnet-pull, .empty-zone {
   float: left;
   min-width: 100px;
   text-align: center;
   margin-left: 10px;
-  line-height: 40px;
   background-color: #f5f5f5;
   border-color: #000;
   border-width: 1px;
 }
 
-.subnet-type-pull {
-  cursor: pointer;
+.subnet-type-pull, .subnet-pull {
   z-index: 1;
   border-style: solid;
+  background-color: #ffffff;
+}
+
+.subnet-type-pull, .subnet-pull.active {
+  cursor: pointer;
+  background-color: #f5f5f5;
+}
+
+.subnet-pull {
+  height: $pull_line_height;
+  display: table;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 10px;
+
+  .name {
+    font-weight: bold;
+  }
+
+  .content {
+    display: table-cell;
+    vertical-align: middle;
+  }
+}
+
+div.cleared {
+  clear: left;
 }
 
 .empty-zone {
@@ -156,5 +186,26 @@ span.editable, span.editable:hover {
     margin-top: 5px;
     margin-bottom: 10px;
     font-weight: bold;
+  }
+}
+
+div.interface {
+  margin-bottom: 10px;
+
+  div.identifier {
+    float: left;
+    width: 70px;
+    border: 1px solid #000;
+    height: $pull_line_height + 20px;
+    line-height: $pull_line_height + 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  div.subnet-drop-zones {
+    border: 1px solid #000;
+    padding-top: 10px;
+    width: 100%;
+    height: $pull_line_height + 20px;
   }
 }

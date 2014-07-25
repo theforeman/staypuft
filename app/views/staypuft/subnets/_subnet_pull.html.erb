@@ -1,0 +1,9 @@
+<div class="subnet-pull <%= 'active' if active %> <%= 'existing' if existing %>"
+     id="<%= dom_id(subnet) %>"
+     data-create-url="<%= deployment_interface_assignments_path(deployment, :host_ids => params[:host_ids], :subnet_id => subnet) %>"
+     data-delete-url="<%= deployment_interface_assignment_path(deployment, 0, :host_ids => params[:host_ids], :subnet_id => subnet) %>">
+  <div class="content">
+    <div class="name"><%= subnet.name %></div>
+    <div class="subnet-types"><%= subnet_types(deployment, subnet) %></div>
+  </div>
+</div>

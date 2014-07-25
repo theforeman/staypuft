@@ -1,5 +1,7 @@
 module Staypuft
   class SubnetType < ActiveRecord::Base
+    PXE = 'PXE'
+
     validates :name, :presence => true
 
     has_many :layout_subnet_types

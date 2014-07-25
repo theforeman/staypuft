@@ -10,6 +10,7 @@ module Staypuft
 
     def update
       @subnet_typing = SubnetTyping.find(params[:id])
+      @deployment = @subnet_typing.deployment
       @subnet_type = @subnet_typing.subnet_type
       @subnet = Subnet.find(params[:subnet_id])
       @subnet_typing.subnet = @subnet
@@ -18,6 +19,7 @@ module Staypuft
 
     def destroy
       @subnet_typing = SubnetTyping.find(params[:id])
+      @deployment = @subnet_typing.deployment
       @subnet_type = @subnet_typing.subnet_type
       @destroyed = @subnet_typing.destroy
     end

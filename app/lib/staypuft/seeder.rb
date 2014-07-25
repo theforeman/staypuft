@@ -731,9 +731,9 @@ module Staypuft
 
     def seed_subnet_types
       # default subnet types
-      types = %w(PXE Management Tenants Public)
+      types = [ Staypuft::SubnetType::PXE ] + %w(Management Tenants Public)
       types.map! do |type|
-        Staypuft::SubnetType.create!(:name => type)
+        Staypuft::SubnetType.create!(:name => type) unless Staypuft::SubnetType.find_by_name(type)
       end
       
       standard_ids = %w(ha_nova non_ha_nova ha_neutron non_ha_neutron)

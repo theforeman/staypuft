@@ -27,6 +27,7 @@ module Staypuft
     end
 
     config.to_prepare do
+      ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Host::Managed.send :include, Staypuft::Concerns::HostDetailsHelper
