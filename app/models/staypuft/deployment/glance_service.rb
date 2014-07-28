@@ -59,7 +59,7 @@ module Staypuft
 
     def pcmk_fs_options
       if self.nfs_backend?
-        'context=\"system_u:object_r:glance_var_lib_t:s0\"'
+        'nosharecache,context=\"system_u:object_r:glance_var_lib_t:s0\"'
       else
         ''
       end

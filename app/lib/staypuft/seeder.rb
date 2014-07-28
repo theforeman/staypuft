@@ -32,7 +32,6 @@ module Staypuft
         'amqp_username'                => 'openstack',
         'admin_email'                  => "admin@#{Facter.value(:domain)}",
         'enable_ovs_agent'             => 'true',
-        'tenant_network_type'          => 'vxlan',
         'ovs_vxlan_udp_port'           => '4789',
         'auto_assign_floating_ip'      => 'true',
         'cisco_vswitch_plugin'         => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
@@ -181,9 +180,10 @@ module Staypuft
       ovs_vlan_ranges             = { :array =>  '<%= @host.deployment.neutron.networker_vlan_ranges %>' }
       compute_ovs_vlan_ranges     = { :array =>  '<%= @host.deployment.neutron.compute_vlan_ranges %>' }
       ml2_network_vlan_ranges     = ovs_vlan_ranges
-      ml2_tenant_network_types    = ['<%= @host.deployment.neutron.network_segmentation %>']
-      ml2_tunnel_id_ranges        = ['10:100000']
-      ml2_vni_ranges              = ['10:100000']
+      tenant_network_type         = '<%= @host.deployment.neutron.network_segmentation %>'
+      ml2_tenant_network_types    = [ tenant_network_type ]
+      ml2_tunnel_id_ranges        = ['10:1000']
+      ml2_vni_ranges              = ['10:1000']
       ovs_tunnel_types            = ['vxlan', 'gre']
       ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>' }
       ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>' }
@@ -213,7 +213,7 @@ module Staypuft
       cinder_backend_nfs_name     = 'nfs_backend'
       cinder_multiple_backends    = false
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
-      cinder_nfs_mount_options    = ''
+      cinder_nfs_mount_options    = 'nosharecache'
 
       cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
       cinder_backend_rbd_name                 = 'rbd_backend'
@@ -346,6 +346,7 @@ module Staypuft
               'controller_pub_host'                     => controller_host },
           'quickstack::neutron::controller'        => {
               'amqp_provider'                           => amqp_provider,
+              'tenant_network_type'                     => tenant_network_type,
               'ml2_network_vlan_ranges'                 => ml2_network_vlan_ranges,
               'ml2_tenant_network_types'                => ml2_tenant_network_types,
               'ml2_tunnel_id_ranges'                    => ml2_tunnel_id_ranges,
@@ -534,6 +535,7 @@ module Staypuft
           'quickstack::neutron::networker'         => {
               'amqp_provider'                 => amqp_provider,
               'enable_tunneling'              => enable_tunneling,
+              'tenant_network_type'           => tenant_network_type,
               'ovs_bridge_mappings'           => ovs_bridge_mappings,
               'ovs_bridge_uplinks'            => ovs_bridge_uplinks,
               'ovs_tunnel_iface'              => ovs_tunnel_iface,
@@ -584,6 +586,7 @@ module Staypuft
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
               'enable_tunneling'           => enable_tunneling,
+              'tenant_network_type'        => tenant_network_type,
               'ovs_bridge_mappings'        => compute_ovs_bridge_mappings,
               'ovs_bridge_uplinks'         => compute_ovs_bridge_uplinks,
               'ovs_tunnel_iface'           => compute_ovs_tunnel_iface,
