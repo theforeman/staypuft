@@ -59,7 +59,8 @@ module Actions
 
         def host_ready?(host_id)
           host = ::Host.find(host_id)
-          host.reports.order('reported_at DESC').any? do |report|
+          # take reports oldest first ignoring always the first one (auto-sign)
+          host.reports.order('reported_at DESC')[0..-2].any? do |report|
             check_for_failures(report, host.id)
             report_change?(report)
           end
