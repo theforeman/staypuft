@@ -1,6 +1,6 @@
 module Staypuft
   module Deployment::VlanRangeValuesValidator
-    GENERAL_MSG = N_("Start and end vlan IDs required, in format '10:100'")
+    GENERAL_MSG = N_("Start and end vlan IDs required, in format '10:15'")
     INT_VAL_MSG = N_("is not a valid integer between 1 and 4094")
     FIRST_VALID = 1
     LAST_VALID = 4024

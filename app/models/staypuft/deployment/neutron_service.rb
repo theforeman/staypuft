@@ -6,7 +6,7 @@ module Staypuft
 
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
     INTERFACE_HELP    = N_('(e.g. eth0 or em1)')
-    VLAN_HELP         = N_('[1-4094] (e.g. 10:100)')
+    VLAN_HELP         = N_('[1-4094] (e.g. 10:15)')
 
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
