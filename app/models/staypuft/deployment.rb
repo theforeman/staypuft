@@ -96,11 +96,11 @@ module Staypuft
     def self.find_by_foreman_task(foreman_task)
       task = ForemanTasks::Lock.where(task_id: foreman_task.id,
                                                      name: :deploy,
-                                                     resource_type: 'Staypuft::Deployment')
-      unless task.first.nil?
-        Deployment.find(task.first.resource_id)
+                                                     resource_type: 'Staypuft::Deployment').first
+      unless task.nil?
+        Deployment.find(task.resource_id)
       else
-        return nil
+        nil
       end
 
     end
