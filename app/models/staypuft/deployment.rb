@@ -94,10 +94,15 @@ module Staypuft
 
     # Helper method for looking up a Deployment based on a foreman task
     def self.find_by_foreman_task(foreman_task)
-      Deployment.find(ForemanTasks::Lock.where(task_id: foreman_task.id,
-                                               name: :deploy,
-                                               resource_type: 'Staypuft::Deployment')
-                                               .first.resource_id)
+      task = ForemanTasks::Lock.where(task_id: foreman_task.id,
+                                                     name: :deploy,
+                                                     resource_type: 'Staypuft::Deployment')
+      unless task.first.nil?
+        Deployment.find(task.first.resource_id)
+      else
+        return nil
+      end
+
     end
 
     # Returns a list of hosts that are currently being deployed.
