@@ -4,7 +4,7 @@ module Staypuft
       'cinder'
     end
 
-    param_attr :driver_backend, :nfs_uri
+    param_attr :driver_backend, :nfs_uri, :rbd_secret_uuid
     after_save :set_lvm_ptable
 
     module DriverBackend
@@ -30,17 +30,17 @@ module Staypuft
               :if       => :nfs_backend?
     # TODO: uri validation
 
-    # TODO: add ceph UI parameters
-
     # TODO: add EqualLogic UI parameters
 
 
     class Jail < Safemode::Jail
-      allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?
+      allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?,
+        :rbd_secret_uuid
     end
 
     def set_defaults
       self.driver_backend = DriverBackend::LVM
+      self.rbd_secret_uuid = SecureRandom.uuid
     end
 
     # cinder config always shows up
@@ -66,12 +66,10 @@ module Staypuft
 
 
     # view should use this rather than DriverBackend::LABELS to hide LVM for HA.
-    # TODO: Add back CEPH and EQUALLOGIC as they're suppoirted
+    # TODO: Add back EQUALLOGIC as it's suppoirted
     def backend_labels_for_layout
       ret_list = DriverBackend::LABELS.clone
       ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      # TODO: remove this line when Ceph is supported
-      ret_list.delete(DriverBackend::CEPH)
       # TODO: remove this line when EqualLogic is supported
       ret_list.delete(DriverBackend::EQUALLOGIC)
 
@@ -80,8 +78,6 @@ module Staypuft
     def backend_types_for_layout
       ret_list = DriverBackend::TYPES.clone
       ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      # TODO: remove this line when Ceph is supported
-      ret_list.delete(DriverBackend::CEPH)
       # TODO: remove this line when EqualLogic is supported
       ret_list.delete(DriverBackend::EQUALLOGIC)
 
@@ -89,7 +85,8 @@ module Staypuft
     end
 
     def param_hash
-      { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri}
+      { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri,
+        "rbd_secret_uuid" => rbd_secret_uuid }
     end
 
     def lvm_ptable

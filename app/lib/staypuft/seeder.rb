@@ -194,13 +194,13 @@ module Staypuft
       enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
 
       # Glance
-      backend                     = 'file'
-      pcmk_fs_type                = { :string => '<%= @host.deployment.glance.driver_backend %>' }
+      backend                     = { :string => '<%= @host.deployment.glance.driver_backend %>' }
+      pcmk_fs_type                = { :string => '<%= @host.deployment.glance.pcmk_fs_type %>' }
       pcmk_fs_device              = { :string => '<%= @host.deployment.glance.pcmk_fs_device %>' }
       pcmk_fs_dir                 = '/var/lib/glance/images'
       pcmk_fs_manage              = 'true'
       pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
-      glance_rbd_store_user       = 'glance'
+      glance_rbd_store_user       = 'images'
       glance_rbd_store_pool       = 'images' 
 
       # Cinder
@@ -217,13 +217,12 @@ module Staypuft
 
       cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
       cinder_backend_rbd_name                 = 'rbd_backend'
-      # TODO: confirm these params and add them to model where user input is needed
       cinder_rbd_pool                         = 'volumes'
-      cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf/'
+      cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf'
       cinder_rbd_flatten_volume_from_snapshot = 'false'
       cinder_rbd_max_clone_depth              = '5'
-      cinder_rbd_user                         = 'cinder'
-      cinder_rbd_secret_uuid                  = ''
+      cinder_rbd_user                         = 'volumes'
+      cinder_rbd_secret_uuid                  = { :string => '<%= @host.deployment.cinder.rbd_secret_uuid %>' }
 
       cinder_backend_eqlx           = { :string => '<%= @host.deployment.cinder.equallogic_backend? %>' }
       cinder_backend_eqlx_name      = ['eqlx_backend']
@@ -560,6 +559,8 @@ module Staypuft
               'ceilometer'                 => ceilometer,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
+              'cinder_backend_rbd'         => cinder_backend_rbd,
+              'rbd_secret_uuid'            => cinder_rbd_secret_uuid,
               'network_manager'            => network_manager,
               'network_overrides'          => network_overrides,
               'network_num_networks'       => network_num_networks,
@@ -585,6 +586,8 @@ module Staypuft
               'ceilometer'                 => ceilometer,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
+              'cinder_backend_rbd'         => cinder_backend_rbd,
+              'rbd_secret_uuid'            => cinder_rbd_secret_uuid,
               'enable_tunneling'           => enable_tunneling,
               'tenant_network_type'        => tenant_network_type,
               'ovs_bridge_mappings'        => compute_ovs_bridge_mappings,
