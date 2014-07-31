@@ -153,4 +153,9 @@ $(function () {
       history.back(1);
   });
 
+  $('#edit_staypuft_deployment_submit').click(function (e) {
+    $('#edit_staypuft_deployment').submit();
+    e.preventDefault();
+  });
+
 });

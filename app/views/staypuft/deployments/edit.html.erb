@@ -7,13 +7,6 @@
   <%= link_to _("Cancel"), '#', :class => "btn btn-danger advanced_back" %>
 <% end %>
 
-<script>
-  $('#edit_staypuft_deployment_submit').click(function (e) {
-    $('#edit_staypuft_deployment').submit();
-    e.preventDefault();
-  });
-</script>
-
 <%= form_for(@deployment,
              :url  => deployment_path, :method => 'PUT',
              :html => { :class => "clearfix", id: 'edit_staypuft_deployment' }) do |f| %>
