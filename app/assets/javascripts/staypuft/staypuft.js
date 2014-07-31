@@ -131,4 +131,42 @@ $(function () {
     $('.configuration').find('li').first().find('a')[0].click();
   }
 
+  // add a hash to the URL when the user clicks on a tab
+  $('a[data-toggle="tab"]').on('click', function(e) {
+    if(!$(this).hasClass("sub-tab")){
+      history.pushState(null, null, $(this).attr('href'));
+    }
+  });
+  // navigate to a tab when the history changes
+  window.addEventListener("popstate", function(e) {
+    var activeTab = $('[href=' + location.hash + ']');
+    if (activeTab.length) {
+      activeTab.tab('show');
+    } else {
+      $('.nav-tabs a:first').tab('show');
+    }
+  });
+
+  // Javascript to enable link to tab
+  var hash = document.location.hash;
+  var prefix = "tab_";
+  if (hash) {
+      $('.nav-tabs a[href='+hash.replace(prefix,"")+']').tab('show');
+  }
+
+  // Change hash for page-reload
+  $('.nav-tabs a').on('shown', function (e) {
+      window.location.hash = e.target.hash.replace("#", "#" + prefix);
+  });
+
+  $('.advanced_back').click(function(event) {
+      event.preventDefault();
+      history.back(1);
+  });
+
+  $('#edit_staypuft_deployment_submit').click(function (e) {
+    $('#edit_staypuft_deployment').submit();
+    e.preventDefault();
+  });
+
 });
