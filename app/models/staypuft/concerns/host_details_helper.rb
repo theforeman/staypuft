@@ -18,7 +18,7 @@ module Staypuft
       end
 
       # Returns array of NIC names
-      def interfaces
+      def network_interfaces
         if self.facts_hash["interfaces"]
           self.facts_hash["interfaces"].split(",")
         else
