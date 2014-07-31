@@ -26,8 +26,8 @@ module Staypuft
         end
       end
 
-      # Returns architecutre
-      def arch
+      # Returns architecture
+      def architectures
         if self.facts_hash["architecture"]
           self.facts_hash["architecture"].name
         else
