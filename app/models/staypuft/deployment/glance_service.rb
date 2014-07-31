@@ -5,14 +5,18 @@ module Staypuft
     end
 
     NFS_HELP = N_('(<server>:<local path>)')
+    BACKEND_FILE = 'file'
+    BACKEND_RBD  = 'rbd'
 
     param_attr :driver_backend, :nfs_network_path
 
     module DriverBackend
       LOCAL   = 'local'
       NFS     = 'nfs'
+      CEPH    = 'ceph'
       LABELS  = { LOCAL   => N_('Local File'),
-                  NFS     => N_('NFS') }
+                  NFS     => N_('NFS'),
+                  CEPH    => N_('Ceph') }
       TYPES   = LABELS.keys
       HUMAN   = N_('Choose Driver Backend')
     end
@@ -30,17 +34,16 @@ module Staypuft
     # TODO: network_path validation
 
     class Jail < Safemode::Jail
-      allow :driver_backend, :pcmk_fs_device, :pcmk_fs_options
+      allow :driver_backend, :pcmk_fs_type, :pcmk_fs_device, :pcmk_fs_options, :backend
     end
 
     def set_defaults
       self.driver_backend = DriverBackend::LOCAL
     end
 
-    # gluster config only shows up for HA
-    # glance UI is HA only until we add ceph (since there's only one option for non-HA)
+    # glance config always shows up
     def active?
-      deployment.ha?
+      true
     end
 
     def local_backend?
@@ -49,6 +52,20 @@ module Staypuft
 
     def nfs_backend?
       self.driver_backend == DriverBackend::NFS
+    end
+
+    def ceph_backend?
+      self.driver_backend == DriverBackend::CEPH
+    end
+
+    def backend
+      ceph_backend? ? BACKEND_RBD : BACKEND_FILE
+    end
+
+    def pcmk_fs_type
+      if self.nfs_backend?
+        self.driver_backend
+      end
     end
 
     def pcmk_fs_device
@@ -69,12 +86,14 @@ module Staypuft
     def backend_labels_for_layout
       ret_list = DriverBackend::LABELS.clone
       ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
+      ret_list.delete(DriverBackend::NFS)   if self.deployment.non_ha?
       ret_list
     end
 
     def backend_types_for_layout
       ret_list = DriverBackend::TYPES.clone
       ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
+      ret_list.delete(DriverBackend::NFS)   if self.deployment.non_ha?
       ret_list
     end
 

@@ -4,7 +4,8 @@ module Staypuft
       'cinder'
     end
 
-    param_attr :driver_backend, :nfs_uri
+    param_attr :driver_backend, :nfs_uri, :rbd_secret_uuid,
+               :san_ip, :san_login, :san_password, :eqlx_group_name, :eqlx_pool
     after_save :set_lvm_ptable
 
     module DriverBackend
@@ -30,17 +31,58 @@ module Staypuft
               :if       => :nfs_backend?
     # TODO: uri validation
 
-    # TODO: add ceph UI parameters
+    module SanIp
+      HUMAN       = N_('SAN IP Addr:')
+    end
+    validates :san_ip,
+              :presence => true,
+              :if       => :equallogic_backend?
+    # TODO: IP address validation
+    # FIXME: question -- should this be validated explicitly as an IP address,
+    #                    or would a dns-resolvable hostname also be appropriate?
 
-    # TODO: add EqualLogic UI parameters
+    module SanLogin
+      HUMAN       = N_('SAN Login:')
+    end
+    validates :san_login,
+              :presence => true,
+              :if       => :equallogic_backend?
+    # TODO: Login validation
 
+    module SanPassword
+      HUMAN       = N_('SAN Password:')
+    end
+    validates :san_password,
+              :presence => true,
+              :if       => :equallogic_backend?
+
+    module EqlxPool
+      HUMAN       = N_('Pool:')
+    end
+    validates :eqlx_pool,
+              :presence => true,
+              :if       => :equallogic_backend?
+    # TODO: pool validation
+
+    module EqlxGroupName
+      HUMAN       = N_('Group:')
+    end
+    validates :eqlx_group_name,
+              :presence => true,
+              :if       => :equallogic_backend?
+    # TODO: group name validation
 
     class Jail < Safemode::Jail
-      allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?
+      allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?,
+        :rbd_secret_uuid, :san_ip, :san_login, :san_password, :eqlx_group_name, :eqlx_pool
     end
 
     def set_defaults
-      self.driver_backend = DriverBackend::LVM
+      self.driver_backend  = DriverBackend::LVM
+      self.rbd_secret_uuid = SecureRandom.uuid
+      self.san_login       = 'grpadmin'
+      self.eqlx_pool       = 'default'
+      self.eqlx_group_name = 'group-0'
     end
 
     # cinder config always shows up
@@ -66,30 +108,21 @@ module Staypuft
 
 
     # view should use this rather than DriverBackend::LABELS to hide LVM for HA.
-    # TODO: Add back CEPH and EQUALLOGIC as they're suppoirted
     def backend_labels_for_layout
       ret_list = DriverBackend::LABELS.clone
       ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      # TODO: remove this line when Ceph is supported
-      ret_list.delete(DriverBackend::CEPH)
-      # TODO: remove this line when EqualLogic is supported
-      ret_list.delete(DriverBackend::EQUALLOGIC)
-
       ret_list
     end
     def backend_types_for_layout
       ret_list = DriverBackend::TYPES.clone
       ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      # TODO: remove this line when Ceph is supported
-      ret_list.delete(DriverBackend::CEPH)
-      # TODO: remove this line when EqualLogic is supported
-      ret_list.delete(DriverBackend::EQUALLOGIC)
-
       ret_list
     end
 
     def param_hash
-      { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri}
+      { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri,
+        "rbd_secret_uuid" => rbd_secret_uuid,
+        "san_ip" => san_ip, "san_login" => san_login, "san_password" => san_password }
     end
 
     def lvm_ptable

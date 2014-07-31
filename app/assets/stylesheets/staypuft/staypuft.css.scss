@@ -38,6 +38,18 @@ li.inner-nav.active a {
   margin-left: 10px;
 }
 
+.deployment-wizard form {
+  min-height: 705px;
+  position: relative;
+  padding-bottom: 60px;
+}
+
+.deployment-wizard .form_actions {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
 .top_actions {
   //same margin as h1 (title)
   margin: 20px 0 10px;
