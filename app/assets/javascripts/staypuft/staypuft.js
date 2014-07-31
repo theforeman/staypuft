@@ -120,12 +120,7 @@ $(function () {
     $('.configuration').find('li').first().find('a')[0].click();
   }
 
-  //
-  if($('a[href$="#overview"]').length > 0) {
-    history.pushState(null, null, $('a[href$="#overview"]').attr('href'));
-  }
-
-    // add a hash to the URL when the user clicks on a tab
+  // add a hash to the URL when the user clicks on a tab
   $('a[data-toggle="tab"]').on('click', function(e) {
     if(!$(this).hasClass("sub-tab")){
       history.pushState(null, null, $(this).attr('href'));
@@ -151,6 +146,11 @@ $(function () {
   // Change hash for page-reload
   $('.nav-tabs a').on('shown', function (e) {
       window.location.hash = e.target.hash.replace("#", "#" + prefix);
+  });
+
+  $('.advanced_back').click(function(event) {
+      event.preventDefault();
+      history.back(1);
   });
 
 });
