@@ -120,4 +120,19 @@ $(function () {
     $('.configuration').find('li').first().find('a')[0].click();
   }
 
+  showCinderEquallogic();
+  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderEquallogic);
+  function showCinderEquallogic() {
+    if ($('#staypuft_deployment_cinder_driver_backend_equallogic').is(":checked")) {
+      $('.cinder_equallogic').show();
+    }
+    else {
+      $('.cinder_equallogic').hide();
+    }
+  }
+
+  if ($('.configuration').length > 0) {
+    $('.configuration').find('li').first().find('a')[0].click();
+  }
+
 });

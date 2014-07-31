@@ -228,15 +228,16 @@ module Staypuft
       cinder_backend_eqlx_name      = ['eqlx_backend']
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
-      cinder_san_ip                 = [''] # ['<%= #@host.deployment.cinder.san_ip %>']
-      cinder_san_login              = [''] # ['<%= #@host.deployment.cinder.san_login %>']
-      cinder_san_password           = [''] # ['<%= #@host.deployment.cinder.san_password %>']
+      cinder_san_ip                 = ['<%= @host.deployment.cinder.san_ip %>']
+      cinder_san_login              = ['<%= @host.deployment.cinder.san_login %>']
+      cinder_san_password           = ['<%= @host.deployment.cinder.san_password %>']
+      cinder_eqlx_group_name        = ['<%= @host.deployment.cinder.eqlx_group_name %>']
+      cinder_eqlx_pool              = ['<%= @host.deployment.cinder.eqlx_pool %>']
+
       cinder_san_thin_provision     = ['false']
-      cinder_eqlx_group_name        = ['group-0']
-      cinder_eqlx_pool              = ['default']
       cinder_eqlx_use_chap          = ['false']
-      cinder_eqlx_chap_login        = [''] # ['<%= #@host.deployment.cinder.chap_login %>']
-      cinder_eqlx_chap_password     = [''] # ['<%= #@host.deployment.cinder.chap_password %>']
+      cinder_eqlx_chap_login        = ['']
+      cinder_eqlx_chap_password     = ['']
 
 
       # effective_value grabs shared password if deployment is in shared password mode,
