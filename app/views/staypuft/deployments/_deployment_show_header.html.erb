@@ -11,7 +11,8 @@
               "",
               :class         => @deployment.in_progress? ? %w(btn btn-primary disabled) : %w(btn btn-primary),
               :'data-toggle' => "modal",
-              :'data-target' => "#deploy_modal") %>
+              :'data-target' => "#deploy_modal",
+              :id => "deploy_button") %>
   <%= link_to(_("Revisit Setup Wizard"),
               if @deployment.deployed?
                 deployment_step_path(deployment_id: @deployment, id: 'services_configuration')

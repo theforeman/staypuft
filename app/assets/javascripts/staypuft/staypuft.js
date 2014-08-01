@@ -164,4 +164,9 @@ $(function () {
     e.preventDefault();
   });
 
+  $('#deploy_modal').on('shown.bs.modal', function(e) {
+    $('#sub-navigation a[href="#overview"]').tab('show');
+    window.location.hash = "#overview";
+  })
+
 });
