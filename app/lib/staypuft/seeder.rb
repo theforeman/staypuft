@@ -194,11 +194,11 @@ module Staypuft
       enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
 
       # Glance
-      backend                     = { :string => '<%= @host.deployment.glance.driver_backend %>' }
+      backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
       pcmk_fs_type                = { :string => '<%= @host.deployment.glance.pcmk_fs_type %>' }
       pcmk_fs_device              = { :string => '<%= @host.deployment.glance.pcmk_fs_device %>' }
       pcmk_fs_dir                 = '/var/lib/glance/images'
-      pcmk_fs_manage              = 'true'
+      pcmk_fs_manage              = { :string => '<%= @host.deployment.glance.pcmk_fs_manage %>' }
       pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
       glance_rbd_store_user       = 'images'
       glance_rbd_store_pool       = 'images' 
