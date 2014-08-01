@@ -34,7 +34,8 @@ module Staypuft
     # TODO: network_path validation
 
     class Jail < Safemode::Jail
-      allow :driver_backend, :pcmk_fs_type, :pcmk_fs_device, :pcmk_fs_options, :backend
+      allow :driver_backend, :pcmk_fs_type, :pcmk_fs_device, :pcmk_fs_options, :backend,
+            :pcmk_fs_manage
     end
 
     def set_defaults
@@ -80,6 +81,10 @@ module Staypuft
       else
         ''
       end
+    end
+
+    def pcmk_fs_manage
+      backend == BACKEND_FILE
     end
 
     # view should use this rather than DriverBackend::LABELS to hide LOCAL for HA.
