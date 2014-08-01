@@ -164,9 +164,20 @@ $(function () {
     e.preventDefault();
   });
 
+
   $('#deploy_modal').on('shown.bs.modal', function(e) {
     $('#sub-navigation a[href="#overview"]').tab('show');
     window.location.hash = "#overview";
-  })
+  });
+
+  var scrolled = false;
+
+  $(window).scroll(function(){
+    scrolled = true;
+  });
+
+  if ( window.location.hash && scrolled ) {
+    $(window).scrollTop( 0 );
+  }
 
 });
