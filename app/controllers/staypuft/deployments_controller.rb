@@ -44,7 +44,7 @@ module Staypuft
               end
             end
           end
-          redirect_to summary_deployment_path(params[:id])
+          redirect_to "#{deployment_path(params[:id])}#advanced_configuration"
         end
 
         format.json do

@@ -159,11 +159,6 @@ $(function () {
       window.location.hash = e.target.hash.replace("#", "#" + prefix);
   });
 
-  $('.advanced_back').click(function(event) {
-      event.preventDefault();
-      history.back(1);
-  });
-
   $('#edit_staypuft_deployment_submit').click(function (e) {
     $('#edit_staypuft_deployment').submit();
     e.preventDefault();
