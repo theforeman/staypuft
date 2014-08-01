@@ -122,7 +122,8 @@ module Staypuft
     def param_hash
       { "driver_backend" => driver_backend, "nfs_uri" => nfs_uri,
         "rbd_secret_uuid" => rbd_secret_uuid,
-        "san_ip" => san_ip, "san_login" => san_login, "san_password" => san_password }
+        "san_ip" => san_ip, "san_login" => san_login, "san_password" => san_password,
+        "eqlx_group_name" => eqlx_group_name, "eqlx_pool" => eqlx_pool }
     end
 
     def lvm_ptable
