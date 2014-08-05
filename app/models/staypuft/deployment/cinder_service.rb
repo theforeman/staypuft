@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Staypuft
   class Deployment::CinderService < Deployment::AbstractParamScope
     def self.param_scope
@@ -7,6 +8,28 @@ module Staypuft
     param_attr :driver_backend, :nfs_uri, :rbd_secret_uuid,
                :san_ip, :san_login, :san_password, :eqlx_group_name, :eqlx_pool
     after_save :set_lvm_ptable
+
+    class SanIpValueValidator < ActiveModel::EachValidator
+      def validate_each(record, attribute, value)        
+        return if value.empty?
+
+        begin
+          ip_addr = IPAddr.new(value)
+          ip_range = ip_addr.to_range
+          if ip_range.begin == ip_range.end
+            true
+          else
+            record.errors.add attribute, "Specify single IP address, not range"
+            false
+          end
+        rescue
+          # not IP addr
+          # FIXME: future validation to allow hostnames too, not just IP addr
+          record.errors.add attribute, "Invalid Network Range Format"
+          false
+        end
+      end
+    end
 
     module DriverBackend
       LVM        = 'lvm'
@@ -35,42 +58,68 @@ module Staypuft
       HUMAN       = N_('SAN IP Addr:')
     end
     validates :san_ip,
-              :presence => true,
-              :if       => :equallogic_backend?
-    # TODO: IP address validation
-    # FIXME: question -- should this be validated explicitly as an IP address,
-    #                    or would a dns-resolvable hostname also be appropriate?
+              :presence     => true,
+              :if           => :equallogic_backend?,
+              :san_ip_value => true
+    # FIXME: Currently this only validates IP addresses, however hostnames are valid here
+    # too. In the absence of "IP or hostname" validation, is forcing IP only better than
+    # no validation, or should we disable this until it works for all valid values?
 
     module SanLogin
       HUMAN       = N_('SAN Login:')
     end
+    # Up to 16 alphanumeric characters, including period, hyphen, and underscore.
+    # First character must be a letter or number.  Last character cannot be a period.
+    # ASCII, Not Unicode
     validates :san_login,
               :presence => true,
+              :format   => /\A[a-zA-Z\d][\w\.\-]*[\w\-]\z/,
+              :length   => { maximum: 16 },
               :if       => :equallogic_backend?
-    # TODO: Login validation
 
     module SanPassword
       HUMAN       = N_('SAN Password:')
     end
+    # Password must be 3 to 16 printable ASCII characters and is case-sensitive.
+    # Punctuation characters are allowed, but spaces are not.
+    # Only the first 8 characters are used, the rest are ignored (without a message).
+    # ASCII, Not Unicode
     validates :san_password,
               :presence => true,
+              :format   => /\A[!-~]+\z/,
+              :length   => { minimum:3, maximum: 16 },
               :if       => :equallogic_backend?
 
     module EqlxPool
       HUMAN       = N_('Pool:')
     end
+    # Name can be up to 63 bytes and is case insensitive.
+    # You can use any printable Unicode character except for
+    # ! " # $ % & ' ( ) * + , / ; < = > ?@ [ \ ] ^ _ ` { | } ~.
+    # First and last characters cannot be a period, hyphen, or colon.
+    # Fewer characters are accepted for this field if you enter the value as a
+    # Unicode character string, which takes up a variable number of bytes,
+    # depending on the specific character.
+    # ASCII, Unicode
     validates :eqlx_pool,
               :presence => true,
+              :format   => /\A[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]][[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~]]+[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]]\z/,
+              :length   => { maximum: 63,
+                             too_long: "Too long: max length is %{count} bytes. Multbyte characters reduce the maximum number of characters available.",
+                             tokenizer: lambda {|str| str.bytes.to_a } },
               :if       => :equallogic_backend?
-    # TODO: pool validation
 
     module EqlxGroupName
       HUMAN       = N_('Group:')
     end
+    # Up to 54 alphanumeric characters and hyphens(dashes).
+    # The first character must be a letter or a number.
+    # ASCII, Not Unicode
     validates :eqlx_group_name,
               :presence => true,
+              :format   => /\A[a-zA-Z\d][a-zA-Z\d\-]*\z/,
+              :length   => { maximum: 54 },
               :if       => :equallogic_backend?
-    # TODO: group name validation
 
     class Jail < Safemode::Jail
       allow :lvm_backend?, :nfs_backend?, :nfs_uri, :ceph_backend?, :equallogic_backend?,
