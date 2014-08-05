@@ -109,7 +109,7 @@ module Staypuft
               :presence => true,
               :format   => /\A[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]][[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~]]+[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]]\z/,
               :length   => { maximum: 63,
-                             too_long: "Too long: max length is %{count} bytes. Multbyte characters reduce the maximum number of characters available.",
+                             too_long: "Too long: max length is %{count} bytes. Using multibyte characters reduces the maximum number of characters allowed.",
                              tokenizer: lambda {|str| str.bytes.to_a } },
               :if       => :equallogic_backend?
 
