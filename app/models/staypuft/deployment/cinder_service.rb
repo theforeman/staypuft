@@ -24,9 +24,13 @@ module Staypuft
           end
         rescue
           # not IP addr
-          # FIXME: future validation to allow hostnames too, not just IP addr
-          record.errors.add attribute, "Invalid Network Range Format"
-          false
+          # validating as fqdn
+          if /(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63})$)/ =~ value
+            true
+          else
+            record.errors.add attribute, "Invalid IP address or FQDN supplied"
+            false
+          end
         end
       end
     end
