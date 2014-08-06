@@ -19,6 +19,26 @@ See [this](doc/setup.md) document.
 
 Fork and send a Pull Request. Thanks!
 
+## Release a new version
+
+To release a new gem version you have to be owner of the gem on rubygems.org. 
+If you're not you can ask for ownership or you can build a gem locally. To build 
+a gem locally, cd into staypuft directory and run `rake build`. This builds
+a gem in pkg directory. The version is determined by constant in lib/staypuft/version.rb 
+so if you want to bump version, modify this file before running rake.
+
+If you are the owner and you want to release new gem version, make sure you're building
+from official repository (not your own fork). Clone the repository and make sure the origin
+remote is github.com/theforeman/staypuft. Now bump the version in lib/staypuft/version.rb.
+Finally build and release new gem by running `rake release`. This will build the package,
+tag the commit, push the commit and the tag to origin and uploads the gem to rubygems.org.
+
+To build and RPM we recommend using our specs in [Foreman packaging](https://github.com/theforeman/foreman-packaging).
+You should find the spec in rpm/develop branch. There's also a README.md which explains
+how you should update and build a package. Long story short, you update the gem and spec,
+send and send a PR. Once it's merged you can build in our koji instance (if you have
+access) using tito.
+
 ## Copyright
 
 Copyright (c) 2014 Red Hat, Inc. http://redhat.com

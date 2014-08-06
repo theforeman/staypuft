@@ -1,0 +1,48 @@
+<% if hosts.exists? %>
+<div class="" id="table_free_hosts">
+  <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
+    <div class="pull-right top_actions">
+      <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
+      <%= submit_tag _("Assign Hosts"), :class => "btn btn-primary btn-sm",
+                     :style => "visibility: hidden" %>
+    </div>
+    <h4 class="pull-left"><%= _("Free Hosts") %></h4>
+    <p class="clearfix"></p>
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+        <tr>
+          <th class="ca">
+            <%= tag :input, type: 'checkbox', class: 'check_all' %>
+          </th>
+          <th><%= sort :name, :as => _('Name') %></th>
+          <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% hosts.each do |host| %>
+          <tr class="checkbox_highlight">
+            <td class="ca">
+              <%= check_box_tag 'host_ids[]',
+                                host.id,
+                                false,
+                                id:       "host_ids_#{host.id}" %>
+            </td>
+            <td class="ellipsis">
+             <%= host_label(host) %>
+            </td>
+            <td class="hidden-s hidden-xs"><%= host.ip %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+<% else %>
+  <div class="association">
+    <h4><%= _("Free Hosts") %></h4>
+    <div class="alert alert-warning">
+      <span class="glyphicon glyphicon-warning-sign">&nbsp;</span>
+      <%= _("All available hosts have been already assigned.") %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,44 @@
+<% title(@deployment.name,
+         edit_textfield(@deployment,
+                        :name,
+                        options={ :update_url => deployment_path(@deployment) }) +
+             content_tag(:small,
+                         @deployment.ha? ? _("with High Availability") : _("without High Availability"),
+                         :class => "text-muted")) %>
+
+<% content_for(:top_actions) do %>
+  <%= link_to(_("Deploy"),
+              "",
+              :class         => @deployment.in_progress? ? %w(btn btn-primary disabled) : %w(btn btn-primary),
+              :'data-toggle' => "modal",
+              :'data-target' => "#deploy_modal",
+              :id => "deploy_button") %>
+  <%= link_to(_("Revisit Setup Wizard"),
+              if @deployment.deployed?
+                deployment_step_path(deployment_id: @deployment, id: 'services_configuration')
+              else
+                deployment_steps_path(deployment_id: @deployment)
+              end,
+              :class         => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default)) %>
+
+  <% if Rails.env.development? %>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <%= _('Populate with') %>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
+        </li>
+        <li>
+          <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
+        </li>
+        <li>
+          <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
+        </li>
+      </ul>
+    </div>
+    <%= help_path %>
+  <% end %>
+<% end %>

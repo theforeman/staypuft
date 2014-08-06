@@ -5,8 +5,8 @@ module Staypuft
     end
 
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
-    INTERFACE_HELP    = N_('(i.e. eth0, em1, etc.)')
-    VLAN_HELP         = N_('[1-4094] (i.e. 10:100)')
+    INTERFACE_HELP    = N_('(e.g. eth0 or em1)')
+    VLAN_HELP         = N_('[1-4094] (e.g. 10:15)')
 
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
@@ -28,17 +28,21 @@ module Staypuft
     validates :network_segmentation, presence: true, inclusion: { in: NetworkSegmentation::TYPES }
 
     module TenantVlanRanges
-      HUMAN       = N_('Tenant (VM data) VLAN Ranges')
+      HUMAN       = N_('Tenant (VM Data) VLAN Ranges')
       HUMAN_AFTER = VLAN_HELP
     end
 
+    class NeutronVlanRangesValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::VlanRangeValuesValidator 
+    end
+
     validates :tenant_vlan_ranges,
-              :presence => true,
-              :if       => :vlan_segmentation?
-    # TODO: vlan range format validation
+              :presence            => true,
+              :if                  => :vlan_segmentation?,
+              :neutron_vlan_ranges => true
 
     module NetworkerTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN       = N_('Which interface to use for tenant networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 
@@ -63,7 +67,7 @@ module Staypuft
     # TODO: interface name format validation
 
     module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks:')
+      HUMAN       = N_('Which interface to use for tenant networks')
       HUMAN_AFTER = INTERFACE_HELP
     end
 

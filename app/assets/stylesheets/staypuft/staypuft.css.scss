@@ -15,6 +15,41 @@
 @import "bootstrap/buttons";
 @import "bootstrap/forms";
 
+ul.inner-nav {
+  border: 0 !important;
+}
+
+li.inner-nav a {
+  border: 0 !important;
+}
+
+li.inner-nav.active a {
+  text-decoration:underline;
+}
+.deployment-wizard .wizard {
+  width: 100%;
+  float: left;
+  padding-left: 0;
+}
+
+.deployment-wizard label {
+  text-align: left !important;
+  float: left;
+  margin-left: 10px;
+}
+
+.deployment-wizard form {
+  min-height: 705px;
+  position: relative;
+  padding-bottom: 60px;
+}
+
+.deployment-wizard .form_actions {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
 .top_actions {
   //same margin as h1 (title)
   margin: 20px 0 10px;

@@ -1,9 +1,9 @@
 <div class="tab-pane" id="<%= child_hostgroup.name.parameterize.underscore %>_free_hosts">
   <% if child_hostgroup.free_hosts.present? %>
     <%= form_tag(associate_host_deployment_path(id: deployment), class: 'form-horizontal well association') do |f| %>
-      <%= submit_tag _("Assign Hosts"), :class => "btn btn-primary btn-sm pull-left" %>
       <h4 class="pull-left"><%= _("Free Hosts") %></h4>
-      <button type="button" class="close" aria-hidden="true">×</button>
+      <button type="button" class="close pull-right" aria-hidden="true">&nbsp;&nbsp;×</button>
+      <%= submit_tag _("Assign Hosts"), :class => "btn btn-primary btn-sm pull-right" %>
       <p class="clearfix"></p>
       <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
       <table class="table table-bordered table-striped table-condensed">

@@ -94,10 +94,15 @@ module Staypuft
 
     # Helper method for looking up a Deployment based on a foreman task
     def self.find_by_foreman_task(foreman_task)
-      Deployment.find(ForemanTasks::Lock.where(task_id: foreman_task.id,
-                                               name: :deploy,
-                                               resource_type: 'Staypuft::Deployment')
-                                               .first.resource_id)
+      task = ForemanTasks::Lock.where(task_id: foreman_task.id,
+                                                     name: :deploy,
+                                                     resource_type: 'Staypuft::Deployment').first
+      unless task.nil?
+        Deployment.find(task.resource_id)
+      else
+        nil
+      end
+
     end
 
     # Returns a list of hosts that are currently being deployed.
@@ -146,7 +151,7 @@ module Staypuft
       QPID     = 'qpid'
       LABELS   = { RABBITMQ => N_('RabbitMQ'), QPID => N_('Qpid') }
       TYPES    = LABELS.keys
-      HUMAN    = N_('Messaging provider')
+      HUMAN    = N_('Messaging Provider')
     end
 
     module Networking
@@ -169,8 +174,7 @@ module Staypuft
     module Platform
       RHEL7  = 'rhel7'
       RHEL6  = 'rhel6'
-      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 7'),
-                 RHEL6 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 6') }
+      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 7')}
       TYPES  = LABELS.keys
       HUMAN  = N_('Platform')
     end

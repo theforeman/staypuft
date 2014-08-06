@@ -1,25 +1,27 @@
-<% title _("%s Configuration Parameters") % @deployment.name %>
-<% content_for(:top_actions) do %>
-  <%= link_to _("Back to Deployment"), deployment_path(@deployment.id), :class => "btn btn-link" %>
-  <%= link_to(icon_text("cloud-upload", _("Import")),
-              {},
-              { :class  => "btn btn-default",
-                :remote => true,
-                :rel    => 'popover',
-                :data   => { 'content'        => "#{render partial: 'import_form'}",
-                             'original-title' => _('Import Config'),
-                             'placement'      => 'left' } }) %>
-  <%= link_to(icon_text("cloud-download", _("Export")),
-              export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
-  <%= link_to _("Edit"), edit_deployment_path(@deployment.id),
-              :class => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default) %>
-<% end %>
 
+<div class="col-md-12">
+  <div class="pull-right">
+    <%= link_to(icon_text("cloud-upload", _("Import")),
+                {},
+                { :class  => "btn btn-default",
+                  :remote => true,
+                  :rel    => 'popover',
+                  :data   => { 'content'        => "#{render partial: 'import_form'}",
+                               'original-title' => _('Import Config'),
+                               'placement'      => 'left' } }) %>
+    <%= link_to(icon_text("cloud-download", _("Export")),
+                export_config_deployment_path(@deployment.id), :class => "btn btn-default") %>
+    <%= link_to _("Edit"), edit_deployment_path(@deployment.id),
+                :class => @deployment.in_progress? ? %w(btn btn-default disabled) : %w(btn btn-default) %>
+  </div>
+</div>
+<br />
+<br />
 <div class="col-md-12">
   <div class="form-group tabbed_side_nav_form row">
     <ul class="nav nav-pills nav-stacked col-md-3" data-tabs="pills">
       <h3><%= _("Services") %></h3>
-      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+      <% @deployment.services_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
         <li class="<%= 'active' if i == 0 %>">
           <a href="#<%= service.name.parameterize.underscore %>" data-toggle="tab">
             <%= service.name %>
@@ -29,7 +31,7 @@
     </ul>
 
     <div class="tab-content col-md-9">
-      <% @service_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
+      <% @deployment.services_hostgroup_map.each_with_index do |(service, hostgroup), i| %>
         <div class="tab-pane <%= 'active' if i == 0 %>" id="<%= service.name.parameterize.underscore %>">
           <h3><%= "#{service.name} " + _("Service Configuration") %></h3>
           <% if (params_hash = service.ui_params_for_form(hostgroup)).size > 0 %>

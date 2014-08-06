@@ -1,0 +1,21 @@
+<% deployed_hosts = @deployment.hosts.select { |h| h.open_stack_deployed? } %>
+<% assigned_hosts = @deployment.hosts.select { |h| !h.open_stack_deployed? } %>
+<% free_hosts = ::Host.where("hostgroup_id IS NULL") %>
+
+<% sub_nav = [ {:title => "#{_('Deployed')} (#{deployed_hosts.count})", :target_id => '#deployed-hosts', :class => "inner-nav", :active => true},
+               {:title => "#{_('Assigned')} (#{assigned_hosts.count})", :target_id => '#assigned-hosts', :class => "inner-nav"},
+               {:title => "#{_('Free')} (#{free_hosts.count})", :target_id => '#free-hosts', :class => "inner-nav"} ] %>
+
+<%= tabbed_nav_menu(sub_nav, 'hosts-navigation', 'nav nav-tabs inner-nav', 'sub-tab') %>
+
+<div id="hosts-navigation-tabs"  class="tab-content">
+  <div class="tab-pane active in" id="deployed-hosts">
+    <%= render :partial => "deployed_hosts", :locals => { :hosts => deployed_hosts } %>
+  </div>
+  <div class="tab-pane" id="assigned-hosts">
+    <%= render :partial => "assigned_hosts", :locals => { :hosts => assigned_hosts } %>
+  </div>
+  <div class="tab-pane" id="free-hosts">
+    <%= render :partial => "free_hosts", :locals => { :hosts => free_hosts } %>
+  </div>
+</div>
