@@ -87,7 +87,6 @@ module Staypuft
     end
 
     validates :public_floating_range, presence: true
-    # TODO: interface format validation
 
     module ComputeTenantInterface
       HUMAN       = N_('Which interface to use for tenant networks')
@@ -99,12 +98,11 @@ module Staypuft
     # TODO: interface name format validation
 
     module PrivateFixedRange
-      HUMAN       = N_('Private IP range for tenant networks')
+      HUMAN       = N_('Fixed IP range for tenant networks')
       HUMAN_AFTER = PublicFloatingRange::HUMAN_AFTER
     end
 
     validates :private_fixed_range, presence: true
-    # TODO: interface format validation
 
     def set_defaults
       self.network_manager = NetworkManager::FLAT_DHCP
