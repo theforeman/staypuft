@@ -140,6 +140,14 @@ module Staypuft
       end
     end
 
+    def private_iface
+      compute_tenant_interface.downcase unless compute_tenant_interface.nil?
+    end
+
+    def public_iface
+      external_interface_name.downcase unless external_interface_name.nil?
+    end
+
     def param_hash
       { 'network_manager'          => network_manager,
         'vlan_range'               => vlan_range,
@@ -151,7 +159,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
-        :compute_tenant_interface, :external_interface_name, :num_networks
+        :private_iface, :public_iface, :num_networks
     end
 
   end
