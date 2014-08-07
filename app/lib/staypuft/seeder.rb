@@ -172,8 +172,8 @@ module Staypuft
       network_num_networks        = { :string => '<%= @host.deployment.nova.num_networks %>' }
       network_fixed_range         = { :string => '<%= @host.deployment.nova.private_fixed_range %>' }
       network_floating_range      = { :string => '<%= @host.deployment.nova.public_floating_range %>' }
-      network_private_iface       = { :string => '<%= @host.deployment.nova.compute_tenant_interface %>' }
-      network_public_iface        = { :string => '<%= @host.deployment.nova.external_interface_name %>' }
+      network_private_iface       = { :string => '<%= @host.deployment.nova.private_iface %>' }
+      network_public_iface        = { :string => '<%= @host.deployment.nova.public_iface %>' }
       network_create_networks     = true
 
       # Neutron
@@ -185,10 +185,10 @@ module Staypuft
       ml2_tunnel_id_ranges        = ['10:1000']
       ml2_vni_ranges              = ['10:1000']
       ovs_tunnel_types            = ['vxlan', 'gre']
-      ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_interface : "" %>' }
+      ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_iface : "" %>' }
       ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>' }
       ovs_bridge_uplinks          = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>' }
-      compute_ovs_tunnel_iface    = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_interface : "" %>' }
+      compute_ovs_tunnel_iface    = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_iface : "" %>' }
       compute_ovs_bridge_mappings = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>' }
       compute_ovs_bridge_uplinks  = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>' }
       enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
