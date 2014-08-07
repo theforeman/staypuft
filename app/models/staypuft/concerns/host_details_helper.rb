@@ -17,6 +17,11 @@ module Staypuft
         self.facts_hash["processorcount"]
       end
 
+      # Returns model
+      def model_type
+        self.facts_hash["hardwaremodel"]
+      end
+
       # Returns array of NIC names
       def network_interfaces
         if self.facts_hash["interfaces"]
