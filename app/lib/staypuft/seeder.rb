@@ -239,6 +239,8 @@ module Staypuft
       cinder_eqlx_chap_login        = ['']
       cinder_eqlx_chap_password     = ['']
 
+      # Keystone
+      keystonerc = 'true'
 
       # effective_value grabs shared password if deployment is in shared password mode,
       # otherwise use the service-specific one
@@ -315,6 +317,7 @@ module Staypuft
               'glance_backend'                          => backend,
               'glance_rbd_store_user'                   => glance_rbd_store_user,
               'glance_rbd_store_pool'                   => glance_rbd_store_pool,
+              'keystonerc'                              => keystonerc,
               'admin_password'                          => admin_pw,
               'ceilometer_user_password'                => ceilometer_user_pw,
               'cinder_db_password'                      => cinder_db_pw,
@@ -384,6 +387,7 @@ module Staypuft
               'glance_backend'                          => backend,
               'glance_rbd_store_user'                   => glance_rbd_store_user,
               'glance_rbd_store_pool'                   => glance_rbd_store_pool,
+              'keystonerc'                              => keystonerc,
               'admin_password'                          => admin_pw,
               'ceilometer_user_password'                => ceilometer_user_pw,
               'cinder_db_password'                      => cinder_db_pw,
@@ -518,6 +522,7 @@ module Staypuft
               'eqlx_chap_login'                  => cinder_eqlx_chap_login,
               'eqlx_chap_password'               => cinder_eqlx_chap_password },
           'quickstack::pacemaker::keystone'        => {
+              'keystonerc'     => keystonerc,
               'admin_password' => admin_pw,
               'admin_token'    => keystone_admin_token },
           'quickstack::pacemaker::horizon'         => {
