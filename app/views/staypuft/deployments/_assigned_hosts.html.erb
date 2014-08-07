@@ -38,7 +38,7 @@
             </td>
             <td><%= host.cpus %></td>
             <td><%= host.mem %></td>
-            <td><%= host.network_interfaces %></td>
+            <td><%=  host.network_interfaces.join('<br/>') if host.network_interfaces %></td>
             <td class="hidden-s hidden-xs"><%= host.ip %></td>
           </tr>
         <% end %>
