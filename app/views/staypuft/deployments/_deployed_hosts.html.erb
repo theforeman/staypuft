@@ -14,7 +14,10 @@
             <%= tag :input, type: 'checkbox', class: 'check_all' %>
           </th>
           <th><%= sort :name, :as => _('Name') %></th>
-          <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+          <th><%= _("Operating System") %></th>
+          <th><%= _("Model") %></th>
+          <th><%= _("Deployment Role") %></th>
+          <th><%= _("Last Report") %></th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +32,14 @@
             <td class="ellipsis">
              <%= host_label(host) %>
             </td>
-            <td class="hidden-s hidden-xs"><%= host.ip %></td>
+            <td class="ellipsis">
+              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.os %>
+            </td>
+            <td><%= host.model_type %></td>
+            <td class="ellipsis">
+              <%= link_to(host.hostgroup.role, hosts_path(:search => "os_description = #{host.hostgroup.role}")) if host.hostgroup %>
+            </td>
+            <td><%= host.last_report %></td>
           </tr>
         <% end %>
       </tbody>

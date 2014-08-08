@@ -15,6 +15,10 @@
             <%= tag :input, type: 'checkbox', class: 'check_all' %>
           </th>
           <th><%= sort :name, :as => _('Name') %></th>
+          <th><%= _("Operating System") %></th>
+          <th><%= _("CPUs") %><br/><span class="text-muted small"><%= _("(cores)") %></span></th>
+          <th><%= _("Memory") %><br/><span class="text-muted small"><%= _("(GB)") %></span></th>
+          <th><%= _("NICs") %></th>
           <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
         </tr>
       </thead>
@@ -30,6 +34,12 @@
             <td class="ellipsis">
              <%= host_label(host) %>
             </td>
+            <td class="ellipsis">
+              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.os %>
+            </td>
+            <td><%= host.cpus %></td>
+            <td><%= host.mem %></td>
+            <td><%= host.network_interfaces.join('<br/>') if host.network_interfaces %></td>
             <td class="hidden-s hidden-xs"><%= host.ip %></td>
           </tr>
         <% end %>
