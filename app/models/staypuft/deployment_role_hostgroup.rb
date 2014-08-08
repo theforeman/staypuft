@@ -12,8 +12,15 @@ module Staypuft
     validates :role_id, :uniqueness => {:scope => :deployment_id}
     validates :hostgroup, :presence => true
     validates :hostgroup_id, :uniqueness => true
+    has_many :hosts, :through => :hostgroup
 
     validates  :deploy_order, :presence => true
+
+    before_destroy :prepare_destroy
+
+    def prepare_destroy
+      hosts.each &:open_stack_unassign
+    end
 
   end
 end

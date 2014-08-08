@@ -22,7 +22,6 @@ module Staypuft
     belongs_to :layout
 
     # needs to be defined before hostgroup association
-    before_destroy :prepare_destroy
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
@@ -316,11 +315,6 @@ module Staypuft
     # the form_step field to complete.
     def check_form_complete
       self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
-    end
-
-    def prepare_destroy
-      hosts.each &:open_stack_unassign
-      child_hostgroups.each &:destroy
     end
 
   end
