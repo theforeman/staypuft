@@ -2,7 +2,7 @@
   <% if child_hostgroup.hosts.present? %>
     <%= form_tag(unassign_host_deployment_path(id: deployment), class: 'form-horizontal well association') do |f| %>
       <h4 class="pull-left"><%= _("Assigned Hosts") %></h4>
-      <button type="button" class="close pull-right" aria-hidden="true">&nbsp;&nbsp;h×</button>
+      <button type="button" class="close pull-right" aria-hidden="true">&nbsp;&nbsp;×</button>
       <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm pull-right" %>
       <p class="clearfix"></p>
       <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
