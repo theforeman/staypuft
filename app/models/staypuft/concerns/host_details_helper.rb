@@ -5,8 +5,20 @@ module Staypuft
 
       # Returns memory in GB
       def mem
-        if self.facts_hash["memorytotal"]
-          self.facts_hash["memorytotal"].split(" ").first.to_f / 1000
+        mem_arr = self.facts_hash["memorytotal"]
+        if mem_arr
+          mem_str, mem_unit = mem_arr.split(" ")
+          mem_number = mem_str.to_f
+          case mem_unit
+          when "MB"
+            mem_number / 1024
+          when "GB"
+            mem_number
+          when "TB"
+            mem_number * 1024
+          else
+            nil
+          end
         else
           nil
         end
