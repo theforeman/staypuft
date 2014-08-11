@@ -50,7 +50,9 @@ module Staypuft
 
     # discovered hosts don't have interfaces yet
     def host_nics(host)
-      host.respond_to?(:interfaces) ? host.interfaces.physical.order(:identifier).map {|i| html_escape(i.identifier)}.join(tag(:br)).html_safe : ''
+      interfaces = [ host.primary_interface ]
+      interfaces += host.respond_to?(:interfaces) ? host.interfaces.physical.map {|i| html_escape(i.identifier)} : []
+      interfaces.compact.sort.join(tag(:br)).html_safe
     end
 
     def is_pxe?(deployment, subnet)

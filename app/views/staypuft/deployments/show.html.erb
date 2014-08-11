@@ -3,103 +3,18 @@
 <% sub_nav = [ {:title => _("Overview"), :target_id => '#overview', :active => true},
                {:title => _("Hosts"), :target_id => '#hosts'},
                # {:title => _("Networking"), :target_id => '#networking'},
-             {:title => _("Advanced Configuration"), :target_id => '#advanced_configuration'} ] %>
+               {:title => _("Advanced Configuration"), :target_id => '#advanced_configuration'} ] %>
 <%= tabbed_nav_menu(sub_nav, 'sub-navigation', 'nav nav-tabs') %>
 
-  <% if @deployment.in_progress? %>
-    <%= display_link_if_authorized(
-            _('Deploy in progress'),
-            hash_for_foreman_tasks_task_path(id: ForemanTasks::Lock.colliding_locks(@deployment, nil).first.task.id),
-            :class => 'btn-info') %>
-  <% else %>
-    <%= link_to(_("Deploy"),
-                "",
-                :class         => %w(btn btn-primary),
-                :'data-toggle' => "modal",
-                :'data-target' => "#deploy_modal") %>
-  <% end %>
-
-  <% if Rails.env.development? %>
-    <div class="btn-group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <%= _('Populate with') %>
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu">
-        <li>
-          <%= display_link_if_authorized(_("Real assigned Hosts"), hash_for_populate_deployment_path(assign: true)) %>
-        </li>
-        <li>
-          <%= display_link_if_authorized(_("Real unassigned Hosts"), hash_for_populate_deployment_path) %>
-        </li>
-        <li>
-          <%= display_link_if_authorized(_("Fake unassigned Hosts"), hash_for_populate_deployment_path(:fake => true)) %>
-        </li>
-      </ul>
-    </div>
-  <% end %>
-
-  <%= help_path %>
-<% end %>
-
-<div class="row tabbed_side_nav_table">
-  <ul class="nav nav-pills nav-stacked col-md-4" data-tabs="pills">
-    <h3><%= _("Deployment Roles") %></h3>
-    <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
-      <li>
-        <div class="col-xs-2">
-          <% if child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count > 0 %>
-            <a href="#<%= child_hostgroup.name.parameterize.underscore %>_deployed_hosts" data-toggle="tab" class="roles_list">
-              <span><%= child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count %></span>
-            </a>
-          <% else %>
-            <span><%= child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count %></span>
-          <% end %>
-        </div>
-        <div class="col-xs-6">
-          <div class="group_name">
-            <%= child_hostgroup.name %>
-          </div>
-        </div>
-        <div class="col-xs-2">
-          <% if child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count > 0 %>
-            <a href="#<%= child_hostgroup.name.parameterize.underscore %>_assigned_hosts" data-toggle="tab" class="roles_list">
-              <i class="glyphicon glyphicon-time"></i>
-              <span><%= child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count %></span>
-            </a>
-          <% end %>
-        </div>
-        <div class="col-xs-2">
-          <a href="#<%= child_hostgroup.name.parameterize.underscore %>_free_hosts" data-toggle="tab" class="roles_list">
-            <i class="glyphicon glyphicon-plus"></i>
-          </a>
-        </div>
-      </li>
-    <% end %>
-  </ul>
-
-  <div class="tab-content col-md-8">
-    <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
-      <%= render 'free_hosts_table', :deployment => @deployment,
-                 :hostgroup => @hostgroup,
-                 :child_hostgroup => child_hostgroup,
-                 :hosts => child_hostgroup.free_hosts %>
-      <%= render 'assigned_hosts_table', :deployment => @deployment,
-                 :hostgroup => @hostgroup,
-                 :child_hostgroup => child_hostgroup,
-                 :hosts => child_hostgroup.hosts %>
-      <%= render 'deployed_hosts_table', :deployment => @deployment,
-                 :hostgroup => @hostgroup,
-                 :child_hostgroup => child_hostgroup,
-                 :hosts => child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? } %>
-    <% end %>
-
+<div id="sub-navigation-tabs"  class="tab-content">
+  <div class="tab-pane active in" id="overview">
+    <%= render :partial => "deployment_overview", :locals => { :deployment => @deployment } %>
   </div>
   <div class="tab-pane" id="hosts">
     <%= render :partial => "deployment_hosts", :locals => { :deployment => @deployment } %>
   </div>
   <!--<div class="tab-pane" id="networking">-->
-    <!--<%= render :partial => "deployment_networking", :locals => { :deployment => @deployment } %>-->
+  <!--<%= render :partial => "deployment_networking", :locals => { :deployment => @deployment } %>-->
   <!--</div>-->
   <div class="tab-pane" id="advanced_configuration">
     <%= render :partial => "advanced_configuration", :locals => { :deployment => @deployment } %>
