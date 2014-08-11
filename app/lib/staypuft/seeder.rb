@@ -274,6 +274,7 @@ module Staypuft
       neutron_metadata_proxy_secret = { :string => '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>' }
 
 
+      private_ip   = { :string => '<%= @host.ip %>' }
       amqp_host    = get_host_format :amqp
       mysql_host   = get_host_format :db
       glance_host  = get_host_format :glance
@@ -472,7 +473,7 @@ module Staypuft
               'nova_public_vip'               => vip_format(:nova),
               'amqp_vip'                      => vip_format(:amqp),
               'swift_public_vip'              => vip_format(:swift),
-              'private_ip'                    => { :string => '<%= @host.ip %>' },
+              'private_ip'                    => private_ip,
               'cluster_control_ip'            => { :string => '<%= @host.deployment.ips.controller_ips.first %>' },
               'lb_backend_server_addrs'       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.ips.controller_fqdns %>' } },
@@ -584,7 +585,8 @@ module Staypuft
               'mysql_host'                 => mysql_host,
               'glance_host'                => glance_host,
               'auth_host'                  => auth_host,
-              'nova_host'                  => nova_host },
+              'nova_host'                  => nova_host,
+              'private_ip'                 => private_ip },
           'quickstack::neutron::compute'           => {
               'amqp_provider'              => amqp_provider,
               'ceilometer'                 => ceilometer,
@@ -612,7 +614,8 @@ module Staypuft
               'glance_host'                => glance_host,
               'auth_host'                  => auth_host,
               'neutron_host'               => neutron_host,
-              'nova_host'                  => nova_host },
+              'nova_host'                  => nova_host,
+              'private_ip'                 => private_ip },
           'quickstack::pacemaker::rsync::keystone' => {
               'keystone_private_vip' => vip_format(:keystone) } }
     end
