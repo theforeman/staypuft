@@ -107,7 +107,7 @@ module Staypuft
     # ASCII, Unicode
     validates :eqlx_pool,
               :presence => true,
-              :format   => /\A[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]][[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~]]+[[^\p{Z}\p{C}!"#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]]\z/,
+              :format   => /\A[[^\p{Z}\p{C}!"\#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]][[^\p{Z}\p{C}!"\#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~]]+[[^\p{Z}\p{C}!"\#$%&'\(\)\*\+,\/;<=>\?@\[\]\\\^\{\}|~\.\-:]]\z/,
               :length   => { maximum: 63,
                              too_long: "Too long: max length is %{count} bytes. Using multibyte characters reduces the maximum number of characters allowed.",
                              tokenizer: lambda {|str| str.bytes.to_a } },
