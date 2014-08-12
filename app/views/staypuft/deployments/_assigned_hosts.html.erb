@@ -1,9 +1,9 @@
 <% if hosts.any? %>
 <div class="" id="table_assigned_hosts">
-  <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
+  <%= form_tag(unassign_host_deployment_path(id: @deployment), class: 'form-horizontal association', method: 'post') do |f| %>
     <div class="pull-right top_actions">
       <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
-      <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :style => "visibility: hidden" %>
+      <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :disabled => true, :id => "unassign_hosts_button" %>
     </div>
     <h4 class="pull-left"><%= _("Assigned Hosts") %></h4>
     <p class="clearfix"></p>

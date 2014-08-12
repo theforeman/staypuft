@@ -170,6 +170,12 @@ $(function () {
     window.location.hash = "#overview";
   });
 
+  $('#role_modal').on('shown.bs.modal', function(e) {
+    $('#sub-navigation a[href="#hosts"]').tab('show');
+    $('#hosts-navigation a[href="#free-hosts"]').tab('show');
+    window.location.hash = "#hosts";
+  });
+
   var scrolled = false;
 
   $(window).scroll(function(){
@@ -179,5 +185,21 @@ $(function () {
   if ( window.location.hash && scrolled ) {
     $(window).scrollTop( 0 );
   }
+
+  var free_host_checkboxes = $('#free-hosts table input:checkbox');
+  free_host_checkboxes.click(function(){
+    $("#assign_hosts_modal").attr("disabled", !free_host_checkboxes.is(":checked"));
+  });
+
+  var assigned_host_checkboxes = $('#assigned-hosts table input:checkbox');
+  assigned_host_checkboxes.click(function(){
+    $("#unassign_hosts_button").attr("disabled", !assigned_host_checkboxes.is(":checked"));
+  });
+
+  var deployed_host_checkboxes = $('#deployed-hosts table input:checkbox');
+  deployed_host_checkboxes.click(function(){
+    $("#undeploy_hosts_modal").attr("disabled", !deployed_host_checkboxes.is(":checked"));
+  });
+
 
 });
