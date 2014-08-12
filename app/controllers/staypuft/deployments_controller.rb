@@ -111,7 +111,6 @@ module Staypuft
 
     def unassign_host
       deployment             = Deployment.find(params[:id])
-      hostgroup              = ::Hostgroup.find params[:hostgroup_id]
       deployment_in_progress = ForemanTasks::Lock.locked?(deployment, nil)
 
       hosts_to_unassign = ::Host::Base.find Array(params[:host_ids])
