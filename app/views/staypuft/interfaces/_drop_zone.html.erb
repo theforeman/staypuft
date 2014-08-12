@@ -14,7 +14,7 @@
 
   <!-- all virtual devices attached to this physical interface assignments -->
   <div id="<%= identifier %>-virtuals">
-    <% Nic::Interface.where(:physical_device => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
+    <% host.interfaces.where(:physical_device => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
       <%= render 'staypuft/subnets/subnet_pull',
                  :subnet => virtual.subnet,
                  :deployment => deployment,

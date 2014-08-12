@@ -48,11 +48,8 @@ module Staypuft
                     :"data-original-title" => _(label) }) + link_to(trunc("  #{host}", 32), path)
     end
 
-    # discovered hosts don't have interfaces yet
     def host_nics(host)
-      interfaces = [ host.primary_interface ]
-      interfaces += host.respond_to?(:interfaces) ? host.interfaces.physical.map {|i| html_escape(i.identifier)} : []
-      interfaces.compact.sort.join(tag(:br)).html_safe
+      host.interfaces_identifiers.compact.sort.join(tag(:br)).html_safe
     end
 
     def is_pxe?(deployment, subnet)

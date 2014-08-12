@@ -5,7 +5,10 @@
     <div class="pull-right top_actions">
       <%= render partial: "hosts_filter" %>
       <div class="pull-right">
-        <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
+
+        <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm dynamic-submit", :disabled => true,
+                     :'data-submit-to' => deployment_interface_assignments_path(@deployment), :'data-method' => 'GET',
+                     :id => "configure_networks_button"%>
         <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :disabled => true, :id => "unassign_hosts_button" %>
       </div>
     </div>

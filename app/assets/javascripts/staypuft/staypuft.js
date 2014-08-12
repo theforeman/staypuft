@@ -187,6 +187,13 @@ $(function () {
     $(window).scrollTop( 0 );
   }
 
+  $('.dynamic-submit').click(function() {
+    this.form.action = $(this).data('submit-to');
+    this.form.method = $(this).data('method');
+    this.form.submit();
+    return false;
+  })
+
   var free_host_checkboxes = $('#free-hosts table input:checkbox');
   free_host_checkboxes.click(function(){
     $("#assign_hosts_modal").attr("disabled", !free_host_checkboxes.is(":checked"));
@@ -195,6 +202,7 @@ $(function () {
   var assigned_host_checkboxes = $('#assigned-hosts table input:checkbox');
   assigned_host_checkboxes.click(function(){
     $("#unassign_hosts_button").attr("disabled", !assigned_host_checkboxes.is(":checked"));
+    $("#configure_networks_button").attr("disabled", !assigned_host_checkboxes.is(":checked"));
   });
 
   var deployed_host_checkboxes = $('#deployed-hosts table input:checkbox');

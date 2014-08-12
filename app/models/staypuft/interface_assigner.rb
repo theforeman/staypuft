@@ -16,6 +16,7 @@ module Staypuft
             :subnet => interface.subnet)
       end
 
+      @host = @interface.host
       @subnet = subnet
       @errors = []
     end
@@ -49,7 +50,7 @@ module Staypuft
     end
 
     def unassign
-      base = @interface.host.interfaces
+      base = @host.interfaces
       base = virtual_assignment? ? base.virtual : base.physical
       ActiveRecord::Base.transaction do
         base.where(:subnet_id => @subnet.id).each do |interface|
@@ -70,7 +71,7 @@ module Staypuft
           :subnet => @subnet,
           :physical_device => @interface.identifier,
           :mac => @interface.mac,
-          :host => @interface.host,
+          :host => @host,
           :virtual => true,
           :identifier => @interface.identifier + ".#{@subnet.vlanid}")
       unless interface.save
@@ -93,7 +94,7 @@ module Staypuft
     end
 
     def unassign_physicals
-      @interface.host.interfaces.physical.where(:subnet_id => @subnet.id).each do |interface|
+      @host.interfaces.physical.where(:subnet_id => @subnet.id).each do |interface|
         unassign_physical(interface)
       end
     end
@@ -105,7 +106,7 @@ module Staypuft
     end
 
     def unassign_virtuals
-      @interface.host.interfaces.virtual.where(:subnet_id => @subnet.id).each do |interface|
+      @host.interfaces.virtual.where(:subnet_id => @subnet.id).each do |interface|
         unassign_virtual(interface)
       end
     end
@@ -117,7 +118,7 @@ module Staypuft
     end
 
     def conflicting_interface
-      Nic::Interface.
+      @host.interfaces.
           where(:identifier => @interface.identifier + ".#{subnet.vlanid}").
           where(['id <> ?', @interface.id]).
           first
