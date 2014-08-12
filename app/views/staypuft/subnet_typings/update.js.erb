@@ -8,3 +8,7 @@
     revert: 'invalid'
   });
 <% end %>
+
+<% if @warn.present? %>
+  $.jnotify('<%=j @warn.html_safe %>', { type: "warning", sticky: true });
+<% end %>

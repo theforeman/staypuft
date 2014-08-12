@@ -6,3 +6,7 @@
       :as => 'subnet_type' %>');
   $("#<%= dom_id(@subnet_type) %>").draggable({revert: 'invalid'});
 <% end %>
+
+<% if @warn.present? %>
+  $.jnotify('<%=j @warn.html_safe %>', { type: "warning", sticky: true });
+<% end %>
