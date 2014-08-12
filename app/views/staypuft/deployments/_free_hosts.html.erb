@@ -58,7 +58,7 @@
           </div>
           <div class="modal-body">
             <h3><%= _("Choose a deployment role to assign these to:") %></h3>
-            <div class="">
+            <div>
               <% @deployment.child_hostgroups.each do |child_hostgroup| %>
                 <div class="form-inline">
                   <%= radio_button_tag(:hostgroup_id, child_hostgroup.id, false) %>
