@@ -1,17 +1,19 @@
 <% if hosts.any? %>
+<h4 class="pull-left"><%= _("Deployed Hosts") %></h4>
 <div class="" id="table_deployed_hosts">
   <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
     <div class="pull-right top_actions">
-      <%= submit_tag _("Unassign Hosts"),
-          :class => "btn btn-danger btn-sm pull-right",
-          :'data-toggle' => "tooltip",
-          :'data-placement' => "left",
-          :id => "undeploy_hosts_modal",
-          :disabled => true,
-          :title => _("Unassigning deployed hosts may lead to unexpected problems.") %>
+      <%= render partial: "hosts_filter" %>
+      <div class="pull-right">
+        <%= submit_tag _("Unassign Hosts"),
+            :class => "btn btn-danger btn-sm",
+            :'data-toggle' => "tooltip",
+            :'data-placement' => "left",
+            :id => "undeploy_hosts_modal",
+            :disabled => true,
+            :title => _("Unassigning deployed hosts may lead to unexpected problems.") %>
+      </div>
     </div>
-    <h4 class="pull-left"><%= _("Deployed Hosts") %></h4>
-    <p class="clearfix"></p>
     <table class="table table-bordered table-striped table-condensed">
       <thead>
         <tr>
@@ -25,7 +27,7 @@
           <th><%= _("Last Report") %></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="searchable">
         <% hosts.each do |host| %>
           <tr class="checkbox_highlight">
             <td class="ca">

@@ -201,5 +201,14 @@ $(function () {
     $("#undeploy_hosts_modal").attr("disabled", !deployed_host_checkboxes.is(":checked"));
   });
 
+  var hosts_filter = $('.hosts_filter');
+  hosts_filter.keyup(function () {
+      var rex = new RegExp($(this).val(), 'i');
+      $('.searchable tr').hide();
+      $('.searchable tr').filter(function () {
+          return rex.test($(this).text());
+      }).show();
+  });
 
+  $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); }); 
 });
