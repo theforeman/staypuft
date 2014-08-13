@@ -8,7 +8,7 @@ module Staypuft
         @interface = interface
       else
         # interface may be Host::Managed which means primary interface, so we create pseudo-interface object
-        @interface = Nic::Interface.new(
+        @interface = Nic::Managed.new(
             :mac => interface.mac,
             :virtual => false,
             :identifier => interface.primary_interface,
@@ -67,7 +67,7 @@ module Staypuft
     private
 
     def assign_virtual
-      interface = Nic::Interface.new(
+      interface = Nic::Managed.new(
           :subnet => @subnet,
           :physical_device => @interface.identifier,
           :mac => @interface.mac,

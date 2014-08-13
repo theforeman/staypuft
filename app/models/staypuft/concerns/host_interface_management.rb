@@ -16,6 +16,13 @@ module Staypuft
         interfaces += self.respond_to?(:interfaces) ? self.interfaces.where("type <> 'Nic::BMC'").physical.map(&:identifier) : []
         interfaces
       end
+
+      def make_all_interfaces_managed
+        self.interfaces.each do |interface|
+          interface.managed = true
+          interface.save!
+        end
+      end
     end
   end
 end

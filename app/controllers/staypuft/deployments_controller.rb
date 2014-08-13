@@ -192,6 +192,8 @@ module Staypuft
 
       # clear all virtual devices that may have been created during previous assignment
       host.clean_vlan_interfaces
+      # by default foreman will try to manage all NICs unless user disables manually after assignment
+      host.make_all_interfaces_managed
 
       # I do not why but the final save! adds following condytion to the update SQL command
       # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
