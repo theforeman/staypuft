@@ -1,14 +1,16 @@
 <% if hosts.exists? %>
+<h4 class="pull-left"><%= _("Free Hosts") %></h4>
 <div class="" id="table_free_hosts">
   <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
     <div class="pull-right top_actions">
-      <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
-      <button type="button" class= "btn btn-primary btn-sm"
-              id="assign_hosts_modal" data-toggle = "modal"
-              data-target = "#role_modal" disabled="true"><%= _("Assign Hosts") %></button>
+      <%= render partial: "hosts_filter" %>
+      <div class="pull-right">
+        <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
+        <button type="button" class= "btn btn-primary btn-sm"
+                id="assign_hosts_modal" data-toggle = "modal"
+                data-target = "#role_modal" disabled="true"><%= _("Assign Hosts") %></button>
+        </div>
     </div>
-    <h4 class="pull-left"><%= _("Free Hosts") %></h4>
-    <p class="clearfix"></p>
     <table class="table table-bordered table-striped table-condensed">
       <thead>
         <tr>
@@ -23,7 +25,7 @@
           <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="searchable">
         <% hosts.each do |host| %>
           <tr class="checkbox_highlight">
             <td class="ca">
