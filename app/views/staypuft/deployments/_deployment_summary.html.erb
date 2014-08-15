@@ -27,7 +27,7 @@
             <label class="col-sm-4 control-label text-muted"><%= _("Password") %></label>
             <div class="col-sm-8">
               <p class="form-control-static">
-                <span class="shown_password hide"><%= @deployment.passwords.admin %></span>
+                <span class="shown_password hide"><%= @deployment.passwords.effective_value(:admin) %></span>
                 <span class="hidden_password">********</span>
                 <a href="" id="hidden_password_toggle">
                   <span class="glyphicon glyphicon-eye-open"></span>
