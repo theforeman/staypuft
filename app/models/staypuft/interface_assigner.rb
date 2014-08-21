@@ -74,6 +74,7 @@ module Staypuft
           :host => @host,
           :virtual => true,
           :identifier => @interface.identifier + ".#{@subnet.vlanid}")
+      suggest_ip(interface) if @subnet.ipam?
       unless interface.save
         @errors.push(*interface.errors.full_messages)
       end
@@ -81,6 +82,7 @@ module Staypuft
 
     def assign_physical
       @interface.subnet = @subnet
+      suggest_ip(@interface) if @subnet.ipam?
       unless @interface.save
         @errors.push(*@interface.errors.full_messages)
       end
@@ -99,8 +101,12 @@ module Staypuft
       end
     end
 
+    # if subnet has IP suggesting enabled we also clear the IP that was suggested
+    # this IP will be used for another interface
     def unassign_physical(interface)
-      unless interface.update_attribute(:subnet_id, nil)
+      interface.ip = nil if interface.subnet.ipam?
+      interface.subnet_id = nil
+      unless interface.save
         @errors.push(interface.errors.full_messages)
       end
     end
@@ -122,6 +128,10 @@ module Staypuft
           where(:identifier => @interface.identifier + ".#{subnet.vlanid}").
           where(['id <> ?', @interface.id]).
           first
+    end
+
+    def suggest_ip(interface)
+      interface.ip = @subnet.unused_ip if interface.ip.blank?
     end
   end
 end
