@@ -37,8 +37,8 @@ module Staypuft
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
 
+      # preload all the Foreman's lib files but only in production
       if Rails.env.production?
-        # preload all the Foreman's lib files
         Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
             map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
             map { |v| v.gsub /\.rb$/, '' }.
