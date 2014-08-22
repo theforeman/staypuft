@@ -103,7 +103,9 @@ module Staypuft
         :horizon_ha         => { :name => 'Horizon (HA)', :class => ['quickstack::pacemaker::horizon'] },
         :galera_ha          => { :name => 'Galera (HA)', :class => ['quickstack::pacemaker::galera'] },
         :mysql_ha           => { :name => 'Mysql (HA)', :class => ['quickstack::pacemaker::mysql'] },
-        :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] }
+        :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] },
+        :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
+        :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)', :class => ['quickstack::openstack_common'] },
     }
 
     # The list of roles is still from astapor
@@ -155,9 +157,21 @@ module Staypuft
           :services      => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
                              :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
                              :neutron_ha, :galera_ha],
-          :orchestration => 'concurrent' }]
+          :orchestration => 'concurrent' },
+        { :name          => 'Generic RHEL 7',
+          :class         => '',
+          :layouts       => [[:non_ha_nova, 20],[:non_ha_neutron, 20], [:ha_nova, 20], [:ha_neutron, 20]],
+          :services      => [:generic_rhel_7],
+          :orchestration => 'concurrent' },
+        { :name          => 'Ceph Storage Node (OSD)',
+          :class         => '',
+          :layouts       => [[:non_ha_nova, 20], [:non_ha_neutron, 20], [:ha_nova, 20], [:ha_neutron, 20]],
+          :services      => [:ceph_osd],
+          :orchestration => 'concurrent' },
+      ]
 
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
+    CEPH_ROLES = ROLES.select {|h| h.fetch(:name) =~ /Ceph/ }
 
     def get_host_format(param_name)
       { :string => '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>' % param_name }
@@ -209,7 +223,7 @@ module Staypuft
       pcmk_fs_manage              = { :string => '<%= @host.deployment.glance.pcmk_fs_manage %>' }
       pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
       glance_rbd_store_user       = 'images'
-      glance_rbd_store_pool       = 'images' 
+      glance_rbd_store_pool       = 'images'
 
       # Cinder
       volume                      = true
