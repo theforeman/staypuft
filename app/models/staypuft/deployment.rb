@@ -275,11 +275,12 @@ module Staypuft
     end
 
     def update_operating_system
+      name = Setting[:base_hostgroup].include?('RedHat') ? 'RedHat' : 'CentOS'
       self.hostgroup.operatingsystem = case platform
                                        when Platform::RHEL6
-                                         Operatingsystem.where(name: 'RedHat', major: '6', minor: '5').first
+                                         Operatingsystem.where(name: name, major: '6', minor: '5').first
                                        when Platform::RHEL7
-                                         Operatingsystem.where(name: 'RedHat', major: '7', minor: '0').first
+                                         Operatingsystem.where(name: name, major: '7', minor: '0').first
                                        end or
           raise 'missing Operatingsystem'
       self.hostgroup.save!
