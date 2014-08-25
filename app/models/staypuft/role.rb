@@ -1,5 +1,16 @@
 module Staypuft
   class Role < ActiveRecord::Base
+    # until we have puppetssh, "run puppet" below means "provision and run puppet"
+
+    # run puppet on all nodes concurrently
+    ORCHESTRATION_CONCURRENT = "concurrent"
+    # run puppet on one node at a time
+    ORCHESTRATION_SERIAL     = "serial"
+    # run puppet on the first mode, then the rest concurrently
+    ORCHESTRATION_LEADER     = "leader"
+
+    ORCHESTRATION_MODES = [ORCHESTRATION_CONCURRENT, ORCHESTRATION_SERIAL, ORCHESTRATION_LEADER]
+
     has_many :layout_roles, :dependent => :destroy
     has_many :layouts, :through => :layout_roles
 
@@ -16,6 +27,8 @@ module Staypuft
     attr_accessible :description, :max_hosts, :min_hosts, :name
 
     validates :name, :presence => true, :uniqueness => true
+
+    validates :orchestration, :inclusion => {:in => ORCHESTRATION_MODES }
 
     scope(:in_deployment, lambda do |deployment|
       joins(:deployment_role_hostgroups).
