@@ -112,42 +112,50 @@ module Staypuft
     # until we get the real list of roles per layout
     # layout refs below specify layout keys from layouts hash
     ROLES          = [
-        { :name     => 'Controller (Nova)',
-          :class    => 'quickstack::nova_network::controller',
-          :layouts  => [[:non_ha_nova, 1]],
-          :services => [:non_ha_amqp, :mysql, :non_ha_keystone, :nova_controller, :non_ha_glance,
-                        :cinder_controller, :heat, :ceilometer] },
-        { :name     => 'Compute (Nova)',
-          :class    => [],
-          :layouts  => [[:ha_nova, 10], [:non_ha_nova, 10]],
-          :services => [:nova_compute] },
-        { :name     => 'Controller (Neutron)',
-          :class    => 'quickstack::neutron::controller',
-          :layouts  => [[:non_ha_neutron, 1]],
-          :services => [:non_ha_amqp, :mysql, :non_ha_keystone, :neutron_controller, :non_ha_glance,
-                        :cinder_controller, :heat, :ceilometer] },
-        { :name     => 'Compute (Neutron)',
-          :class    => [],
-          :layouts  => [[:ha_neutron, 10], [:non_ha_neutron, 10]],
-          :services => [:neutron_compute] },
-        { :name     => 'Neutron Networker',
-          :class    => [],
-          :layouts  => [[:non_ha_neutron, 3]],
-          :services => [:neutron_networker] },
-        { :name     => 'Cinder Block Storage',
-          :class    => [],
-          :layouts  => [],
-          :services => [:cinder_node] },
-        { :name     => 'Swift Storage Node',
-          :class    => [],
-          :layouts  => [],
-          :services => [:swift] },
-        { :name     => 'HA Controller',
-          :class    => [],
-          :layouts  => [[:ha_nova, 1], [:ha_neutron, 1]],
-          :services => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
-                        :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
-                        :neutron_ha, :galera_ha] }]
+        { :name          => 'Controller (Nova)',
+          :class         => 'quickstack::nova_network::controller',
+          :layouts       => [[:non_ha_nova, 1]],
+          :services      => [:non_ha_amqp, :mysql, :non_ha_keystone, :nova_controller, :non_ha_glance,
+                             :cinder_controller, :heat, :ceilometer],
+          :orchestration => 'concurrent' },
+        { :name          => 'Compute (Nova)',
+          :class         => [],
+          :layouts       => [[:ha_nova, 10], [:non_ha_nova, 10]],
+          :services      => [:nova_compute],
+          :orchestration => 'leader' },
+        { :name          => 'Controller (Neutron)',
+          :class         => 'quickstack::neutron::controller',
+          :layouts       => [[:non_ha_neutron, 1]],
+          :services      => [:non_ha_amqp, :mysql, :non_ha_keystone, :neutron_controller, :non_ha_glance,
+                             :cinder_controller, :heat, :ceilometer],
+          :orchestration => 'concurrent' },
+        { :name          => 'Compute (Neutron)',
+          :class         => [],
+          :layouts       => [[:ha_neutron, 10], [:non_ha_neutron, 10]],
+          :services      => [:neutron_compute],
+          :orchestration => 'concurrent' },
+        { :name          => 'Neutron Networker',
+          :class         => [],
+          :layouts       => [[:non_ha_neutron, 3]],
+          :services      => [:neutron_networker],
+          :orchestration => 'concurrent' },
+        { :name          => 'Cinder Block Storage',
+          :class         => [],
+          :layouts       => [],
+          :services      => [:cinder_node],
+          :orchestration => 'concurrent' },
+        { :name          => 'Swift Storage Node',
+          :class         => [],
+          :layouts       => [],
+          :services      => [:swift],
+          :orchestration => 'concurrent' },
+        { :name          => 'HA Controller',
+          :class         => [],
+          :layouts       => [[:ha_nova, 1], [:ha_neutron, 1]],
+          :services      => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
+                             :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
+                             :neutron_ha, :galera_ha],
+          :orchestration => 'concurrent' }]
 
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
 
@@ -662,13 +670,15 @@ module Staypuft
 
     def seed_roles
       ROLES.each do |role_hash|
-        role = Staypuft::Role.where(:name => role_hash[:name]).first_or_create!
+        role = Staypuft::Role.where(:name => role_hash[:name]).first_or_initialize
 
         puppet_classes = collect_puppet_classes(Array(role_hash[:class]))
         puppet_classes.each { |pc| apply_astapor_defaults pc }
         role.puppetclasses = puppet_classes
 
         role.description      = role_hash[:description]
+        role.orchestration    = role_hash[:orchestration]
+        role.save!
         old_role_services_arr = role.role_services.to_a
         role_hash[:services].each do |key|
           role_service = role.role_services.where(:service_id => SERVICES[key][:obj].id).first_or_create!

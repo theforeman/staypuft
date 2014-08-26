@@ -26,9 +26,46 @@ module Actions
           # hostgroup.hosts returns already converted hosts from Host::Discovered with build flag
           # set to false so they are not built when assigned to the hostgroup in wizard
           # run Hostgroup's Hosts filtered by hosts
-          (hostgroup.hosts & hosts).each do |host|
+          host_list = hostgroup.hosts & hosts
+          orchestration_mode = hostgroup.role.orchestration unless hostgroup.role.nil?
+
+          case orchestration_mode
+          when ::Staypuft::Role::ORCHESTRATION_CONCURRENT
+            deploy_concurrently(host_list)
+          when ::Staypuft::Role::ORCHESTRATION_SERIAL
+            deploy_serially(host_list)
+          when ::Staypuft::Role::ORCHESTRATION_LEADER
+            deploy_leader_first(host_list)
+          else
+            deploy_concurrently(host_list)
+          end
+        end
+
+        def deploy_concurrently(hosts)
+          hosts.each do |host|
             # planned in concurrence
             plan_action Host::Deploy, host
+          end
+        end
+
+        def deploy_serially(hosts)
+          sequence do
+            hosts.each do |host|
+              plan_action Host::Deploy, host
+            end
+          end
+        end
+
+        def deploy_leader_first(hosts)
+          first_host = hosts.shift
+          sequence do
+            #deploy first host, then deploy remainder in parallel
+            plan_action Host::Deploy, first_host unless first_host.nil?
+            concurrence do
+              hosts.each do |host|
+                plan_action Host::Deploy, host
+              end
+            end
           end
         end
 
