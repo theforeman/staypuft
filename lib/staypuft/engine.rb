@@ -36,12 +36,14 @@ module Staypuft
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
 
-      # preload all the Foreman's lib files
-      Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
-          map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
-          map { |v| v.gsub /\.rb$/, '' }.
-          sort_by { |v| v.scan('/').size }. # ordered by the directory depth
-          map { |v| require_dependency v }
+      if Rails.env.production?
+        # preload all the Foreman's lib files
+        Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
+            map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
+            map { |v| v.gsub /\.rb$/, '' }.
+            sort_by { |v| v.scan('/').size }. # ordered by the directory depth
+            map { |v| require_dependency v }
+      end
     end
 
     rake_tasks do
