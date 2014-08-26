@@ -133,7 +133,7 @@ module Staypuft
           :class         => [],
           :layouts       => [[:ha_neutron, 10], [:non_ha_neutron, 10]],
           :services      => [:neutron_compute],
-          :orchestration => 'leader' },
+          :orchestration => 'concurrent' },
         { :name          => 'Neutron Networker',
           :class         => [],
           :layouts       => [[:non_ha_neutron, 3]],
