@@ -124,9 +124,9 @@ $(function () {
   }
 
   showCinderNfsUri();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderNfsUri);
+  $("#staypuft_deployment_cinder_backend_nfs").change(showCinderNfsUri);
   function showCinderNfsUri() {
-    if ($('#staypuft_deployment_cinder_driver_backend_nfs').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_nfs').is(":checked")) {
       $('.cinder_nfs_uri').show();
     }
     else {
@@ -135,9 +135,9 @@ $(function () {
   }
 
   showCinderEquallogic();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderEquallogic);
+  $("#staypuft_deployment_cinder_backend_eqlx").change(showCinderEquallogic);
   function showCinderEquallogic() {
-    if ($('#staypuft_deployment_cinder_driver_backend_equallogic').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_eqlx').is(":checked")) {
       $('.cinder_equallogic').show();
     }
     else {
@@ -255,4 +255,36 @@ $(function () {
     var id = $(this).parentsUntil(".tab-content").last().attr("id");
     $("a[href=#"+id+"]").parent().addClass("tab-error");
   })
+
+  var regex = /^(.+)(\d*)$/i;
+
+  var cloneIndex = $(".cinderPicker").length;
+
+  // $("button.add_another_server").live("click", function(){
+
+  //   var theClone = $(this).siblings(".cinder_equallogic_picker")
+  //       .find('.eqlx:last').clone()
+  //       .appendTo(".cinder_equallogic_picker")
+  //       .attr("id", "eqlx" +  cloneIndex)
+  //       .find("*").each(function() {
+  //         var id = this.id || "";
+  //         var match = id.match(regex) || [];
+  //         if (match.length == 3) {
+  //           this.id = match[1] + (cloneIndex);
+  //         }
+  //   });
+  //   cloneIndex++;
+
+  // });
+
+  $("button.add_another_server").live("click", function() {
+    var eqlx_form = function () {
+      return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime())
+    }
+    $('#eqlxs').append(eqlx_form())
+  })
+
+  $("button.remove").live("click", function(){
+      $(this).parents(".clonedInput").remove();
+  });
 });

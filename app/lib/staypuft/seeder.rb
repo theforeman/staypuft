@@ -263,7 +263,7 @@ module Staypuft
       cinder_backend_iscsi_name   = 'iscsi_backend'
       cinder_backend_nfs          = { :string => '<%= @host.deployment.cinder.nfs_backend? %>' }
       cinder_backend_nfs_name     = 'nfs_backend'
-      cinder_multiple_backends    = false
+      cinder_multiple_backends    = { :string => '<%= @host.deployment.cinder.multiple_backends? %>' }
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = 'nosharecache'
 
@@ -280,11 +280,11 @@ module Staypuft
       cinder_backend_eqlx_name      = ['eqlx_backend']
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
-      cinder_san_ip                 = ['<%= @host.deployment.cinder.san_ip %>']
-      cinder_san_login              = ['<%= @host.deployment.cinder.san_login %>']
-      cinder_san_password           = ['<%= @host.deployment.cinder.san_password %>']
-      cinder_eqlx_group_name        = ['<%= @host.deployment.cinder.eqlx_group_name %>']
-      cinder_eqlx_pool              = ['<%= @host.deployment.cinder.eqlx_pool %>']
+      cinder_san_ip                 = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_ips %>' }
+      cinder_san_login              = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_logins %>' }
+      cinder_san_password           = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_passwords %>' }
+      cinder_eqlx_group_name        = { :array => '<%= @host.deployment.cinder.compute_eqlx_group_names %>' }
+      cinder_eqlx_pool              = { :array => '<%= @host.deployment.cinder.compute_eqlx_pools %>'}
 
       cinder_san_thin_provision     = ['false']
       cinder_eqlx_use_chap          = ['false']

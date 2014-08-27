@@ -1,30 +1,53 @@
-<%= f.fields_for :cinder, @deployment.cinder do |p| %>
-  <%= field(p, :driver_backend, :label => _(Staypuft::Deployment::CinderService::DriverBackend::HUMAN)) do
-    @deployment.cinder.backend_labels_for_layout.map do |value, label|
-      radio_button_f_non_inline(p, :driver_backend,
-                                :checked => @deployment.cinder.driver_backend == value,
-                                :value   => value,
-                                :text    => label)
-    end.join
-  end %>
+<div class="cinder">
+  <div class="col-md-12 clearfix cinderPicker" id="cinderPicker">
+    <%= f.fields_for :cinder, @deployment.cinder do |p| %>
 
-  <div class="cinder_nfs_uri col-md-offset-0 hide">
-    <%= text_f p, :nfs_uri, class: "cinder_nfs_uri",
-               label:              _(Staypuft::Deployment::CinderService::NfsUri::HUMAN),
-               help_inline:        _(Staypuft::Deployment::CinderService::NfsUri::HUMAN_AFTER) %>
+      <%= check_box_f_non_inline(p, :backend_nfs,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :text            => "NFS")
+      %>
+      <div class="cinder_nfs_uri col-md-offset-1 hide">
 
+        <%= text_f p, :nfs_uri, class: "cinder_nfs_uri",
+                   label:              _(Staypuft::Deployment::CinderService::NfsUri::HUMAN),
+                   help_inline:        _(Staypuft::Deployment::CinderService::NfsUri::HUMAN_AFTER) %>
+
+      </div>
+
+      <%= check_box_f_non_inline(p, :backend_lvm,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :text            => "LVM")
+      %>
+
+      <%= check_box_f_non_inline(p, :backend_ceph,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :text            => "Ceph")
+      %>
+
+      <%= check_box_f_non_inline(p, :backend_eqlx,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :text            => "EqualLogic")
+      %>
+
+
+      <div class="cinder_equallogic col-md-offset-1 hide">
+        <div id="eqlxs" class="cinder_equallogic_picker">
+        <% @deployment.cinder.eqlxs.each_with_index do |eqlx, index| %>
+          <%= p.fields_for "eqlxs[]", eqlx, index: index do |e| %>
+            <% render partial: 'cinder_equallogic_form', locals: {e: e} %>
+          <% end %>
+        <% end %>
+        </div>
+        <button type="button" class= "btn btn-primary btn-sm add_another_server"><%= _("Add Another Server") %></button>
+    </div>
+    <script type='html/template' id='eqlx_form_template'>
+      <%= p.fields_for 'eqlxs[]', Staypuft::Deployment::CinderService::Equallogic.new, index: 'NEW_RECORD' do |e| render(partial: 'cinder_equallogic_form', locals: {e: e}); end %>
+    </script>
+    <%end%>
   </div>
-  <div class="cinder_equallogic col-md-offset-0 hide">
-    <%= text_f p, :san_ip, class: "cinder_equallogic",
-               label:              _(Staypuft::Deployment::CinderService::SanIp::HUMAN) %>
-    <%= text_f p, :san_login, class: "cinder_equallogic",
-               label:              _(Staypuft::Deployment::CinderService::SanLogin::HUMAN) %>
-    <%= text_f p, :san_password, class: "cinder_equallogic",
-               label:              _(Staypuft::Deployment::CinderService::SanPassword::HUMAN) %>
-    <%= text_f p, :eqlx_pool, class: "cinder_equallogic",
-               label:              _(Staypuft::Deployment::CinderService::EqlxPool::HUMAN) %>
-    <%= text_f p, :eqlx_group_name, class: "cinder_equallogic",
-               label:              _(Staypuft::Deployment::CinderService::EqlxGroupName::HUMAN) %>
+</div>
 
-  </div>
-<% end %>
