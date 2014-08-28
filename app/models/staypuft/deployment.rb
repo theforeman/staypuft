@@ -13,7 +13,7 @@ module Staypuft
 
     # supporting import/export
     EXPORT_PARAMS   = [:amqp_provider, :networking, :layout_name, :platform]
-    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords] 
+    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords]
 
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
@@ -49,7 +49,7 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
-    
+
     validate :all_subnet_types_associated, :if => Proc.new { |o| o.form_step == STEP_NETWORKING }
 
     after_validation :check_form_complete
@@ -121,6 +121,10 @@ module Staypuft
       ForemanTasks::Lock.locked? self, nil
     end
 
+    def hide_ceph_notification?
+      ceph_hostgroup.hosts.empty?
+    end
+
     # Helper method for getting the in progress foreman task for this
     # deployment.
     def task
@@ -134,7 +138,7 @@ module Staypuft
     end
 
     def progress_summary
-      self.in_progress? ? self.task.humanized[:output] : nil 
+      self.in_progress? ? self.task.humanized[:output] : nil
     end
 
     # Helper method for getting the progress of this deployment
@@ -193,7 +197,8 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?
+        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?,
+        :hide_ceph_notification?
     end
 
     # TODO(mtaylor)
@@ -266,6 +271,13 @@ module Staypuft
 
     def unassigned_subnet_types
       self.layout.subnet_types - self.subnet_types
+    end
+
+    def ceph_hostgroup
+      Hostgroup.includes(:deployment_role_hostgroup).
+        where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
+                                                      role_id:       Staypuft::Role.cephosd }).
+        first
     end
 
     private
