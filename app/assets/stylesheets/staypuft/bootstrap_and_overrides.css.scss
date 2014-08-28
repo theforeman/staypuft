@@ -74,6 +74,22 @@
         -webkit-transform:rotate(360deg);
       }
     }
+
+    & > li.tab-error > a.tab-error span {
+      visibility: visible !important;
+      padding-left: 6px;
+    }
+
+    & > li.tab-error.active {
+      a {
+        background-color: $state-danger-text;
+        color: white !important;
+      }
+
+      a:after {
+        border-color: transparent transparent transparent $state-danger-text;
+      }
+    }
   }
   .tab-content {
     min-height: 520px;

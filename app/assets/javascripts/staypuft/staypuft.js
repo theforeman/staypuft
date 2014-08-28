@@ -247,5 +247,11 @@ $(function () {
       }).show();
   });
 
-  $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); }); 
+  $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); });
+
+// add more highlighting for tabs with errors
+  $(".tab-content").find(".form-group.has-error").each(function(index) {
+    var id = $(this).parentsUntil(".tab-content").last().attr("id");
+    $("a[href=#"+id+"]").parent().addClass("tab-error");
+  })
 });
