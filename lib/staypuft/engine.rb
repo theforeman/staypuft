@@ -27,6 +27,7 @@ module Staypuft
     end
 
     config.to_prepare do
+      ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Host::Managed.send :include, Staypuft::Concerns::HostDetailsHelper
@@ -36,8 +37,8 @@ module Staypuft
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
 
+      # preload all the Foreman's lib files but only in production
       if Rails.env.production?
-        # preload all the Foreman's lib files
         Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
             map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
             map { |v| v.gsub /\.rb$/, '' }.
@@ -59,7 +60,7 @@ module Staypuft
     end
 
     initializer "staypuft.assets.precompile" do |app|
-      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js)
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js)
     end
 
     initializer "load default settings" do |app|

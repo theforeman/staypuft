@@ -1,0 +1,12 @@
+<% if @saved %>
+$("#<%= dom_id(@subnet) %>").remove();
+$("#<%= params[:interface] %>-<%= @assigner.virtual_assignment? ? 'virtuals' : 'physicals' %>").prepend(
+        '<%=j render :partial => 'staypuft/subnets/subnet_pull',
+                     :object => @subnet,
+                     :as => 'subnet',
+                     :locals => { :active => !is_pxe?(@deployment, @subnet), :deployment => @deployment, :existing => true } %>');
+$("#<%= dom_id(@subnet) %>").draggable({revert: 'invalid'});
+<% else %>
+  error = '<%=j @errors.map { |k, v| "#{h(k)}: #{v.join(', ')}" }.join('<br />').html_safe %>';
+  $.jnotify(error, { type: "error", sticky: true });
+<% end %>

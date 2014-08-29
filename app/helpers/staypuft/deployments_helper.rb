@@ -4,6 +4,7 @@ module Staypuft
       wizard_header(
           step,
           _("Deployment Settings"),
+          _("Network Configuration"),
           _("Services Overview"),
           _("Services Configuration")
       )
@@ -33,9 +34,7 @@ module Staypuft
         style           ="label-default"
         short           = s_("Discovered|D")
         label           = _('Discovered Host')
-        # TODO remove after migrating to foreman_discover 1.3.0
-        hash_for_method = [:hash_for_discovered_host_path, :hash_for_discover_path].find { |m| respond_to? m }
-        path            = send hash_for_method, host
+        path            = hash_for_discovered_host_path(host)
       else
         style = 'label-warning'
         short = s_("Error|E")
@@ -47,6 +46,22 @@ module Staypuft
                   { :rel                   => "twipsy",
                     :class                 => "label label-light " + style,
                     :"data-original-title" => _(label) }) + link_to(trunc("  #{host}", 32), path)
+    end
+
+    def host_nics(host)
+      host.interfaces_identifiers.compact.sort.join(tag(:br)).html_safe
+    end
+
+    def is_pxe?(deployment, subnet)
+      subnet_typings(deployment, subnet).any? { |t| t.subnet_type.name == Staypuft::SubnetType::PXE }
+    end
+
+    def subnet_types(deployment, subnet)
+      subnet_typings(deployment, subnet).map { |t| h(t.subnet_type.name) }.join(' + ')
+    end
+
+    def subnet_typings(deployment, subnet)
+      deployment.subnet_typings.where(:subnet_id => subnet.id).includes(:subnet_type)
     end
   end
 

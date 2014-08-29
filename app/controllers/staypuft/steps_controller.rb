@@ -1,7 +1,7 @@
 module Staypuft
   class StepsController < Staypuft::ApplicationController
     include Wicked::Wizard
-    steps :deployment_settings, :services_overview, :services_configuration
+    steps :deployment_settings, :network_configuration, :services_overview, :services_configuration
 
     before_filter :get_deployment
 
@@ -13,6 +13,8 @@ module Staypuft
         if !@deployment.ha? && @deployment.cinder.lvm_ptable.nil?
           flash[:warning] = "Missing Partition Table 'LVM with cinder-volumes', LVM cinder backend won't work." 
         end
+      when :network_configuration
+        @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
       when :services_configuration
         @services_map = [:nova, :neutron, :glance, :cinder]
       end
@@ -30,6 +32,15 @@ module Staypuft
         @deployment.passwords.attributes = params[:staypuft_deployment].delete(:passwords)
         @deployment.attributes = params[:staypuft_deployment]
 
+        # we don't care too much whether pxe network was detected or all typings were saved since it's
+        # just a helper for user to have all types preassigned to pxe network
+        pxe_network = Subnet.where('dhcp_id IS NOT NULL').where(:external_dhcp => false).first
+        if pxe_network
+          @deployment.unassigned_subnet_types.each do |type|
+            @deployment.subnet_typings.new(:subnet_id => pxe_network.id, :subnet_type_id => type.id).save
+          end
+        end
+
       when :services_overview
         @deployment.form_step = Deployment::STEP_OVERVIEW
 
@@ -41,6 +52,9 @@ module Staypuft
             @deployment.send(service).attributes = params[:staypuft_deployment].delete(service)
           end
         end
+      when :network_configuration
+        @deployment.form_step = Deployment::STEP_NETWORKING
+        @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
       else
         raise 'unknown step'
       end

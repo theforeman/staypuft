@@ -1,0 +1,30 @@
+<div class="interface" id="<%= identifier %>-interface" data-interface="<%= identifier %>">
+  <div class="identifier">
+    <%= identifier %>
+  </div>
+
+  <!-- physical interface assignment (can be only one at most) -->
+  <div id="<%= identifier %>-physicals">
+    <%= render 'staypuft/subnets/subnet_pull',
+               :subnet => subnet,
+               :deployment => deployment,
+               :active => !is_pxe?(deployment, subnet),
+               :existing => true if subnet %>
+  </div>
+
+  <!-- all virtual devices attached to this physical interface assignments -->
+  <div id="<%= identifier %>-virtuals">
+    <% host.interfaces.where(:physical_device => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
+      <%= render 'staypuft/subnets/subnet_pull',
+                 :subnet => virtual.subnet,
+                 :deployment => deployment,
+                 :active => true,
+                 :existing => true if virtual.subnet %>
+    <% end %>
+  </div>
+
+  <div class="subnet-drop-zones">
+    <div class="empty-zone">
+    </div>
+  </div>
+</div>

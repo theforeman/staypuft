@@ -7,6 +7,7 @@ module Staypuft
     STEP_CONFIGURATION = :configuration
     STEP_COMPLETE      = :complete
     STEP_OVERVIEW      = :overview
+    STEP_NETWORKING    = :networking
 
     NEW_NAME_PREFIX = 'uninitialized_'
 
@@ -40,10 +41,16 @@ module Staypuft
     has_many :services, :through => :roles
     has_many :hosts, :through => :child_hostgroups
 
+    has_many :subnet_typings, :dependent => :destroy
+    has_many :subnet_types, :through => :subnet_typings
+    has_many :subnets, :through => :subnet_typings
+
     validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+    
+    validate :all_subnet_types_associated, :if => Proc.new { |o| o.form_step == STEP_NETWORKING }
 
     after_validation :check_form_complete
     before_save :update_layout
@@ -257,6 +264,10 @@ module Staypuft
         first
     end
 
+    def unassigned_subnet_types
+      self.layout.subnet_types - self.subnet_types
+    end
+
     private
 
     def update_layout
@@ -267,6 +278,15 @@ module Staypuft
       update_hostgroup_name
       update_operating_system
       update_hostgroup_list
+    end
+
+    def all_subnet_types_associated
+      associated_subnet_types = self.subnet_typings.map(&:subnet_type)
+      missing = self.layout.subnet_types.select { |t| !associated_subnet_types.include?(t) }
+      unless missing.empty?
+        errors.add :base,
+                   _("Some subnet types are missing association of a subnet. Please drag and drop following types: %s") % missing.map(&:name).join(', ')
+      end
     end
 
     def update_hostgroup_name

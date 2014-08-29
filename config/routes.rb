@@ -16,7 +16,10 @@ Rails.application.routes.draw do
       end
 
       resources :steps
+
+      resources :interface_assignments, :only => [:index, :create, :destroy]
     end
 
+    resources :subnet_typings, :only => [:create, :destroy, :update]
   end
 end

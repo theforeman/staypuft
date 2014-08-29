@@ -729,11 +729,30 @@ module Staypuft
       end
     end
 
+    def seed_subnet_types
+      # default subnet types
+      types = [ Staypuft::SubnetType::PXE ] + %w(Management Tenants Public)
+      types.map! do |type|
+        Staypuft::SubnetType.create!(:name => type) unless Staypuft::SubnetType.find_by_name(type)
+      end
+      
+      standard_ids = %w(ha_nova non_ha_nova ha_neutron non_ha_neutron)
+      standard_names = LAYOUTS.select { |k,v| standard_ids.include?(k.to_s)}.map { |k,v| v[:name] }
+      standard_layouts = Staypuft::Layout.find_all_by_name(standard_names)
+      raise ActiveRecord::RecordNotFound, 'some of layouts were not found, renaming issue?' if standard_layouts.size != standard_ids.size
+      
+      # assign subnet types to layouts (unless there's at least one assignment)
+      standard_layouts.each do |layout|
+        layout.subnet_types = types if layout.subnet_types.empty?
+      end
+    end
+
     def seed
       seed_layouts
       seed_services
       seed_roles
       seed_functional_dependencies
+      seed_subnet_types
     end
 
     def collect_puppet_classes(puppet_class_names)
