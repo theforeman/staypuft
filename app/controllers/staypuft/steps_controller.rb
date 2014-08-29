@@ -13,8 +13,6 @@ module Staypuft
         if !@deployment.ha? && @deployment.cinder.lvm_ptable.nil?
           flash[:warning] = "Missing Partition Table 'LVM with cinder-volumes', LVM cinder backend won't work." 
         end
-      when :services_configuration
-        @services_map = [:nova, :neutron, :glance, :cinder]
       when :network_configuration
         @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
       when :services_configuration
