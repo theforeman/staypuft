@@ -41,7 +41,7 @@ module Staypuft
     has_many :services, :through => :roles
     has_many :hosts, :through => :child_hostgroups
 
-    has_many :subnet_typings
+    has_many :subnet_typings, :dependent => :destroy
     has_many :subnet_types, :through => :subnet_typings
     has_many :subnets, :through => :subnet_typings
 

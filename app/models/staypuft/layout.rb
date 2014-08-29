@@ -5,7 +5,7 @@ module Staypuft
     has_many :layout_roles, :dependent => :destroy, :order => "staypuft_layout_roles.deploy_order ASC"
     has_many :roles, :through => :layout_roles, :order => "staypuft_layout_roles.deploy_order ASC"
 
-    has_many :layout_subnet_types
+    has_many :layout_subnet_types, :dependent => :destroy
     has_many :subnet_types, :through => :layout_subnet_types
 
     attr_accessible :description, :name, :networking

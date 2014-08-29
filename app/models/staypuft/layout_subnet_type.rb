@@ -7,5 +7,6 @@ module Staypuft
 
     validates :layout, :presence => true
     validates :subnet_type, :presence => true
+    validates :layout_id, :uniqueness => { :scope => :subnet_type_id }
   end
 end
