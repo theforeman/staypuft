@@ -49,6 +49,22 @@ $(function () {
     $(this).siblings('.hidden_password, .shown_password').toggleClass('hide');
   });
 
+  $('#ceph_notification_dismissal').click(function(e) {
+    e.preventDefault();
+    $('.ceph_notification').toggleClass('hide');
+    var pathname = window.location.pathname
+    var id = pathname.substring(pathname.lastIndexOf('/') + 1)
+    var cephDeploymentNotification = readFromCookie();
+    cephDeploymentNotification[id] = true
+    $.cookie('ceph-deployment-notification', JSON.stringify(cephDeploymentNotification))
+  });
+  function readFromCookie() {
+    if (r = $.cookie('ceph-deployment-notification'))
+      return $.parseJSON(r);
+    else
+      return {};
+  }
+
   var duration = 150;
 
   showPasswords();
@@ -125,6 +141,18 @@ $(function () {
     }
     else {
       $('.cinder_equallogic').hide();
+    }
+  }
+
+  showCephNotification();
+  function showCephNotification() {
+    var cephDeploymentNotification = readFromCookie();
+    var pathname = window.location.pathname;
+    var id = pathname.substring(pathname.lastIndexOf('/') + 1);
+    if (cephDeploymentNotification !== null && cephDeploymentNotification !== undefined) {
+      if (cephDeploymentNotification[id]) {
+        $('.ceph_notification').addClass('hide');
+      }
     }
   }
 
