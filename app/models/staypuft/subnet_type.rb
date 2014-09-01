@@ -1,6 +1,16 @@
 module Staypuft
   class SubnetType < ActiveRecord::Base
-    PXE = 'PXE'
+    PXE                = 'Provisioning/PXE'
+
+    MANAGEMENT         = 'Management'
+    EXTERNAL           = 'External'
+    CLUSTER_MGMT       = 'Cluster Management'
+    ADMIN_API          = 'Admin API'
+    PUBLIC_API         = 'Public API'
+    TENANT             = 'Tenant'
+
+    STORAGE            = 'Storage'
+    STORAGE_CLUSTERING = 'Storage Clustering'
 
     validates :name, :presence => true
 
