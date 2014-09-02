@@ -5,7 +5,8 @@ module Staypuft
       @deployment = deployment
     end
 
-    def interface_for_host(host, subnet_type_name)
+    private
+    def interface_hash_for_host(host, subnet_type_name)
       subnet_type = @deployment.layout.subnet_types.where(:name=> subnet_type_name).first
 
       # raise error if no subnet with this name is assigned to this layout
@@ -18,14 +19,17 @@ module Staypuft
       return nil if subnet_typing.nil?
       subnet = subnet_typing.subnet
 
+      secondary_iface = host.interfaces.where(:subnet_id => subnet.id).first
       # check for primary interface
-      # FIXME: we should really return some consistent interface type or hash here,
-      # so we'll need to change this to return some internal Staypuft interface object
-      # here that works for both primary and secondary interfaces
-      return host if (host.subnet_id == subnet.id)
-
-      # return interface
-      host.interfaces.where(:subnet_id => subnet.id).first
+      if (host.subnet_id == subnet.id)
+        {:subnet => host.subnet, :ip => host.ip,
+         :interface => host.primary_interface, :mac =>  host.mac }
+      elsif !iface.nil?
+        {:subnet => secondary_iface.subnet, :ip => secondary_iface.ip,
+         :interface => secondary_iface.name, :mac =>  secondary_iface.mac }
+      else
+        nil
+      end
     end
   end
 end
