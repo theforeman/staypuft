@@ -9,9 +9,8 @@ module Staypuft
       subnet_type = @deployment.layout.subnet_types.where(:name=> subnet_type_name).first
 
       # raise error if no subnet with this name is assigned to this layout
-      # TODO: should this just return nil instead of raising an error?
       if subnet_type.nil?
-        raise ArgumentError, "Invalid import file: subnet type  '#{subnet_type_name}' node found for deployment #{@deployment.name}"
+        raise ArgumentError, "Invalid subnet type  '#{subnet_type_name}' for layout of this deployment #{@deployment.name}"
       end
 
       subnet_typing = @deployment.subnet_typings.where(:subnet_type_id => subnet_type.id).first
@@ -19,16 +18,14 @@ module Staypuft
       return nil if subnet_typing.nil?
       subnet = subnet_typing.subnet
 
-      # check for physical interface
-      iface = host.interfaces.physical.where(:subnet_id => subnet.id).first
-      return iface unless iface.nil?
+      # check for primary interface
+      # FIXME: we should really return some consistent interface type or hash here,
+      # so we'll need to change this to return some internal Staypuft interface object
+      # here that works for both primary and secondary interfaces
+      return host if (host.subnet_id == subnet.id)
 
-      # check for virtual interface
-      iface = host.interfaces.virtual.where(:subnet_id => subnet.id).first
-      return iface unless iface.nil?
-
-      # no matches found; return nil
-      nil
+      # return interface
+      host.interfaces.where(:subnet_id => subnet.id).first
     end
   end
 end

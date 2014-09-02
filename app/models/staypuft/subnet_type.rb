@@ -21,5 +21,7 @@ module Staypuft
 
     has_many :subnet_typings
     has_many :subnets, :through => :subnet_typings
+
+    scope :required, lambda { where(:is_required => true) }
   end
 end

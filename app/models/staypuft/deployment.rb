@@ -294,7 +294,7 @@ module Staypuft
 
     def all_required_subnet_types_associated
       associated_subnet_types = self.subnet_typings.map(&:subnet_type)
-      missing_required = self.layout.subnet_types.select { |t| t.is_required && !associated_subnet_types.include?(t) }
+      missing_required = self.layout.subnet_types.required.select { |t| !associated_subnet_types.include?(t) }
       unless missing_required.empty?
         errors.add :base,
                    _("Some required subnet types are missing association of a subnet. Please drag and drop following types: %s") % missing_required.map(&:name).join(', ')
