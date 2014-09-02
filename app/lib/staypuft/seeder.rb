@@ -341,6 +341,16 @@ module Staypuft
       controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
       controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
 
+      fencing_type                   = { :string => '<%= @host.bmc_nic.attrs["fencing_type"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_address          = { :string => '<%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_username         = { :string => '<%= @host.bmc_nic.username if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_password         = { :string => '<%= @host.bmc_nic.password if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_interval         = { :string => '<%= "60s" if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_hostlist         = { :string => '<%= "" if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_host_to_address  = { :array =>  '<%= [] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_expose_lanplus   = { :string => '<%= @host.bmc_nic.attrs["fence_ipmilan_expose_lanplus"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_lanplus_options  = { :string => '<%= @host.bmc_nic.attrs["fence_ipmilan_lanplus_options"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+
       {
           'quickstack::nova_network::controller'   => {
               'amqp_provider'                           => amqp_provider,
@@ -535,7 +545,16 @@ module Staypuft
               'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_fqdns %>' } },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" } },
+              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" },
+              'fencing_type'                  => fencing_type,
+              'fence_ipmilan_address'         => fence_ipmilan_address,
+              'fence_ipmilan_username'        => fence_ipmilan_username,
+              'fence_ipmilan_password'        => fence_ipmilan_password,
+              'fence_ipmilan_interval'        => fence_ipmilan_interval,
+              'fence_ipmilan_hostlist'        => fence_ipmilan_hostlist,
+              'fence_ipmilan_host_to_address' => fence_ipmilan_host_to_address,
+              'fence_ipmilan_expose_lanplus'  => fence_ipmilan_expose_lanplus,
+              'fence_ipmilan_lanplus_options' => fence_ipmilan_lanplus_options },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
