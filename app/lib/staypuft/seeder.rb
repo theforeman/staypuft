@@ -786,6 +786,7 @@ module Staypuft
         end
         # delete any prior mappings that remain
         old_layout_subnet_types_arr.each do |layout_subnet_type|
+          Rails.logger.warn "destroying old layout_subnet_type for #{layout_subnet_type.layout.name}, #{subnet_type.name}: This should not happen on a clean install"
           subnet_type.layouts.destroy(layout_subnet_type.layout)
         end
       end
