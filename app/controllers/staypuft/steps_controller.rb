@@ -34,7 +34,7 @@ module Staypuft
 
         # we don't care too much whether pxe network was detected or all typings were saved since it's
         # just a helper for user to have all types preassigned to pxe network
-        pxe_network = Subnet.where('dhcp_id IS NOT NULL').where(:external_dhcp => false).first
+        pxe_network = Subnet.where('dhcp_id IS NOT NULL').first
         if pxe_network
           @deployment.unassigned_subnet_types.each do |type|
             @deployment.subnet_typings.new(:subnet_id => pxe_network.id, :subnet_type_id => type.id).save
