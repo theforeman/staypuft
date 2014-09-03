@@ -17,7 +17,7 @@
                 <div class="row">
                   <label class="col-sm-4 control-label text-muted"><%= "#{vip_name}:" %></label>
                   <div class="col-sm-8">
-                    <p class="form-control-static"><%= @deployment.vips.get(vip_name) %></p>
+                    <p class="form-control-static"><%= @deployment.vips.try(vip_name) %></p>
                   </div>
                 </div>
                 <% end %>
