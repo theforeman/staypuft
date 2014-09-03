@@ -173,6 +173,36 @@ module Staypuft
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
     CEPH_ROLES = ROLES.select {|h| h.fetch(:name) =~ /Ceph/ }
 
+    ALL_LAYOUTS = LAYOUTS.keys
+    SUBNET_TYPES = { :pxe             => { :name     => Staypuft::SubnetType::PXE,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :management      => { :name     => Staypuft::SubnetType::MANAGEMENT,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :external        => { :name     => Staypuft::SubnetType::EXTERNAL,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :cluster_mgmt    => { :name     => Staypuft::SubnetType::CLUSTER_MGMT,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :admin_api       => { :name     => Staypuft::SubnetType::ADMIN_API,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :public_api      => { :name     => Staypuft::SubnetType::PUBLIC_API,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :tenant          => { :name     => Staypuft::SubnetType::TENANT,
+                                           :required => true,
+                                           :layouts  => ALL_LAYOUTS},
+                     :storage         => { :name     => Staypuft::SubnetType::STORAGE,
+                                           :required => false,
+                                           :layouts  => ALL_LAYOUTS},
+                     :storage_cluster => { :name     => Staypuft::SubnetType::STORAGE_CLUSTERING,
+                                           :required => false,
+                                           :layouts  => ALL_LAYOUTS}
+    }
+
     def get_host_format(param_name)
       { :string => '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>' % param_name }
     end
@@ -745,19 +775,20 @@ module Staypuft
 
     def seed_subnet_types
       # default subnet types
-      types = [ Staypuft::SubnetType::PXE ] + %w(Management Tenants Public)
-      types.map! do |type|
-        Staypuft::SubnetType.create!(:name => type) unless Staypuft::SubnetType.find_by_name(type)
-      end
-      
-      standard_ids = %w(ha_nova non_ha_nova ha_neutron non_ha_neutron)
-      standard_names = LAYOUTS.select { |k,v| standard_ids.include?(k.to_s)}.map { |k,v| v[:name] }
-      standard_layouts = Staypuft::Layout.find_all_by_name(standard_names)
-      raise ActiveRecord::RecordNotFound, 'some of layouts were not found, renaming issue?' if standard_layouts.size != standard_ids.size
-      
-      # assign subnet types to layouts (unless there's at least one assignment)
-      standard_layouts.each do |layout|
-        layout.subnet_types = types if layout.subnet_types.empty?
+      SUBNET_TYPES.each do |key, subnet_type_hash|
+        subnet_type = Staypuft::SubnetType.where(:name => subnet_type_hash[:name]).first_or_initialize
+        subnet_type.is_required = subnet_type_hash[:required]
+        subnet_type.save!
+        old_layout_subnet_types_arr = subnet_type.layout_subnet_types.to_a
+        subnet_type_hash[:layouts].each do |layout|
+          layout_subnet_type              = subnet_type.layout_subnet_types.where(:layout_id => LAYOUTS[layout][:obj].id).first_or_create!
+          old_layout_subnet_types_arr.delete(layout_subnet_type)
+        end
+        # delete any prior mappings that remain
+        old_layout_subnet_types_arr.each do |layout_subnet_type|
+          Rails.logger.warn "destroying old layout_subnet_type for #{layout_subnet_type.layout.name}, #{subnet_type.name}: This should not happen on a clean install"
+          subnet_type.layouts.destroy(layout_subnet_type.layout)
+        end
       end
     end
 
