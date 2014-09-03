@@ -4,8 +4,8 @@ $(function() {
   });
 
   $("div.subnet-drop-zone").droppable({
-    activeClass: "ui-state-default",
-    hoverClass: "ui-state-hover",
+    activeClass: "panel-droppable",
+    hoverClass: "panel-success",
     accept: "div.subnet-type-pull",
     drop: function(event, ui) {
       if(ui.draggable.hasClass('new')) {
@@ -26,8 +26,9 @@ $(function() {
     }
   });
   $("#subnet_types").droppable({
-    activeClass: "ui-state-default",
-    hoverClass: "ui-state-hover",
+    activeClass: "panel-droppable",
+    hoverClass: "panel-success",
+    accept: "div.subnet-type-pull",
     accept: "div.subnet-type-pull.existing",
     drop: function(event, ui) {
       $.ajax({

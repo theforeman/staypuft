@@ -9,12 +9,16 @@
     </div>
 
     <div class="row">
-      <div id="subnet_types" class="col-md-12">
+      <div class="col-md-12">
         <%= base_errors_for @deployment %>
-        <h4><%= _("Available Roles") %></h4>
-        <% @deployment.unassigned_subnet_types.each do |subnet_type| %>
-          <%= render 'staypuft/subnet_types/subnet_type_pull', :subnet_type => subnet_type, :deployment => @deployment %>
-        <% end %>
+        <h4><%= _("Available Network Traffic Types") %></h4>
+        <div id="subnet_types" class="panel panel-default">
+          <div class="panel-body">
+            <% @deployment.unassigned_subnet_types.each do |subnet_type| %>
+              <%= render 'staypuft/subnet_types/subnet_type_pull', :subnet_type => subnet_type, :deployment => @deployment %>
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -24,29 +28,33 @@
           <%= display_link_if_authorized(_("New Subnet"), hash_for_new_subnet_path(:redirect => request.url + '#new')) %>
         </div>
       </div>
+    </div>
 
+    <div class="row">
       <div id="subnets" class="col-md-12">
-        <h4><%= _("Networks") %></h4>
+        <h4><%= _("Subnets") %></h4>
         <% @subnets.each do |subnet| %>
           <%= render 'staypuft/subnets/drop_zone', :subnet => subnet, :deployment => @deployment %>
         <% end %>
       </div>
     </div>
 
-    <br />
-
-    <%= form_for(@deployment, :url => wizard_path, :method => 'PUT', :html => {:class => ''}) do |f| %>
-      <div class="form_actions">
-        <a class="btn btn-default" href="<%= previous_wizard_path %>">
-          <span class="glyphicon glyphicon-chevron-left"></span>
-          <%= _("Back") %>
-        </a>
-        <%= link_to _("Cancel"), deployment_path(@deployment),
-                    :class => "btn btn-danger" %>
-        <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
-          <%= _("Next") %>
+    <div class="row">
+      <div class="col-sm-12">
+        <%= form_for(@deployment, :url => wizard_path, :method => 'PUT', :html => {:class => ''}) do |f| %>
+          <div class="form_actions">
+            <a class="btn btn-default" href="<%= previous_wizard_path %>">
+              <span class="glyphicon glyphicon-chevron-left"></span>
+              <%= _("Back") %>
+            </a>
+            <%= link_to _("Cancel"), deployment_path(@deployment),
+                        :class => "btn btn-danger" %>
+            <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
+              <%= _("Next") %>
+            <% end %>
+          </div>
         <% end %>
       </div>
-    <% end %>
+    </div>
   </div>
 <% end %>

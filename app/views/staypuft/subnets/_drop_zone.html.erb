@@ -1,9 +1,9 @@
-<div class="subnet-drop-zone" id="<%= dom_id(subnet) %>_drop_zone" data-subnet-id="<%= subnet.id %>">
-  <div class="name">
-    <%= subnet.name %> - <%= subnet.network_address %>
+<div class="subnet-drop-zone panel panel-default" id="<%= dom_id(subnet) %>_drop_zone" data-subnet-id="<%= subnet.id %>">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= subnet.name %> <small>- <%= subnet.network_address %></small></h3>
   </div>
 
-  <div class="subnet-types">
+  <div class="panel-body subnet-types">
     <% deployment.subnet_typings.where(["#{Staypuft::SubnetTyping.table_name}.subnet_id = ?", subnet.id]).each do |typing| %>
     <%= render :partial => 'staypuft/subnet_types/subnet_type_pull',
                :object => typing.subnet_type,
@@ -11,6 +11,6 @@
                :as => :subnet_type %>
     <% end %>
 
-    <div class="empty-zone"></div>
+    <div class="empty-zone">&nbsp;</div>
   </div>
 </div>
