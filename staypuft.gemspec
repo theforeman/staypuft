@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'foreman-tasks', '~> 0.6.4'
   s.add_dependency 'dynflow', '~> 0.7.0'
   s.add_dependency 'wicked'
+  s.add_dependency 'deface'
 
   s.add_dependency 'foreman_discovery', '~> 1.4.0.rc1'
 end
