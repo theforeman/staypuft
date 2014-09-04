@@ -38,10 +38,10 @@
              <%= host_label(host) %>
             </td>
             <td class="ellipsis">
-              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.os %>
+              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.respond_to?(:os) && host.os %>
             </td>
-            <td><%= host.cpus %></td>
-            <td><%= host.mem %></td>
+            <td><%= host.cpus if host.respond_to?(:cpu) %></td>
+            <td><%= host.mem if host.respond_to?(:mem) %></td>
             <td><%= host_nics(host) %></td>
             <td class="hidden-s hidden-xs"><%= host.ip %></td>
           </tr>
