@@ -2,37 +2,49 @@
 
 <% title _("Configure Interfaces (%s hosts)") % @hosts.size %>
 
-<div id="subnets">
-  <h2><%= _("Configured Networks") %></h2>
-  <% @subnets.each do |subnet| %>
-  <% next if is_pxe?(@deployment, subnet) # we skip PXE network which is always on primary interface %>
-  <% next if @host.interfaces.where(:subnet_id => subnet.id).present? # we skip assigned subnets %>
-    <%= render 'staypuft/subnets/subnet_pull',
-               :subnet => subnet,
-               :deployment => @deployment,
-               :active => true,
-               :existing => false %>
-  <% end %>
+<div class="row">
+  <div class="col-md-12">
+    <h3><%= _("Configured Networks") %></h2>
+    <div id="subnets" class="panel panel-default">
+      <div class="panel-body">
+        <% @subnets.each do |subnet| %>
+        <% next if is_pxe?(@deployment, subnet) # we skip PXE network which is always on primary interface %>
+        <% next if @host.interfaces.where(:subnet_id => subnet.id).present? # we skip assigned subnets %>
+          <%= render 'staypuft/subnets/subnet_pull',
+                     :subnet => subnet,
+                     :deployment => @deployment,
+                     :active => true,
+                     :existing => false %>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="cleared"></div>
-<br />
-<h2><%= _("Network Interfaces") %></h2>
+<div class="row">
+  <div class="col-md-12">
+    <h3><%= _("Network Interfaces") %></h2>
+    <% if (subnet = @host.subnet) %>
+      <%= render 'staypuft/interfaces/drop_zone',
+                 :identifier => @host.primary_interface,
+                 :subnet => subnet,
+                 :deployment => @deployment,
+                 :host => @host %>
+    <% end %>
 
-<% if (subnet = @host.subnet) %>
-  <%= render 'staypuft/interfaces/drop_zone',
-             :identifier => @host.primary_interface,
-             :subnet => subnet,
-             :deployment => @deployment,
-             :host => @host %>
-<% end %>
+    <% @interfaces.each do |interface| %>
+      <%= render 'staypuft/interfaces/drop_zone',
+                 :identifier => interface.identifier,
+                 :subnet => interface.subnet,
+                 :deployment => @deployment,
+                 :host => @host %>
+    <% end %>
+  </div>
+</div>
 
-<% @interfaces.each do |interface| %>
-  <%= render 'staypuft/interfaces/drop_zone',
-             :identifier => interface.identifier,
-             :subnet => interface.subnet,
-             :deployment => @deployment,
-             :host => @host %>
-<% end %>
+<div class="row">
+  <div class="col-md-12">
+    <%= link_to _('Back to deployment'), deployment_path(@deployment) %>
+  </div>
+</div>
 
-<%= link_to _('Back to deployment'), deployment_path(@deployment) %>

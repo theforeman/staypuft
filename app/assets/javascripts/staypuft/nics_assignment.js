@@ -4,8 +4,8 @@ $(function() {
   });
 
   $("div.interface").droppable({
-    activeClass: "ui-state-default",
-    hoverClass: "ui-state-hover",
+    activeClass: "panel-droppable",
+    hoverClass: "panel-success",
     accept: "div.subnet-pull",
     drop: function(event, ui) {
       $.ajax({
@@ -17,8 +17,8 @@ $(function() {
     }
   });
   $("#subnets").droppable({
-    activeClass: "ui-state-default",
-    hoverClass: "ui-state-hover",
+    activeClass: "panel-droppable",
+    hoverClass: "panel-success",
     accept: "div.subnet-pull.existing",
     drop: function(event, ui) {
       $.ajax({
