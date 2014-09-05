@@ -139,6 +139,9 @@ $(function () {
   function showCinderEquallogic() {
     if ($('#staypuft_deployment_cinder_backend_eqlx').is(":checked")) {
       $('.cinder_equallogic').show();
+      if($('#eqlxs').children().length == 0) {
+        $('.add_another_server').click();
+      }
     }
     else {
       $('.cinder_equallogic').hide();
@@ -248,6 +251,7 @@ $(function () {
       }).show();
   });
 
+  /* clear filter if switching */
   $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); });
 
 // add more highlighting for tabs with errors
@@ -256,35 +260,19 @@ $(function () {
     $("a[href=#"+id+"]").parent().addClass("tab-error");
   })
 
-  var regex = /^(.+)(\d*)$/i;
-
-  var cloneIndex = $(".cinderPicker").length;
-
-  // $("button.add_another_server").live("click", function(){
-
-  //   var theClone = $(this).siblings(".cinder_equallogic_picker")
-  //       .find('.eqlx:last').clone()
-  //       .appendTo(".cinder_equallogic_picker")
-  //       .attr("id", "eqlx" +  cloneIndex)
-  //       .find("*").each(function() {
-  //         var id = this.id || "";
-  //         var match = id.match(regex) || [];
-  //         if (match.length == 3) {
-  //           this.id = match[1] + (cloneIndex);
-  //         }
-  //   });
-  //   cloneIndex++;
-
-  // });
-
   $("button.add_another_server").live("click", function() {
     var eqlx_form = function () {
-      return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime())
+      return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
     }
-    $('#eqlxs').append(eqlx_form())
+    $('#eqlxs').append(eqlx_form());
+    if($('#eqlxs').children().length > 1) {
+      var added_form_span = $('#eqlxs').children().last().find('h5').find('.server_number');
+      var previous_span_number = $('#eqlxs').children().eq(-2).find('h5').find('.server_number');
+      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
+    }
   })
 
-  $("button.remove").live("click", function(){
-      $(this).parents(".clonedInput").remove();
+  $(".eqlx h5 a.remove").live("click", function(){
+      $(this).parent().parent().remove();
   });
 });

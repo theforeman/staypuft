@@ -1,4 +1,5 @@
 <div class="cinder">
+  <h5><%= _(Staypuft::Deployment::CinderService::DriverBackend::HUMAN) %></h5>
   <div class="col-md-12 clearfix cinderPicker" id="cinderPicker">
     <%= f.fields_for :cinder, @deployment.cinder do |p| %>
 
@@ -32,8 +33,6 @@
                                  :unchecked_value => 'false',
                                  :text            => "EqualLogic")
       %>
-
-
       <div class="cinder_equallogic col-md-offset-1 hide">
         <div id="eqlxs" class="cinder_equallogic_picker">
         <% @deployment.cinder.eqlxs.each_with_index do |eqlx, index| %>
@@ -42,11 +41,11 @@
           <% end %>
         <% end %>
         </div>
+        <script type='html/template' id='eqlx_form_template'>
+          <%= p.fields_for 'eqlxs[]', Staypuft::Deployment::CinderService::Equallogic.new, index: 'NEW_RECORD' do |e| render(partial: 'cinder_equallogic_form', locals: {e: e}); end %>
+        </script>
         <button type="button" class= "btn btn-primary btn-sm add_another_server"><%= _("Add Another Server") %></button>
     </div>
-    <script type='html/template' id='eqlx_form_template'>
-      <%= p.fields_for 'eqlxs[]', Staypuft::Deployment::CinderService::Equallogic.new, index: 'NEW_RECORD' do |e| render(partial: 'cinder_equallogic_form', locals: {e: e}); end %>
-    </script>
     <%end%>
   </div>
 </div>
