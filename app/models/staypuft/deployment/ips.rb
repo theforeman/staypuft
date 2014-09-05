@@ -9,16 +9,18 @@ module Staypuft
       @controllers ||= deployment.controller_hostgroup.hosts.order(:id)
     end
 
-    def controller_ips
-      controllers.map &:ip
+    # FIXME: check for any invocation without subnet type param
+    def controller_ips(subnet_type_name)
+      controllers.map { |controller| deployment.network_query.ip_for_host(controller, subnet_type_name) }
     end
 
     def controller_fqdns
       controllers.map &:fqdn
     end
 
-    def controller_ip
-      controllers.tap { |v| v.size == 1 or raise }.first.ip
+    # FIXME: check for any invocation without subnet type param
+    def controller_ip(subnet_type_name)
+      deployment.network_query.ip_for_host(controllers.tap { |v| v.size == 1 or raise }.first, subnet_type_name)
     end
 
   end

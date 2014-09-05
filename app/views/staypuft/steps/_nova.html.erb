@@ -20,15 +20,4 @@
   <%= change_label_width 4, text_f(p, :private_fixed_range,
                                    label:       _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN),
                                    help_inline: _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN_AFTER)) %>
-
-  <h4><%= _('Compute Nodes') %> </h4>
-
-  <%= change_label_width 4, text_f(p, :external_interface_name, label: _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN),
-                                   help_inline:                        _(Staypuft::Deployment::NovaService::ExternalInterfaceName::HUMAN_AFTER)) %>
-
-  <%= change_label_width 4, text_f(p, :compute_tenant_interface, label: _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN),
-                                   help_inline:                         _(Staypuft::Deployment::NovaService::ComputeTenantInterface::HUMAN_AFTER)) %>
-
-  <%= _('NOTE: Best practice is to use a different interface than the interface used for pxe/provisioning the node. This practice is mandatory if VLAN is chosen as the tenant network type.') %>
-
 <% end %>

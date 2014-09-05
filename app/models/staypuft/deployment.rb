@@ -198,7 +198,7 @@ module Staypuft
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
         :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?,
-        :hide_ceph_notification?
+        :hide_ceph_notification?, :network_query
     end
 
     # TODO(mtaylor)
@@ -278,6 +278,10 @@ module Staypuft
         where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
                                                       role_id:       Staypuft::Role.cephosd }).
         first
+    end
+
+    def network_query
+      @network_query || NetworkQuery.new(self)
     end
 
     private

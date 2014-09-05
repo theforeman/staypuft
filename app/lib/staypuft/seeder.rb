@@ -203,8 +203,8 @@ module Staypuft
                                            :layouts  => ALL_LAYOUTS}
     }
 
-    def get_host_format(param_name)
-      { :string => '<%%= d = @host.deployment; d.ha? ? d.vips.get(:%s) : d.ips.controller_ip %%>' % param_name }
+    def get_host_format(param_name, subnet_type_name)
+      { :string => "<%= d = @host.deployment; d.ha? ? d.vips.get(:#{param_name}) : d.ips.controller_ip('#{subnet_type_name}') %>" }
     end
 
     # virtual ip addresses
@@ -224,8 +224,8 @@ module Staypuft
       network_num_networks        = { :string => '<%= @host.deployment.nova.num_networks %>' }
       network_fixed_range         = { :string => '<%= @host.deployment.nova.private_fixed_range %>' }
       network_floating_range      = { :string => '<%= @host.deployment.nova.public_floating_range %>' }
-      network_private_iface       = { :string => '<%= @host.deployment.nova.private_iface %>' }
-      network_public_iface        = { :string => '<%= @host.deployment.nova.public_iface %>' }
+      network_private_iface       = { :string => "<%= @host.deployment.network_query.interface_for_host(@host, '#{Staypuft::SubnetType::TENANT}') %>" }
+      network_public_iface        = { :string => "<%= @host.deployment.network_query.interface_for_host(@host, '#{Staypuft::SubnetType::EXTERNAL}') %>" }
       network_create_networks     = true
 
       # Neutron
@@ -237,12 +237,12 @@ module Staypuft
       ml2_tunnel_id_ranges        = ['10:1000']
       ml2_vni_ranges              = ['10:1000']
       ovs_tunnel_types            = ['vxlan', 'gre']
-      ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.networker_tenant_iface : "" %>' }
-      ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings %>' }
-      ovs_bridge_uplinks          = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks %>' }
-      compute_ovs_tunnel_iface    = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.compute_tenant_iface : "" %>' }
-      compute_ovs_bridge_mappings = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_mappings %>' }
-      compute_ovs_bridge_uplinks  = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks %>' }
+      ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host) : "" %>' }
+      ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings(@host) %>' }
+      ovs_bridge_uplinks          = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks(@host) %>' }
+      compute_ovs_tunnel_iface    = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host) : "" %>' }
+      compute_ovs_bridge_mappings = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_mappings(@host) %>' }
+      compute_ovs_bridge_uplinks  = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks(@host) %>' }
       enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
 
       # Glance
@@ -326,15 +326,20 @@ module Staypuft
       neutron_metadata_proxy_secret = { :string => '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>' }
 
 
-      private_ip   = { :string => '<%= @host.ip %>' }
-      amqp_host    = get_host_format :amqp
-      mysql_host   = get_host_format :db
-      glance_host  = get_host_format :glance
-      auth_host    = get_host_format :keystone
-      neutron_host = get_host_format :neutron
-      nova_host    = get_host_format :nova
+      private_ip   = { :string => "<%= @host.deployment.network_query.ip_for_host(@host, '#{Staypuft::SubnetType::MANAGEMENT}') %>" }
+      # private API/management
+      amqp_host    = get_host_format :amqp_vip, Staypuft::SubnetType::MANAGEMENT
+      mysql_host   = get_host_format :db_vip, Staypuft::SubnetType::MANAGEMENT
+      glance_host  = get_host_format :glance_private_vip, Staypuft::SubnetType::MANAGEMENT
+      neutron_host = get_host_format :neutron_private_vip, Staypuft::SubnetType::MANAGEMENT
+      #admin API
+      auth_host    = get_host_format :keystone_admin_vip, Staypuft::SubnetType::ADMIN_API
+      # public API
+      nova_host    = get_host_format :nova_public_vip, Staypuft::SubnetType::PUBLIC_API
 
-      controller_host = { :string => '<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip %>'}
+      controller_admin_host = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::ADMIN_API}') %>"}
+      controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
+      controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
 
       {
           'quickstack::nova_network::controller'   => {
@@ -394,11 +399,11 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
+              'swift_storage_ips'                       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'cinder_gluster_shares'                   => [],
-              'controller_admin_host'                   => controller_host,
-              'controller_priv_host'                    => controller_host,
-              'controller_pub_host'                     => controller_host },
+              'controller_admin_host'                   => controller_admin_host,
+              'controller_priv_host'                    => controller_priv_host,
+              'controller_pub_host'                     => controller_pub_host },
           'quickstack::neutron::controller'        => {
               'amqp_provider'                           => amqp_provider,
               'tenant_network_type'                     => tenant_network_type,
@@ -467,11 +472,11 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
+              'swift_storage_ips'                       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'cinder_gluster_shares'                   => [],
-              'controller_admin_host'                   => controller_host,
-              'controller_priv_host'                    => controller_host,
-              'controller_pub_host'                     => controller_host },
+              'controller_admin_host'                   => controller_admin_host,
+              'controller_priv_host'                    => controller_priv_host,
+              'controller_pub_host'                     => controller_pub_host },
           'quickstack::pacemaker::params'          => {
               'include_swift'                 => 'false',
               'include_neutron'               => neutron,
@@ -494,43 +499,43 @@ module Staypuft
               'amqp_password'                 => amqp_pw,
               'heat_auth_encryption_key'      => heat_auth_encrypt_key,
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
-              'ceilometer_admin_vip'          => vip_format(:ceilometer),
-              'ceilometer_private_vip'        => vip_format(:ceilometer),
-              'ceilometer_public_vip'         => vip_format(:ceilometer),
-              'cinder_admin_vip'              => vip_format(:cinder),
-              'cinder_private_vip'            => vip_format(:cinder),
-              'cinder_public_vip'             => vip_format(:cinder),
-              'db_vip'                        => vip_format(:db),
-              'glance_admin_vip'              => vip_format(:glance),
-              'glance_private_vip'            => vip_format(:glance),
-              'glance_public_vip'             => vip_format(:glance),
-              'heat_admin_vip'                => vip_format(:heat),
-              'heat_private_vip'              => vip_format(:heat),
-              'heat_public_vip'               => vip_format(:heat),
-              'heat_cfn_admin_vip'            => vip_format(:heat_cfn),
-              'heat_cfn_private_vip'          => vip_format(:heat_cfn),
-              'heat_cfn_public_vip'           => vip_format(:heat_cfn),
-              'horizon_admin_vip'             => vip_format(:horizon),
-              'horizon_private_vip'           => vip_format(:horizon),
-              'horizon_public_vip'            => vip_format(:horizon),
-              'keystone_admin_vip'            => vip_format(:keystone),
-              'keystone_private_vip'          => vip_format(:keystone),
-              'keystone_public_vip'           => vip_format(:keystone),
-              'loadbalancer_vip'              => vip_format(:loadbalancer),
-              'neutron_admin_vip'             => vip_format(:neutron),
-              'neutron_private_vip'           => vip_format(:neutron),
-              'neutron_public_vip'            => vip_format(:neutron),
-              'nova_admin_vip'                => vip_format(:nova),
-              'nova_private_vip'              => vip_format(:nova),
-              'nova_public_vip'               => vip_format(:nova),
-              'amqp_vip'                      => vip_format(:amqp),
-              'swift_public_vip'              => vip_format(:swift),
+              'ceilometer_admin_vip'          => vip_format(:ceilometer_admin_vip),
+              'ceilometer_private_vip'        => vip_format(:ceilometer_private_vip),
+              'ceilometer_public_vip'         => vip_format(:ceilometer_public_vip),
+              'cinder_admin_vip'              => vip_format(:cinder_admin_vip),
+              'cinder_private_vip'            => vip_format(:cinder_private_vip),
+              'cinder_public_vip'             => vip_format(:cinder_public_vip),
+              'db_vip'                        => vip_format(:db_vip),
+              'glance_admin_vip'              => vip_format(:glance_admin_vip),
+              'glance_private_vip'            => vip_format(:glance_private_vip),
+              'glance_public_vip'             => vip_format(:glance_public_vip),
+              'heat_admin_vip'                => vip_format(:heat_admin_vip),
+              'heat_private_vip'              => vip_format(:heat_private_vip),
+              'heat_public_vip'               => vip_format(:heat_public_vip),
+              'heat_cfn_admin_vip'            => vip_format(:heat_cfn_admin_vip),
+              'heat_cfn_private_vip'          => vip_format(:heat_cfn_private_vip),
+              'heat_cfn_public_vip'           => vip_format(:heat_cfn_public_vip),
+              'horizon_admin_vip'             => vip_format(:horizon_admin_vip),
+              'horizon_private_vip'           => vip_format(:horizon_private_vip),
+              'horizon_public_vip'            => vip_format(:horizon_public_vip),
+              'keystone_admin_vip'            => vip_format(:keystone_admin_vip),
+              'keystone_private_vip'          => vip_format(:keystone_private_vip),
+              'keystone_public_vip'           => vip_format(:keystone_public_vip),
+              'loadbalancer_vip'              => vip_format(:loadbalancer_vip),
+              'neutron_admin_vip'             => vip_format(:neutron_admin_vip),
+              'neutron_private_vip'           => vip_format(:neutron_private_vip),
+              'neutron_public_vip'            => vip_format(:neutron_public_vip),
+              'nova_admin_vip'                => vip_format(:nova_admin_vip),
+              'nova_private_vip'              => vip_format(:nova_private_vip),
+              'nova_public_vip'               => vip_format(:nova_public_vip),
+              'amqp_vip'                      => vip_format(:amqp_vip),
+              'swift_public_vip'              => vip_format(:swift_public_vip),
               'private_ip'                    => private_ip,
-              'cluster_control_ip'            => { :string => '<%= @host.deployment.ips.controller_ips.first %>' },
-              'lb_backend_server_addrs'       => { :array => '<%= @host.deployment.ips.controller_ips %>' },
+              'cluster_control_ip'            => { :string => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
+              'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.ips.controller_fqdns %>' } },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => { :string => '<%= @host.deployment.ips.controller_ips.join(" ") %>' } },
+              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" } },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
@@ -580,10 +585,9 @@ module Staypuft
               'secret_key' => horizon_secret_key },
           'quickstack::pacemaker::galera'          => {
               'mysql_root_password'   => mysql_root_pw,
-              'wsrep_cluster_members' => { :array => '<%= @host.deployment.ips.controller_ips %>' } },
+              'wsrep_cluster_members' => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" } },
           'quickstack::pacemaker::swift'           => {
               'swift_shared_secret' => swift_shared_secret,
-              'swift_internal_vip'  => vip_format(:swift),
               'swift_storage_ips'   => [] },
           'quickstack::pacemaker::nova'            => {
               'multi_host'                    => 'true',
@@ -605,7 +609,7 @@ module Staypuft
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
               'amqp_host'                     => amqp_host,
               'mysql_host'                    => mysql_host,
-              'controller_priv_host'          => controller_host },
+              'controller_priv_host'          => controller_priv_host },
           'quickstack::storage_backend::cinder'    => {
               'amqp_provider'        => amqp_provider,
               'cinder_db_password'   => cinder_db_pw,
