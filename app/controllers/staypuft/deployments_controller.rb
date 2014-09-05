@@ -117,6 +117,7 @@ module Staypuft
 
       hosts_to_unassign.each do |host|
         unless host.open_stack_deployed? && deployment_in_progress
+          host.interfaces.where(['identifier LIKE ?', 'vip%']).each(&:destroy)
           host.open_stack_unassign
           host.environment = Environment.get_discovery
           host.save!
@@ -195,6 +196,12 @@ module Staypuft
       # by default foreman will try to manage all NICs unless user disables manually after assignment
       host.make_all_interfaces_managed
 
+      # we create VIPs interfaces if this is the first host in Controller HA hostgroup
+      # TODO use real vips
+      vips = {:parameter1 => SubnetType::PXE, :parameter2 => SubnetType::MANAGEMENT, :parameter3 => SubnetType::TENANT,
+              :parameter4 => SubnetType::MANAGEMENT, :parameter5 => SubnetType::TENANT}
+      host.build_vips(vips) if should_create_vips?(hostgroup)
+
       # I do not why but the final save! adds following condytion to the update SQL command
       # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
       # which will not find the record since it's still Host::Discovered.
@@ -206,6 +213,10 @@ module Staypuft
       [host.save, host].tap do |saved, _|
         discovered_host.becomes(Host::Base).update_column(:type, original_type) unless saved
       end
+    end
+
+    def should_create_vips?(hostgroup)
+      hostgroup.deployment.ha? && hostgroup.hosts.all? { |h| h.interfaces.where(['identifier LIKE ?', 'vip%']).empty? }
     end
   end
 
