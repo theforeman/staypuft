@@ -13,16 +13,16 @@
           <div class="col-sm-8 col-sm-offset-1">
               <h4><%= @deployment.ha? ? _("VIP list") : _("Controller IPs") %></h4>
               <% if @deployment.ha? %>
-                <% Staypuft::Deployment::VIPS::VIP_NAMES.keys.each do | vip_name | %>
+                <% Staypuft::NetworkQuery::VIP_NAMES.keys.each do | vip_name | %>
                 <div class="row">
                   <label class="col-sm-4 control-label text-muted"><%= "#{vip_name}:" %></label>
                   <div class="col-sm-8">
-                    <p class="form-control-static"><%= @deployment.vips.get(vip_name) %></p>
+                    <p class="form-control-static"><%= @deployment.network_query.get_vip(vip_name) %></p>
                   </div>
                 </div>
                 <% end %>
               <% else %>
-                <% @deployment.ips.controller_ips(Staypuft::SubnetType::MANAGEMENT).each do |ip| %>
+                <% @deployment.network_query.controller_ips(Staypuft::SubnetType::MANAGEMENT).each do |ip| %>
                   <%= ip %> what subnet type here?
                 <% end %>
               <% end %>

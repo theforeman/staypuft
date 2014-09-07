@@ -204,12 +204,12 @@ module Staypuft
     }
 
     def get_host_format(param_name, subnet_type_name)
-      { :string => "<%= d = @host.deployment; d.ha? ? d.vips.get(:#{param_name}) : d.ips.controller_ip('#{subnet_type_name}') %>" }
+      { :string => "<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:#{param_name}) : d.network_query.controller_ip('#{subnet_type_name}') %>" }
     end
 
     # virtual ip addresses
     def vip_format(param_name)
-      { :string => '<%%= @host.deployment.vips.get(:%s) %%>' % param_name }
+      { :string => '<%%= @host.deployment.network_query.get_vip(:%s) %%>' % param_name }
     end
 
     def functional_dependencies
@@ -337,9 +337,9 @@ module Staypuft
       # public API
       nova_host    = get_host_format :nova_public_vip, Staypuft::SubnetType::PUBLIC_API
 
-      controller_admin_host = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::ADMIN_API}') %>"}
-      controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
-      controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.ips.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
+      controller_admin_host = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::ADMIN_API}') %>"}
+      controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
+      controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
 
       {
           'quickstack::nova_network::controller'   => {
@@ -399,7 +399,7 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
+              'swift_storage_ips'                       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'cinder_gluster_shares'                   => [],
               'controller_admin_host'                   => controller_admin_host,
               'controller_priv_host'                    => controller_priv_host,
@@ -472,7 +472,7 @@ module Staypuft
               'mysql_host'                              => mysql_host,
               'swift_shared_secret'                     => swift_shared_secret,
               'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
+              'swift_storage_ips'                       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'cinder_gluster_shares'                   => [],
               'controller_admin_host'                   => controller_admin_host,
               'controller_priv_host'                    => controller_priv_host,
@@ -531,11 +531,11 @@ module Staypuft
               'amqp_vip'                      => vip_format(:amqp_vip),
               'swift_public_vip'              => vip_format(:swift_public_vip),
               'private_ip'                    => private_ip,
-              'cluster_control_ip'            => { :string => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
-              'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
-              'lb_backend_server_names'       => { :array => '<%= @host.deployment.ips.controller_fqdns %>' } },
+              'cluster_control_ip'            => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
+              'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
+              'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_fqdns %>' } },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" } },
+              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" } },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
@@ -585,7 +585,7 @@ module Staypuft
               'secret_key' => horizon_secret_key },
           'quickstack::pacemaker::galera'          => {
               'mysql_root_password'   => mysql_root_pw,
-              'wsrep_cluster_members' => { :array => "<%= @host.deployment.ips.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" } },
+              'wsrep_cluster_members' => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" } },
           'quickstack::pacemaker::swift'           => {
               'swift_shared_secret' => swift_shared_secret,
               'swift_storage_ips'   => [] },

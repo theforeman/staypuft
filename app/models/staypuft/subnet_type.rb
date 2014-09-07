@@ -25,7 +25,7 @@ module Staypuft
     scope :required, lambda { where(:is_required => true) }
 
     class Jail < Safemode::Jail
-      allow :layouts, layout_subnet_types, name, subnets, subnet_typings, required
+      allow :layouts, :layout_subnet_types, :name, :subnets, :subnet_typings, :required
     end
   end
 end
