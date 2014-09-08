@@ -14,3 +14,11 @@ module Staypuft
     end
   end
 end
+
+class ::Host::Managed::Jail < Safemode::Jail
+  allow :bmc_nic
+end
+
+class ::Nic::Base::Jail < Safemode::Jail
+  allow :fencing_enabled, :attrs, :username, :password
+end
