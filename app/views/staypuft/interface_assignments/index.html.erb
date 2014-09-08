@@ -9,7 +9,7 @@
       <div class="panel-body">
         <% @subnets.each do |subnet| %>
         <% next if is_pxe?(@deployment, subnet) # we skip PXE network which is always on primary interface %>
-        <% next if @host.interfaces.where(:subnet_id => subnet.id).present? # we skip assigned subnets %>
+        <% next if @host.interfaces.where("identifier NOT LIKE 'vip%'").where(:subnet_id => subnet.id).present? # we skip assigned subnets %>
           <%= render 'staypuft/subnets/subnet_pull',
                      :subnet => subnet,
                      :deployment => @deployment,
