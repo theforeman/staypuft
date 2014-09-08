@@ -1,12 +1,95 @@
 module Staypuft
   class NetworkQuery
 
+    VIP_NAMES = {
+      :ceilometer_admin_vip   => Staypuft::SubnetType::ADMIN_API,
+      :ceilometer_private_vip => Staypuft::SubnetType::MANAGEMENT,
+      :ceilometer_public_vip  => Staypuft::SubnetType::PUBLIC_API,
+      :cinder_admin_vip       => Staypuft::SubnetType::ADMIN_API,
+      :cinder_private_vip     => Staypuft::SubnetType::MANAGEMENT,
+      :cinder_public_vip      => Staypuft::SubnetType::PUBLIC_API,
+      :db_vip                 => Staypuft::SubnetType::MANAGEMENT,
+      :glance_admin_vip       => Staypuft::SubnetType::ADMIN_API,
+      :glance_private_vip     => Staypuft::SubnetType::MANAGEMENT,
+      :glance_public_vip      => Staypuft::SubnetType::PUBLIC_API,
+      :heat_admin_vip         => Staypuft::SubnetType::ADMIN_API,
+      :heat_private_vip       => Staypuft::SubnetType::MANAGEMENT,
+      :heat_public_vip        => Staypuft::SubnetType::PUBLIC_API,
+      :heat_cfn_admin_vip     => Staypuft::SubnetType::ADMIN_API,
+      :heat_cfn_private_vip   => Staypuft::SubnetType::MANAGEMENT,
+      :heat_cfn_public_vip    => Staypuft::SubnetType::PUBLIC_API,
+      :horizon_admin_vip      => Staypuft::SubnetType::ADMIN_API,
+      :horizon_private_vip    => Staypuft::SubnetType::MANAGEMENT,
+      :horizon_public_vip     => Staypuft::SubnetType::PUBLIC_API,
+      :keystone_admin_vip     => Staypuft::SubnetType::ADMIN_API,
+      :keystone_private_vip   => Staypuft::SubnetType::MANAGEMENT,
+      :keystone_public_vip    => Staypuft::SubnetType::PUBLIC_API,
+      :loadbalancer_vip       => Staypuft::SubnetType::PUBLIC_API,
+      :neutron_admin_vip      => Staypuft::SubnetType::ADMIN_API,
+      :neutron_private_vip    => Staypuft::SubnetType::MANAGEMENT,
+      :neutron_public_vip     => Staypuft::SubnetType::PUBLIC_API,
+      :nova_admin_vip         => Staypuft::SubnetType::ADMIN_API,
+      :nova_private_vip       => Staypuft::SubnetType::MANAGEMENT,
+      :nova_public_vip        => Staypuft::SubnetType::PUBLIC_API,
+      :amqp_vip               => Staypuft::SubnetType::MANAGEMENT,
+      :swift_public_vip       => Staypuft::SubnetType::PUBLIC_API,
+      :keystone_private_vip   => Staypuft::SubnetType::MANAGEMENT
+    }
+    COUNT     = VIP_NAMES.size
+
     def initialize(deployment)
       @deployment = deployment
     end
 
+    def ip_for_host(host, subnet_type_name)
+      interface_hash_for_host(host, subnet_type_name)[:ip]
+    end
+
+    def interface_for_host(host, subnet_type_name)
+      interface_hash_for_host(host, subnet_type_name)[:interface]
+    end
+
+    def controllers
+      @controllers ||= @deployment.controller_hostgroup.hosts.order(:id)
+    end
+
+    def controller_ips(subnet_type_name)
+      controllers.map { |controller| ip_for_host(controller, subnet_type_name) }
+    end
+
+    def controller_ip(subnet_type_name)
+      ip_for_host(controllers.tap { |v| v.size == 1 or raise }.first, subnet_type_name)
+    end
+
+    def controller_fqdns
+      controllers.map &:fqdn
+    end
+
+    def vip_controller
+      controllers.each do |controller|
+        return controller unless controller.interfaces.vip.empty?
+      end
+      return nil
+    end
+
+    def get_vip(vip_name)
+      if VIP_NAMES[vip_name]
+        controller = vip_controller
+        interface = controller.interfaces.vip.where(:tag => vip_name).first if controller
+        interface.ip if interface
+      end
+    end
+
+    class Jail < Safemode::Jail
+      allow :ip_for_host, :interface_for_host, :controller_ip, :controller_ips, :controller_fqdns, :get_vip
+    end
+
     private
     def interface_hash_for_host(host, subnet_type_name)
+      if host.nil?
+        raise ArgumentError, "no host specified"
+      end
+
       subnet_type = @deployment.layout.subnet_types.where(:name=> subnet_type_name).first
 
       # raise error if no subnet with this name is assigned to this layout
@@ -16,19 +99,19 @@ module Staypuft
 
       subnet_typing = @deployment.subnet_typings.where(:subnet_type_id => subnet_type.id).first
       # if this subnet type isn't assigned to a subnet for this deployment, return nil
-      return nil if subnet_typing.nil?
+      return {} if subnet_typing.nil?
       subnet = subnet_typing.subnet
 
-      secondary_iface = host.interfaces.where(:subnet_id => subnet.id).first
+      secondary_iface = host.interfaces.non_vip.where(:subnet_id => subnet.id).first
       # check for primary interface
       if (host.subnet_id == subnet.id)
         {:subnet => host.subnet, :ip => host.ip,
          :interface => host.primary_interface, :mac =>  host.mac }
-      elsif !iface.nil?
+      elsif !secondary_iface.nil?
         {:subnet => secondary_iface.subnet, :ip => secondary_iface.ip,
-         :interface => secondary_iface.name, :mac =>  secondary_iface.mac }
+         :interface => secondary_iface.identifier, :mac =>  secondary_iface.mac }
       else
-        nil
+        {}
       end
     end
   end

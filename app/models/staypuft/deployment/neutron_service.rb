@@ -5,12 +5,9 @@ module Staypuft
     end
 
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
-    INTERFACE_HELP    = N_('(e.g. eth0 or em1)')
     VLAN_HELP         = N_('[1-4094] (e.g. 10:15)')
 
-
-    param_attr :network_segmentation, :tenant_vlan_ranges, :networker_tenant_interface,
-               :use_external_interface, :external_interface_name, :compute_tenant_interface
+    param_attr :network_segmentation, :tenant_vlan_ranges
 
     module NetworkSegmentation
       VXLAN  = 'vxlan'
@@ -41,129 +38,69 @@ module Staypuft
               :if                  => :vlan_segmentation?,
               :neutron_vlan_ranges => true
 
-    module NetworkerTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks')
-      HUMAN_AFTER = INTERFACE_HELP
-    end
-
-    validates :networker_tenant_interface,
-              :presence => true
-    # TODO: interface name format validation
-
-    module UseExternalInterface
-      HUMAN = N_('Configure external interface on network node')
-    end
-
-    validates :use_external_interface, inclusion: { in: [true, false, 'true', 'false'] }
-
-    module ExternalInterfaceName
-      HUMAN       = N_('External interface connected to')
-      HUMAN_AFTER = INTERFACE_HELP
-    end
-
-    validates :external_interface_name,
-              :presence => true,
-              :if       => :use_external_interface?
-    # TODO: interface name format validation
-
-    module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks')
-      HUMAN_AFTER = INTERFACE_HELP
-    end
-
-    validates :compute_tenant_interface,
-              :presence => true
-    # TODO: interface name format validation
-
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
-        :networker_tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
-        :compute_tenant_iface, :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks
+        :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
+        :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks
     end
 
     def set_defaults
       self.network_segmentation   = NetworkSegmentation::VXLAN
-      self.use_external_interface = 'false'
     end
 
     def active?
       deployment.networking == Deployment::Networking::NEUTRON
     end
 
-    # TODO: make this less clumsy w/ consistent handling of true/false values
-    def use_external_interface?
-      (self.use_external_interface == true) || (self.use_external_interface == 'true')
-    end
-
     # return list of supported segmentation options with selected option at the
     # beginning of the list
     def network_segmentation_list
-      [self.network_segmentation, *(SEGMENTATION_LIST - [self.network_segmentation])]
+      [network_segmentation, *(SEGMENTATION_LIST - [network_segmentation])]
     end
 
-    def networker_ovs_bridge_mappings
-      [("physnet-tenants:br-#{self.networker_tenant_iface}"  unless self.enable_tunneling?),
-       ('physnet-external:br-ex' if self.use_external_interface?)].compact
+    def networker_ovs_bridge_mappings(host)
+      compute_ovs_bridge_mappings(host) + [*('physnet-external:br-ex' if external_interface_name(host))]
     end
 
-    def networker_ovs_bridge_uplinks
-      [("br-#{self.networker_tenant_iface}:#{self.networker_tenant_iface}" unless self.enable_tunneling?),
-       ("br-ex:#{self.external_interface_name.downcase}" if self.use_external_interface?)
-      ].compact
+    def networker_ovs_bridge_uplinks(host)
+      compute_ovs_bridge_uplinks(host) + [*("br-ex:#{external_interface_name(host)}" if external_interface_name(host))]
     end
 
-    def compute_ovs_bridge_mappings
-      if !self.enable_tunneling?
-        ["physnet-tenants:br-#{self.compute_tenant_iface}"]
-      else
-        []
-      end
+    def compute_ovs_bridge_mappings(host)
+      [*("physnet-tenants:br-#{tenant_iface(host)}" if !enable_tunneling?)]
     end
 
-    def compute_ovs_bridge_uplinks
-      if !self.enable_tunneling?
-        ["br-#{self.compute_tenant_iface}:#{self.compute_tenant_iface}"]
-      else
-        []
-      end
+    def compute_ovs_bridge_uplinks(host)
+      [*("br-#{tenant_iface(host)}:#{tenant_iface(host)}" if !enable_tunneling?)]
     end
 
     def compute_vlan_ranges
-      if self.vlan_segmentation?
-        ["physnet-tenants:#{self.tenant_vlan_ranges}"]
-      else
-        []
-      end
+      [*("physnet-tenants:#{tenant_vlan_ranges}" if vlan_segmentation?)]
     end
 
     def networker_vlan_ranges
-      [("physnet-tenants:#{self.tenant_vlan_ranges}" if self.vlan_segmentation?),
-       "physnet-external"].compact
+      compute_vlan_ranges << "physnet-external"
     end
 
     def vlan_segmentation?
-      self.network_segmentation == NetworkSegmentation::VLAN
+      network_segmentation == NetworkSegmentation::VLAN
     end
 
     def enable_tunneling?
       [NetworkSegmentation::VXLAN, NetworkSegmentation::GRE].include?(network_segmentation)
     end
 
-    def networker_tenant_iface
-      networker_tenant_interface.downcase unless networker_tenant_interface.nil?
+    def tenant_iface(host)
+      deployment.network_query.interface_for_host(host, Staypuft::SubnetType::TENANT)
     end
 
-    def compute_tenant_iface
-      compute_tenant_interface.downcase unless compute_tenant_interface.nil?
+    def external_interface_name(host)
+      deployment.network_query.interface_for_host(host, Staypuft::SubnetType::EXTERNAL)
     end
 
     def param_hash
       { 'network_segmentation'       => network_segmentation,
-        'tenant_vlan_ranges'         => tenant_vlan_ranges,
-        'networker_tenant_interface' => networker_tenant_interface,
-        'use_external_interface'     => use_external_interface,
-        'external_interface_name'    => external_interface_name,
-        'compute_tenant_interface'   => compute_tenant_interface }
+        'tenant_vlan_ranges'         => tenant_vlan_ranges }
     end
 
   end

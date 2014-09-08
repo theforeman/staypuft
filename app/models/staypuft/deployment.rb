@@ -60,9 +60,7 @@ module Staypuft
               [:neutron, :@neutron_service, NeutronService],
               [:glance, :@glance_service, GlanceService],
               [:cinder, :@cinder_service, CinderService],
-              [:passwords, :@passwords, Passwords],
-              [:vips, :@vips, VIPS],
-              [:ips, :@ips, IPS]]
+              [:passwords, :@passwords, Passwords]]
 
     SCOPES.each do |name, ivar, scope_class|
       define_method name do
@@ -197,8 +195,8 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?,
-        :hide_ceph_notification?
+        :nova, :neutron, :glance, :cinder, :passwords, :ha?, :non_ha?,
+        :hide_ceph_notification?, :network_query
     end
 
     # TODO(mtaylor)
@@ -256,9 +254,9 @@ module Staypuft
 
     def horizon_url
       if ha?
-        "http://#{self.vips.get(:horizon)}"
+        "http://#{network_query.get_vip(:horizon_public_vip)}"
       else
-        self.ips.controller_ips.empty? ? nil : "http://#{self.ips.controller_ip}"
+        network_query.controller_ips(Staypuft::SubnetType::PUBLIC_API).empty? ? nil : "http://#{network_query.controller_ip(Staypuft::SubnetType::PUBLIC_API)}"
       end
     end
 
@@ -278,6 +276,10 @@ module Staypuft
         where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
                                                       role_id:       Staypuft::Role.cephosd }).
         first
+    end
+
+    def network_query
+      @network_query || NetworkQuery.new(self)
     end
 
     private
