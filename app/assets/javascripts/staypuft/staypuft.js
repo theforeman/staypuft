@@ -213,6 +213,10 @@ $(function () {
       function() {
         return $(this).attr('value');
       }).get().join();
+    /* remove the first if it's the select all */
+    if(to_assign.substr(0,2) == 'on') {
+      to_assign = to_assign.substr(3);
+    }
     var to_path = $('#configure_networks_modal').data('path');
     $.ajax({
         url: to_path,
