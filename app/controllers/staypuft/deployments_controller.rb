@@ -115,19 +115,24 @@ module Staypuft
 
       hosts_to_unassign = ::Host::Base.find Array(params[:host_ids])
 
+      removed_vips_hostgroup = nil
       hosts_to_unassign.each do |host|
         unless host.open_stack_deployed? && deployment_in_progress
-          host.interfaces.where(['identifier LIKE ?', 'vip%']).each(&:destroy)
-          hostgroup = host.hostgroup
+          vip_interfaces = host.interfaces.where(['identifier LIKE ?', 'vip%'])
+          removed_vips_hostgroup = host.hostgroup unless vip_interfaces.empty?
+          vip_interfaces.each(&:destroy)
           host.open_stack_unassign
           host.environment = Environment.get_discovery
           host.save!
           host.setBuild
-          if hostgroup
-            hostgroup.reload
-            newhost = hostgroup.hosts.first
-            build_vips_if_needed(newhost) unless newhost.nil?
-          end
+        end
+      end
+      if removed_vips_hostgroup
+        removed_vips_hostgroup.reload
+        newhost = removed_vips_hostgroup.hosts.first
+        unless newhost.nil?
+          build_vips_if_needed(newhost)
+          newhost.save!
         end
       end
 
@@ -220,6 +225,7 @@ module Staypuft
 
     def build_vips_if_needed(host)
       hostgroup = host.hostgroup
+      hostgroup.reload if hostgroup
       if hostgroup && hostgroup.deployment.ha? && hostgroup.hosts.all? { |h| h.interfaces.where(['identifier LIKE ?', 'vip%']).empty? }
         host.build_vips(Staypuft::NetworkQuery::VIP_NAMES)
       end
