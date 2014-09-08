@@ -41,12 +41,3 @@
     <% end %>
   </div>
 </div>
-
-<% @interfaces.each do |interface| %>
-  <%= render 'staypuft/interfaces/drop_zone',
-             :identifier => interface.identifier,
-             :subnet => interface.subnet,
-             :deployment => @deployment,
-             :host => @host %>
-<% end %>
-
