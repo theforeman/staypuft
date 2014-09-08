@@ -67,7 +67,7 @@ module Staypuft
 
     def vip_controller
       controllers.each do |controller|
-        return controller unless controller.interfaces.where(['identifier LIKE ?', 'vip%']).empty?
+        return controller unless controller.interfaces.vip.empty?
       end
       return nil
     end
@@ -75,7 +75,7 @@ module Staypuft
     def get_vip(vip_name)
       if VIP_NAMES[vip_name]
         controller = vip_controller
-        interface = controller.interfaces.where(['identifier LIKE ?', 'vip%']).where(:tag => vip_name).first if controller
+        interface = controller.interfaces.vip.where(:tag => vip_name).first if controller
         interface.ip if interface
       end
     end
@@ -102,7 +102,7 @@ module Staypuft
       return {} if subnet_typing.nil?
       subnet = subnet_typing.subnet
 
-      secondary_iface = host.interfaces.where(:subnet_id => subnet.id).first
+      secondary_iface = host.interfaces.non_vip.where(:subnet_id => subnet.id).first
       # check for primary interface
       if (host.subnet_id == subnet.id)
         {:subnet => host.subnet, :ip => host.ip,

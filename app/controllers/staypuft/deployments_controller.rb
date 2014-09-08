@@ -118,7 +118,7 @@ module Staypuft
       removed_vips_hostgroup = nil
       hosts_to_unassign.each do |host|
         unless host.open_stack_deployed? && deployment_in_progress
-          vip_interfaces = host.interfaces.where(['identifier LIKE ?', 'vip%'])
+          vip_interfaces = host.interfaces.vip
           removed_vips_hostgroup = host.hostgroup unless vip_interfaces.empty?
           vip_interfaces.each(&:destroy)
           host.open_stack_unassign
@@ -226,7 +226,7 @@ module Staypuft
     def build_vips_if_needed(host)
       hostgroup = host.hostgroup
       hostgroup.reload if hostgroup
-      if hostgroup && hostgroup.deployment.ha? && hostgroup.hosts.all? { |h| h.interfaces.where(['identifier LIKE ?', 'vip%']).empty? }
+      if hostgroup && hostgroup.deployment.ha? && (hostgroup == hostgroup.deployment.controller_hostgroup) && hostgroup.hosts.all? { |h| h.interfaces.vip.empty? }
         host.build_vips(Staypuft::NetworkQuery::VIP_NAMES)
       end
     end

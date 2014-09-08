@@ -13,12 +13,12 @@ module Staypuft
 
       def interfaces_identifiers
         interfaces = [ self.primary_interface ]
-        interfaces += self.respond_to?(:interfaces) ? self.interfaces.where("type <> 'Nic::BMC'").where("identifier NOT LIKE 'vip%'").physical.map(&:identifier) : []
+        interfaces += self.respond_to?(:interfaces) ? self.interfaces.where("type <> 'Nic::BMC'").non_vip.physical.map(&:identifier) : []
         interfaces
       end
 
       def make_all_interfaces_managed
-        self.interfaces.each do |interface|
+        self.interfaces.non_vip.each do |interface|
           interface.managed = true
           interface.save!
         end

@@ -5,7 +5,7 @@ module Staypuft
       @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)
       @subnets = @deployment.subnets.uniq
       @host = @hosts.first
-      @interfaces = @host ? @host.interfaces.where("type <> 'Nic::BMC'").where("identifier NOT LIKE 'vip%'").order(:identifier).physical : []
+      @interfaces = @host ? @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).physical : []
 
       errors = {}
       @hosts.each do |host|
