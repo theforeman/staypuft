@@ -209,6 +209,33 @@ $(function () {
     window.location.hash = "#hosts";
   });
 
+  $('#configure_networks_modal').on('shown.bs.modal', function(e) {
+    var height = $(window).height() - 200;
+    $(this).find(".modal-body").css("max-height", height);
+    var to_assign = $("input:checkbox[name=host_ids[]]:checked").map(
+      function() {
+        return $(this).attr('value');
+      }).get().join();
+    /* remove the first if it's the select all */
+    if(to_assign.substr(0,2) == 'on') {
+      to_assign = to_assign.substr(3);
+    }
+    var to_path = $('#configure_networks_modal').data('path');
+    $.ajax({
+        url: to_path,
+        type: "GET",
+        //Pass in each variable as a parameter.
+        data: {
+          host_ids: to_assign
+        },
+        success: function(data){
+          $('#interfaces').html(data).promise().done(function(){
+            nics_assignment();
+          });
+        }
+    });
+  });
+
   var scrolled = false;
 
   $(window).scroll(function(){

@@ -5,10 +5,9 @@
     <div class="pull-right top_actions">
       <%= render partial: "hosts_filter" %>
       <div class="pull-right">
-
-        <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm dynamic-submit", :disabled => true,
-                     :'data-submit-to' => deployment_interface_assignments_path(@deployment), :'data-method' => 'GET',
-                     :id => "configure_networks_button"%>
+        <button type="button" class= "btn btn-default btn-sm"
+                id="configure_networks_button" data-toggle = "modal"
+                data-target = "#configure_networks_modal" disabled="true"><%= _("Configure Networks") %></button>
         <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :disabled => true, :id => "unassign_hosts_button" %>
       </div>
     </div>
@@ -49,6 +48,26 @@
         <% end %>
       </tbody>
     </table>
+    <div class="modal fade" id="configure_networks_modal" tabindex="-1" role="dialog" aria-labelledby="<%= _("Configure Networks") %>" aria-hidden="true" data-path="<%= deployment_interface_assignments_path(@deployment.id) %>">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title" id="configure_networks_modal_label">
+                  <span class="glyphicon glyphicon-link">
+                  </span> <%= _("Configure Networks") %>
+                </h2>
+              </div>
+              <div class="modal-body">
+                <div id="interfaces"><%= image_tag '/assets/spinner.gif', style: "display: block; margin-left: auto; margin-right: auto" %></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
+                <button type="button" class="btn btn-primarym" data-dismiss="modal"><%= _("Done") %></button>
+              </div>
+            </div>
+          </div>
+        </div>
   <% end %>
 </div>
 <% else %>
