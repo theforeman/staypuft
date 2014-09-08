@@ -1,5 +1,6 @@
 module Staypuft
   class InterfaceAssignmentsController < Staypuft::ApplicationController
+    layout false
     def index
       @deployment = Deployment.find(params[:deployment_id])
       @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)

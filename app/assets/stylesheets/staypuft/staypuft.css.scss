@@ -162,3 +162,13 @@ span.editable, span.editable:hover {
     border: 1px dashed $panel-success-text;
   }
 }
+
+#configure_networks_modal {
+  .modal-dialog {
+    width: 90%;
+  }
+
+  .modal-body{
+    overflow-y: auto;
+  }
+}
