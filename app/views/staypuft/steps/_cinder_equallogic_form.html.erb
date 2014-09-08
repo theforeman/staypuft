@@ -1,0 +1,13 @@
+          <div class="eqlx well">
+          <h5 class="muted"><a href="#" class="remove"><i class="glyphicon glyphicon-remove-sign ">&nbsp;</i></a>&nbsp;Server #<span class="server_number">1</span></h5>
+          <%= text_f e, :san_ip, class: "cinder_equallogic",
+                     label:              _(Staypuft::Deployment::CinderService::SanIp::HUMAN) %>
+          <%= text_f e, :san_login, class: "cinder_equallogic",
+                     label:              _(Staypuft::Deployment::CinderService::SanLogin::HUMAN) %>
+          <%= text_f e, :san_password, class: "cinder_equallogic",
+                     label:              _(Staypuft::Deployment::CinderService::SanPassword::HUMAN) %>
+          <%= text_f e, :pool, class: "cinder_equallogic",
+                     label:              _(Staypuft::Deployment::CinderService::EqlxPool::HUMAN) %>
+          <%= text_f e, :group_name, class: "cinder_equallogic",
+                     label:              _(Staypuft::Deployment::CinderService::EqlxGroupName::HUMAN) %>
+          </div>

@@ -124,9 +124,9 @@ $(function () {
   }
 
   showCinderNfsUri();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderNfsUri);
+  $("#staypuft_deployment_cinder_backend_nfs").change(showCinderNfsUri);
   function showCinderNfsUri() {
-    if ($('#staypuft_deployment_cinder_driver_backend_nfs').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_nfs').is(":checked")) {
       $('.cinder_nfs_uri').show();
     }
     else {
@@ -135,10 +135,13 @@ $(function () {
   }
 
   showCinderEquallogic();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderEquallogic);
+  $("#staypuft_deployment_cinder_backend_eqlx").change(showCinderEquallogic);
   function showCinderEquallogic() {
-    if ($('#staypuft_deployment_cinder_driver_backend_equallogic').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_eqlx').is(":checked")) {
       $('.cinder_equallogic').show();
+      if($('#eqlxs').children().length == 0) {
+        $('.add_another_server').click();
+      }
     }
     else {
       $('.cinder_equallogic').hide();
@@ -248,6 +251,7 @@ $(function () {
       }).show();
   });
 
+  /* clear filter if switching */
   $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); });
 
 // add more highlighting for tabs with errors
@@ -255,4 +259,20 @@ $(function () {
     var id = $(this).parentsUntil(".tab-content").last().attr("id");
     $("a[href=#"+id+"]").parent().addClass("tab-error");
   })
+
+  $("button.add_another_server").live("click", function() {
+    var eqlx_form = function () {
+      return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
+    }
+    $('#eqlxs').append(eqlx_form());
+    if($('#eqlxs').children().length > 1) {
+      var added_form_span = $('#eqlxs').children().last().find('h5').find('.server_number');
+      var previous_span_number = $('#eqlxs').children().eq(-2).find('h5').find('.server_number');
+      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
+    }
+  })
+
+  $(".eqlx h5 a.remove").live("click", function(){
+      $(this).parent().parent().remove();
+  });
 });
