@@ -63,9 +63,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
-                <%= submit_tag _("Configure Networks"), :class => "btn btn-primary btn-sm dynamic-submit", :disabled => true,
-                                     :'data-submit-to' => deployment_interface_assignments_path(@deployment), :'data-method' => 'GET',
-                                     :id => "submit_networks_button"%>
+                <button type="button" class="btn btn-primarym" data-dismiss="modal"><%= _("Done") %></button>
               </div>
             </div>
           </div>

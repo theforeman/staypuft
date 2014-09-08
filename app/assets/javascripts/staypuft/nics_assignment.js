@@ -1,4 +1,4 @@
-$(function() {
+var nics_assignment = (function() {
   $("div.subnet-pull.active").draggable({
     revert: 'invalid'
   });

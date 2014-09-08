@@ -226,7 +226,9 @@ $(function () {
           host_ids: to_assign
         },
         success: function(data){
-          $('#interfaces').html(data);
+          $('#interfaces').html(data).promise().done(function(){
+            nics_assignment();
+          });
         }
     });
   });
