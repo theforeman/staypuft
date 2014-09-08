@@ -11,6 +11,10 @@ module Staypuft
         attrs['fencing_enabled'] == '1'
       end
 
+      def expose_lanplus?
+        attrs['fence_ipmilan_expose_lanplus'] == '1'
+      end
+
     end
   end
 end
@@ -20,5 +24,5 @@ class ::Host::Managed::Jail < Safemode::Jail
 end
 
 class ::Nic::Base::Jail < Safemode::Jail
-  allow :fencing_enabled, :attrs, :username, :password
+  allow :fencing_enabled?, :attrs, :username, :password, :expose_lanplus?
 end
