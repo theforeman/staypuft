@@ -3,7 +3,9 @@ module Staypuft
     layout false
     def index
       @deployment = Deployment.find(params[:deployment_id])
-      @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)
+      host_ids = params[:host_ids]
+      host_ids = host_ids.split(',') unless host_ids.is_a? Array
+      @hosts = Host::Managed.where(:id => host_ids).includes(:interfaces)
       @subnets = @deployment.subnets.uniq
       @host = @hosts.first
       @interfaces = @host ? @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).physical : []
@@ -23,7 +25,9 @@ module Staypuft
     def create
       @errors = {}
       @deployment = Deployment.find(params[:deployment_id])
-      @hosts = Host::Managed.where(:id => params[:host_ids])
+      host_ids = params[:host_ids]
+      host_ids = host_ids.split(',') unless host_ids.is_a? Array
+      @hosts = Host::Managed.where(:id => host_ids)
       @hosts.each do |host|
         @interface = host.interfaces.find_by_identifier(params[:interface]) || host
         @subnet = Subnet.find(params[:subnet_id])
@@ -37,7 +41,9 @@ module Staypuft
     def destroy
       @errors = {}
       @deployment = Deployment.find(params[:deployment_id])
-      @hosts = Host::Managed.where(:id => params[:host_ids])
+      host_ids = params[:host_ids]
+      host_ids = host_ids.split(',') unless host_ids.is_a? Array
+      @hosts = Host::Managed.where(:id => host_ids)
       @hosts.each do |host|
         @interface = host.interfaces.find_by_identifier(params[:interface]) || host
         @subnet = Subnet.find(params[:subnet_id])
@@ -71,7 +77,7 @@ module Staypuft
     end
 
     def get_interfaces_to_compare(host)
-      host.interfaces.where("type <> 'Nic::BMC'").order(:identifier)
+      host.interfaces.non_vip.where("type <> 'Nic::BMC'").order(:identifier)
     end
   end
 end
