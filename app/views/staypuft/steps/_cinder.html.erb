@@ -2,7 +2,8 @@
   <h5><%= _(Staypuft::Deployment::CinderService::DriverBackend::HUMAN) %></h5>
   <div class="col-md-12 clearfix cinderPicker" id="cinderPicker">
     <%= f.fields_for :cinder, @deployment.cinder do |p| %>
-
+      <%= base_errors_for @deployment.cinder %>
+      <div class="form-group <%= @deployment.cinder.errors.empty? ? "" : 'has-error' %> hide"></div>
       <%= check_box_f_non_inline(p, :backend_nfs,
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
