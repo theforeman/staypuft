@@ -148,14 +148,14 @@ module Staypuft
       if self.deployment.ha?
         params.delete :backend_lvm
       end
-      unless params.detect(lambda { false }) { |field| field }
-        errors[:base] << _("At least one storage backend must be selected")
+      unless params.detect(lambda { false }) { |field| self.send(field) == "true" }
+        errors.add :base, _("At least one storage backend must be selected")
       end
     end
 
     def equallogic_backends
       unless self.eqlxs.all? { |item| item.valid? }
-        errors[:base] << _("Please fix the problems in selected backends")
+        errors.add :base, _("Please fix the problems in selected backends")
       end
     end
   end
