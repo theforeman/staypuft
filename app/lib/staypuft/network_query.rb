@@ -58,7 +58,7 @@ module Staypuft
     end
 
     def controller_ip(subnet_type_name)
-      ip_for_host(controllers.tap { |v| v.size == 1 or raise }.first, subnet_type_name)
+      ip_for_host(controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first, subnet_type_name)
     end
 
     def controller_fqdns
