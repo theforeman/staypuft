@@ -294,6 +294,20 @@ module Staypuft
       # Keystone
       keystonerc = 'true'
 
+      # Ceph
+      ceph_cluster_network      = { :string => "<%= @host.deployment.network_query.network_address_for_host(@host, '#{Staypuft::SubnetType::STORAGE_CLUSTERING}') %>" }
+      # FIXME: this should actually be STORAGE instead of PXE, but only after we have a reliable way of identifying DNS names
+      #        on the storage network
+      ceph_public_network      = { :string => "<%= @host.deployment.network_query.network_address_for_host(@host, '#{Staypuft::SubnetType::PXE}') %>" }
+      ceph_fsid                = { :string => '<%= @host.deployment.ceph.fsid %>' }
+      ceph_images_key          = { :string => '<%= @host.deployment.ceph.images_key %>' }
+      ceph_volumes_key         = { :string => '<%= @host.deployment.ceph.volumes_key %>' }
+      # FIXME: this should move to STORAGE from PXE like above
+      ceph_mon_host            = { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::PXE}') %>" }
+      # FIXME: This is currently the hostnames (which maps to fqdns on the PXE network) -- eventually we want DNS names
+      #        on the Storage network
+      ceph_mon_initial_members = { :array => "<%= @host.deployment.ceph.mon_initial_members %>" }
+
       # effective_value grabs shared password if deployment is in shared password mode,
       # otherwise use the service-specific one
       admin_pw                      = { :string => '<%= @host.deployment.passwords.effective_value(:admin) %>' }
@@ -354,6 +368,13 @@ module Staypuft
       {
           'quickstack::nova_network::controller'   => {
               'amqp_provider'                           => amqp_provider,
+              'ceph_cluster_network'                    => ceph_cluster_network,
+              'ceph_public_network'                     => ceph_public_network,
+              'ceph_fsid'                               => ceph_fsid,
+              'ceph_images_key'                         => ceph_images_key,
+              'ceph_volumes_key'                        => ceph_volumes_key,
+              'ceph_mon_host'                           => ceph_mon_host,
+              'ceph_mon_initial_members'                => ceph_mon_initial_members,
               'cinder_backend_gluster'                  => cinder_backend_gluster,
               'cinder_backend_gluster_name'             => cinder_backend_gluster_name,
               'cinder_backend_iscsi'                    => cinder_backend_iscsi,
@@ -416,6 +437,13 @@ module Staypuft
               'controller_pub_host'                     => controller_pub_host },
           'quickstack::neutron::controller'        => {
               'amqp_provider'                           => amqp_provider,
+              'ceph_cluster_network'                    => ceph_cluster_network,
+              'ceph_public_network'                     => ceph_public_network,
+              'ceph_fsid'                               => ceph_fsid,
+              'ceph_images_key'                         => ceph_images_key,
+              'ceph_volumes_key'                        => ceph_volumes_key,
+              'ceph_mon_host'                           => ceph_mon_host,
+              'ceph_mon_initial_members'                => ceph_mon_initial_members,
               'tenant_network_type'                     => tenant_network_type,
               'ml2_network_vlan_ranges'                 => ml2_network_vlan_ranges,
               'ml2_tenant_network_types'                => ml2_tenant_network_types,
@@ -492,6 +520,13 @@ module Staypuft
               'include_neutron'               => neutron,
               'neutron'                       => neutron,
               'ceilometer_user_password'      => ceilometer_user_pw,
+              'ceph_cluster_network'          => ceph_cluster_network,
+              'ceph_public_network'           => ceph_public_network,
+              'ceph_fsid'                     => ceph_fsid,
+              'ceph_images_key'               => ceph_images_key,
+              'ceph_volumes_key'              => ceph_volumes_key,
+              'ceph_mon_host'                 => ceph_mon_host,
+              'ceph_mon_initial_members'      => ceph_mon_initial_members,
               'cinder_db_password'            => cinder_db_pw,
               'cinder_user_password'          => cinder_user_pw,
               'glance_db_password'            => glance_db_pw,
@@ -637,6 +672,13 @@ module Staypuft
           'quickstack::nova_network::compute'      => {
               'amqp_provider'              => amqp_provider,
               'ceilometer'                 => ceilometer,
+              'ceph_cluster_network'       => ceph_cluster_network,
+              'ceph_public_network'        => ceph_public_network,
+              'ceph_fsid'                  => ceph_fsid,
+              'ceph_images_key'            => ceph_images_key,
+              'ceph_volumes_key'           => ceph_volumes_key,
+              'ceph_mon_host'              => ceph_mon_host,
+              'ceph_mon_initial_members'   => ceph_mon_initial_members,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
               'cinder_backend_rbd'         => cinder_backend_rbd,
@@ -665,6 +707,13 @@ module Staypuft
           'quickstack::neutron::compute'           => {
               'amqp_provider'              => amqp_provider,
               'ceilometer'                 => ceilometer,
+              'ceph_cluster_network'       => ceph_cluster_network,
+              'ceph_public_network'        => ceph_public_network,
+              'ceph_fsid'                  => ceph_fsid,
+              'ceph_images_key'            => ceph_images_key,
+              'ceph_volumes_key'           => ceph_volumes_key,
+              'ceph_mon_host'              => ceph_mon_host,
+              'ceph_mon_initial_members'   => ceph_mon_initial_members,
               'cinder_backend_gluster'     => cinder_backend_gluster,
               'cinder_backend_nfs'         => cinder_backend_nfs,
               'cinder_backend_rbd'         => cinder_backend_rbd,

@@ -49,6 +49,11 @@ module Staypuft
       interface_hash_for_host(host, subnet_type_name)[:interface]
     end
 
+    def network_address_for_host(host, subnet_type_name)
+      subnet = interface_hash_for_host(host, subnet_type_name)[:subnet]
+      subnet.network_address if subnet
+    end
+
     def controllers
       @controllers ||= @deployment.controller_hostgroup.hosts.order(:id)
     end
@@ -81,7 +86,8 @@ module Staypuft
     end
 
     class Jail < Safemode::Jail
-      allow :ip_for_host, :interface_for_host, :controller_ip, :controller_ips, :controller_fqdns, :get_vip
+      allow :ip_for_host, :interface_for_host, :network_address_for_host,
+            :controller_ip, :controller_ips, :controller_fqdns, :get_vip
     end
 
     private
