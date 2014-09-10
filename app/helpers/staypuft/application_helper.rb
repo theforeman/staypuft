@@ -30,7 +30,8 @@ module Staypuft
       text            = options.delete(:text)
       checked_value   = options.delete(:checked_value)
       unchecked_value = options.delete(:unchecked_value)
-      content_tag(:div, :class => 'checkbox') do
+      group_class     = options.delete(:group_class)
+      content_tag(:div, :class => "checkbox #{group_class}") do
         label_tag('') do
           f.check_box(attr, options, checked_value, unchecked_value) + " #{text} "
         end

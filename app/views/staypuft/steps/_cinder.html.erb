@@ -7,7 +7,7 @@
       <%= check_box_f_non_inline(p, :backend_nfs,
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
-                                 :text            => "NFS")
+                                 :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['nfs']))
       %>
       <div class="cinder_nfs_uri col-md-offset-1 hide">
 
@@ -20,19 +20,21 @@
       <%= check_box_f_non_inline(p, :backend_lvm,
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
-                                 :text            => "LVM")
+                                 :checked         => @deployment.cinder.lvm_backend?,
+                                 :group_class     => @deployment.ha? ? "hide" : "",
+                                 :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['lvm']))
       %>
 
       <%= check_box_f_non_inline(p, :backend_ceph,
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
-                                 :text            => "Ceph")
+                                 :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['ceph']))
       %>
 
       <%= check_box_f_non_inline(p, :backend_eqlx,
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
-                                 :text            => "EqualLogic")
+                                 :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['equallogic']))
       %>
       <div class="cinder_equallogic col-md-offset-1 hide">
         <div id="eqlxs" class="cinder_equallogic_picker">
