@@ -145,9 +145,7 @@ module Staypuft
 
     def at_least_one_backend_selected
       params = BACKEND_TYPE_PARAMS.clone
-      if self.deployment.ha?
-        params.delete :backend_lvm
-      end
+      params.delete :backend_lvm if self.deployment.ha?
       unless params.detect(lambda { false }) { |field| self.send(field) == "true" }
         errors.add :base, _("At least one storage backend must be selected")
       end
