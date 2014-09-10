@@ -13,7 +13,7 @@ module Staypuft
 
     # supporting import/export
     EXPORT_PARAMS   = [:amqp_provider, :networking, :layout_name, :platform]
-    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords]
+    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords, :ceph]
 
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
@@ -60,7 +60,8 @@ module Staypuft
               [:neutron, :@neutron_service, NeutronService],
               [:glance, :@glance_service, GlanceService],
               [:cinder, :@cinder_service, CinderService],
-              [:passwords, :@passwords, Passwords]]
+              [:passwords, :@passwords, Passwords],
+              [:ceph, :@ceph, CephService]]
 
     SCOPES.each do |name, ivar, scope_class|
       define_method name do
@@ -90,6 +91,7 @@ module Staypuft
       self.glance.set_defaults
       self.cinder.set_defaults
       self.passwords.set_defaults
+      self.ceph.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
     end
@@ -195,7 +197,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :ha?, :non_ha?,
+        :nova, :neutron, :glance, :cinder, :passwords, :ceph, :ha?, :non_ha?,
         :hide_ceph_notification?, :network_query
     end
 
