@@ -1,0 +1,7 @@
+<%= select_f f, :subnet_id, accessible_subnets, :id, :to_label,
+             { :include_blank => accessible_subnets.any? ? true : _("No subnets")},
+             { :disabled => accessible_subnets.empty? ? true : false,
+               :help_inline => 'help_inline',
+               :class => 'interface_subnet',
+               'data-url' => freeip_subnets_path,
+               'data-types' => "#{list_subnet_types(f.object, accessible_subnets).to_json}" } %>
