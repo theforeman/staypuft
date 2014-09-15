@@ -54,7 +54,8 @@ module Staypuft
     validates :eqlxs,
               :presence   => true,
               :if         => :equallogic_backend?
-    validate :equallogic_backends
+    validate :equallogic_backends,
+             :if          => :equallogic_backend?
 
     class Jail < Safemode::Jail
       allow :lvm_backend?, :nfs_backend?, :ceph_backend?, :equallogic_backend?,
