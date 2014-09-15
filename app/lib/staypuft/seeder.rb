@@ -359,9 +359,9 @@ module Staypuft
       fence_ipmilan_address          = { :string => '<%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_username         = { :string => '<%= @host.bmc_nic.username if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_password         = { :string => '<%= @host.bmc_nic.password if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
-      fence_ipmilan_interval         = { :string => '<%= "60s" if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
-      fence_ipmilan_hostlist         = { :string => '<%= "" if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
-      fence_ipmilan_host_to_address  = { :array =>  '<%= [] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fence_ipmilan_interval         = '60s'
+      fence_ipmilan_hostlist         = ''
+      fence_ipmilan_host_to_address  = []
       fence_ipmilan_expose_lanplus   = { :string => '<%= @host.bmc_nic.expose_lanplus? if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_lanplus_options  = { :string => '<%= @host.bmc_nic.attrs["fence_ipmilan_lanplus_options"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
 
