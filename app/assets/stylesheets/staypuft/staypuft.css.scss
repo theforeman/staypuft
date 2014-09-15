@@ -101,6 +101,18 @@ span.editable, span.editable:hover {
   overflow: auto;
 }
 
+
+.nav > li > a.roles_list {
+  padding: 0;
+  border: 1px solid #ddd;
+  & > div {
+    padding: 10px;
+    &:not(:first-child) {
+      border-left: 1px solid #ddd;
+    }
+  }
+}
+
 .association.well {
   min-height: 500px;
   margin-top: 50px;
@@ -109,5 +121,54 @@ span.editable, span.editable:hover {
     &.pull-left {
       margin-left: 10px;
     }
+  }
+}
+
+// subnet and nics drag 'n drop association
+.subnet-type-pull, .subnet-pull, .empty-zone {
+  @extend .btn;
+  @extend .btn-default;
+  background: $well-bg;
+  margin: 3px 0;
+  &:active, &.active {
+    box-shadow: none;
+    z-index: 1;
+  }
+}
+
+.subnet-pull {
+  text-align: left;
+  .virtual {
+    background-color: #d7f5f5;
+  }
+}
+
+.empty-zone {
+  border-style: dashed;
+  background: transparent;
+  min-width: 100px;
+  &:hover, &:active {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.subnet-drop-zone.panel-droppable,
+#subnet_types.panel-droppable,
+.interface.panel-droppable,
+#subnets.panel-droppable {
+  border: 1px solid $panel-success-text;
+  .empty-zone {
+    border: 1px dashed $panel-success-text;
+  }
+}
+
+#configure_networks_modal {
+  .modal-dialog {
+    width: 90%;
+  }
+
+  .modal-body{
+    overflow-y: auto;
   }
 }

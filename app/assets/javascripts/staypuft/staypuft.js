@@ -11,6 +11,8 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require_tree .
+//= require jquery.ui.draggable
+//= require jquery.ui.droppable
 
 $(function () {
   // Check all checkboxes in table
@@ -47,6 +49,22 @@ $(function () {
     $(this).children('.glyphicon-eye-open, .glyphicon-eye-close').toggleClass('hide');
     $(this).siblings('.hidden_password, .shown_password').toggleClass('hide');
   });
+
+  $('#ceph_notification_dismissal').click(function(e) {
+    e.preventDefault();
+    $('.ceph_notification').toggleClass('hide');
+    var pathname = window.location.pathname
+    var id = pathname.substring(pathname.lastIndexOf('/') + 1)
+    var cephDeploymentNotification = readFromCookie();
+    cephDeploymentNotification[id] = true
+    $.cookie('ceph-deployment-notification', JSON.stringify(cephDeploymentNotification))
+  });
+  function readFromCookie() {
+    if (r = $.cookie('ceph-deployment-notification'))
+      return $.parseJSON(r);
+    else
+      return {};
+  }
 
   var duration = 150;
 
@@ -106,9 +124,9 @@ $(function () {
   }
 
   showCinderNfsUri();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderNfsUri);
+  $("#staypuft_deployment_cinder_backend_nfs").change(showCinderNfsUri);
   function showCinderNfsUri() {
-    if ($('#staypuft_deployment_cinder_driver_backend_nfs').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_nfs').is(":checked")) {
       $('.cinder_nfs_uri').show();
     }
     else {
@@ -117,13 +135,28 @@ $(function () {
   }
 
   showCinderEquallogic();
-  $("input[name='staypuft_deployment[cinder][driver_backend]']").change(showCinderEquallogic);
+  $("#staypuft_deployment_cinder_backend_eqlx").change(showCinderEquallogic);
   function showCinderEquallogic() {
-    if ($('#staypuft_deployment_cinder_driver_backend_equallogic').is(":checked")) {
+    if ($('#staypuft_deployment_cinder_backend_eqlx').is(":checked")) {
       $('.cinder_equallogic').show();
+      if($('#eqlxs').children().length == 0) {
+        $('.add_another_server').click();
+      }
     }
     else {
       $('.cinder_equallogic').hide();
+    }
+  }
+
+  showCephNotification();
+  function showCephNotification() {
+    var cephDeploymentNotification = readFromCookie();
+    var pathname = window.location.pathname;
+    var id = pathname.substring(pathname.lastIndexOf('/') + 1);
+    if (cephDeploymentNotification !== null && cephDeploymentNotification !== undefined) {
+      if (cephDeploymentNotification[id]) {
+        $('.ceph_notification').addClass('hide');
+      }
     }
   }
 
@@ -170,6 +203,39 @@ $(function () {
     window.location.hash = "#overview";
   });
 
+  $('#role_modal').on('shown.bs.modal', function(e) {
+    $('#sub-navigation a[href="#hosts"]').tab('show');
+    $('#hosts-navigation a[href="#free-hosts"]').tab('show');
+    window.location.hash = "#hosts";
+  });
+
+  $('#configure_networks_modal').on('shown.bs.modal', function(e) {
+    var height = $(window).height() - 200;
+    $(this).find(".modal-body").css("max-height", height);
+    var to_assign = $("input:checkbox[name=host_ids[]]:checked").map(
+      function() {
+        return $(this).attr('value');
+      }).get().join();
+    /* remove the first if it's the select all */
+    if(to_assign.substr(0,2) == 'on') {
+      to_assign = to_assign.substr(3);
+    }
+    var to_path = $('#configure_networks_modal').data('path');
+    $.ajax({
+        url: to_path,
+        type: "GET",
+        //Pass in each variable as a parameter.
+        data: {
+          host_ids: to_assign
+        },
+        success: function(data){
+          $('#interfaces').html(data).promise().done(function(){
+            nics_assignment();
+          });
+        }
+    });
+  });
+
   var scrolled = false;
 
   $(window).scroll(function(){
@@ -180,4 +246,60 @@ $(function () {
     $(window).scrollTop( 0 );
   }
 
+  $('.dynamic-submit').click(function() {
+    this.form.action = $(this).data('submit-to');
+    this.form.method = $(this).data('method');
+    this.form.submit();
+    return false;
+  })
+
+  var free_host_checkboxes = $('#free-hosts table input:checkbox');
+  free_host_checkboxes.click(function(){
+    $("#assign_hosts_modal").attr("disabled", !free_host_checkboxes.is(":checked"));
+  });
+
+  var assigned_host_checkboxes = $('#assigned-hosts table input:checkbox');
+  assigned_host_checkboxes.click(function(){
+    $("#unassign_hosts_button").attr("disabled", !assigned_host_checkboxes.is(":checked"));
+    $("#configure_networks_button").attr("disabled", !assigned_host_checkboxes.is(":checked"));
+  });
+
+  var deployed_host_checkboxes = $('#deployed-hosts table input:checkbox');
+  deployed_host_checkboxes.click(function(){
+    $("#undeploy_hosts_modal").attr("disabled", !deployed_host_checkboxes.is(":checked"));
+  });
+
+  var hosts_filter = $('.hosts_filter');
+  hosts_filter.keyup(function () {
+      var rex = new RegExp($(this).val(), 'i');
+      $('.searchable tr').hide();
+      $('.searchable tr').filter(function () {
+          return rex.test($(this).text());
+      }).show();
+  });
+
+  /* clear filter if switching */
+  $('.inner-nav').click(function(){ hosts_filter.val("").keyup(); });
+
+// add more highlighting for tabs with errors
+  $(".tab-content").find(".form-group.has-error").each(function(index) {
+    var id = $(this).parentsUntil(".tab-content").last().attr("id");
+    $("a[href=#"+id+"]").parent().addClass("tab-error");
+  })
+
+  $("button.add_another_server").live("click", function() {
+    var eqlx_form = function () {
+      return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
+    }
+    $('#eqlxs').append(eqlx_form());
+    if($('#eqlxs').children().length > 1) {
+      var added_form_span = $('#eqlxs').children().last().find('h5').find('.server_number');
+      var previous_span_number = $('#eqlxs').children().eq(-2).find('h5').find('.server_number');
+      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
+    }
+  })
+
+  $(".eqlx h5 a.remove").live("click", function(){
+      $(this).parent().parent().remove();
+  });
 });

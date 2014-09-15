@@ -1,55 +1,24 @@
 <div class="tab-pane" id="<%= child_hostgroup.name.parameterize.underscore %>_free_hosts">
-  <% if child_hostgroup.free_hosts.present? %>
+  <% if hosts.present? %>
     <%= form_tag(associate_host_deployment_path(id: deployment), class: 'form-horizontal well association') do |f| %>
-      <h4 class="pull-left"><%= _("Free Hosts") %></h4>
-      <button type="button" class="close pull-right" aria-hidden="true">&nbsp;&nbsp;×</button>
-      <%= submit_tag _("Assign Hosts"), :class => "btn btn-primary btn-sm pull-right" %>
-      <p class="clearfix"></p>
-      <%= hidden_field_tag :hostgroup_id, child_hostgroup.id %>
+
+      <%= render 'hosts_header', :header => _("Free Hosts"), :child_hostgroup => child_hostgroup, :assign_text => _("Assign Hosts") %>
+
       <table class="table table-bordered table-striped table-condensed">
         <thead>
-          <tr>
-            <th class="ca">
-              <%= tag :input, type: 'checkbox', class: 'check_all' %>
-            </th>
-            <th><%= sort :name, :as => _('Name') %></th>
-            <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
-            <th class="hidden-s hidden-xs"><%= _('Managed?') %></th>
-          </tr>
+          <%= render 'host_head_row' %>
         </thead>
         <tbody>
-          <% child_hostgroup.free_hosts.each do |host| %>
-            <tr class="checkbox_highlight">
-              <td class="ca">
-                <%= check_box_tag 'host_ids[]',
-                                  host.id,
-                                  child_hostgroup.host_ids.include?(host.id),
-                                  id:       "host_ids_#{host.id}" %>
-              </td>
-              <td class="ellipsis">
-               <%= host_label(host) %>
-              </td>
-              <td class="hidden-s hidden-xs"><%= host.ip %></td>
-              <td class="hidden-s hidden-xs">
-                <% if host.managed? %>
-                  <span class="glyphicon glyphicon-ok"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-minus"></span>
-                <% end %>
-              </td>
-            </tr>
+          <% hosts.each do |host| %>
+            <%= render 'host_row',
+                       :host => host,
+                       :checkbox_value => child_hostgroup.host_ids.include?(host.id) %>
           <% end %>
         </tbody>
       </table>
+
     <% end %>
   <% else %>
-    <div class="well association">
-      <button type="button" class="close pull-right" aria-hidden="true">×</button>
-      <h4><%= _("Free Hosts") %></h4>
-      <div class="alert alert-warning">
-        <span class="glyphicon glyphicon-warning-sign">&nbsp;</span>
-        <%= _("All available hosts have been already assigned.") %>
-      </div>
-    </div>
+    <%= render 'empty_hosts', :header => _("Free Hosts"), :message => _("All available hosts have been already assigned.") %>
   <% end %>
 </div>

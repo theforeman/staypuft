@@ -1,0 +1,30 @@
+<div class="panel panel-default interface" id="<%= identifier %>-interface" data-interface="<%= identifier %>">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= identifier %></h3>
+  </div>
+  <div class="panel-body">
+    <!-- physical interface assignment (can be only one at most) -->
+    <span id="<%= identifier %>-physicals">
+      <%= render 'staypuft/subnets/subnet_pull',
+                 :subnet => subnet,
+                 :deployment => deployment,
+                 :active => !is_pxe?(deployment, subnet),
+                 :existing => true if subnet %>
+    </span>
+
+    <!-- all virtual devices attached to this physical interface assignments -->
+    <span id="<%= identifier %>-virtuals">
+      <% host.interfaces.where(:physical_device => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
+        <%= render 'staypuft/subnets/subnet_pull',
+                   :subnet => virtual.subnet,
+                   :deployment => deployment,
+                   :active => true,
+                   :existing => true if virtual.subnet %>
+      <% end %>
+    </span>
+
+    <div class="empty-zone">
+      &nbsp;
+    </div>
+  </div>
+</div>

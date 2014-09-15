@@ -44,15 +44,18 @@
 
   <div class="tab-content col-md-8">
     <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
-      <%= render :partial => "free_hosts_table", :locals => { :deployment      => @deployment,
-                                                              :hostgroup       => @hostgroup,
-                                                              :child_hostgroup => child_hostgroup } %>
-      <%= render :partial => "assigned_hosts_table", :locals => { :deployment      => @deployment,
-                                                                  :hostgroup       => @hostgroup,
-                                                                  :child_hostgroup => child_hostgroup } %>
-      <%= render :partial => "deployed_hosts_table", :locals => { :deployment      => @deployment,
-                                                                  :hostgroup       => @hostgroup,
-                                                                  :child_hostgroup => child_hostgroup } %>
+      <%= render 'free_hosts_table', :deployment => @deployment,
+                 :hostgroup => @hostgroup,
+                 :child_hostgroup => child_hostgroup,
+                 :hosts => child_hostgroup.free_hosts %>
+      <%= render 'assigned_hosts_table', :deployment => @deployment,
+                 :hostgroup => @hostgroup,
+                 :child_hostgroup => child_hostgroup,
+                 :hosts => child_hostgroup.hosts %>
+      <%= render 'deployed_hosts_table', :deployment => @deployment,
+                 :hostgroup => @hostgroup,
+                 :child_hostgroup => child_hostgroup,
+                 :hosts => child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? } %>
     <% end %>
     <%= render :partial => "deployment_summary", :locals => { :deployment => @deployment } %>
   </div>

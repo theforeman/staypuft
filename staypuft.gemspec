@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'staypuft'
   s.version     = Staypuft::VERSION
   s.date        = Date.today.to_s
-  s.license     = 'GPL-3.0+' 
+  s.license     = 'GPL-3.0+'
   s.authors     = ['Staypuft team']
   s.email       = ['foreman-dev+staypuft@googlegroups.com']
   s.homepage    = 'https://github.com/theforeman/staypuft'
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'foreman-tasks', '~> 0.6.4'
   s.add_dependency 'dynflow', '~> 0.7.0'
   s.add_dependency 'wicked'
+  s.add_dependency 'deface'
 
-  s.add_dependency 'foreman_discovery', '~> 1.3.0.rc1'
+  s.add_dependency 'foreman_discovery', '~> 1.4.0.rc1'
 end

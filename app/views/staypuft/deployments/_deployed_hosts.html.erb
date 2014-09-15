@@ -1,12 +1,19 @@
 <% if hosts.any? %>
+<h4 class="pull-left"><%= _("Deployed Hosts") %></h4>
 <div class="" id="table_deployed_hosts">
   <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
     <div class="pull-right top_actions">
-      <%= submit_tag _("Undeploy Hosts"), :class => "btn btn-primary btn-smt",
-          :style => "visibility: hidden" %>
+      <%= render partial: "hosts_filter" %>
+      <div class="pull-right">
+        <%= submit_tag _("Unassign Hosts"),
+            :class => "btn btn-danger btn-sm",
+            :'data-toggle' => "tooltip",
+            :'data-placement' => "left",
+            :id => "undeploy_hosts_modal",
+            :disabled => true,
+            :title => _("Unassigning deployed hosts may lead to unexpected problems.") %>
+      </div>
     </div>
-    <h4 class="pull-left"><%= _("Deployed Hosts") %></h4>
-    <p class="clearfix"></p>
     <table class="table table-bordered table-striped table-condensed">
       <thead>
         <tr>
@@ -14,10 +21,13 @@
             <%= tag :input, type: 'checkbox', class: 'check_all' %>
           </th>
           <th><%= sort :name, :as => _('Name') %></th>
-          <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+          <th><%= _("Operating System") %></th>
+          <th><%= _("Model") %></th>
+          <th><%= _("Deployment Role") %></th>
+          <th><%= _("Last Report") %></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="searchable">
         <% hosts.each do |host| %>
           <tr class="checkbox_highlight">
             <td class="ca">
@@ -29,7 +39,14 @@
             <td class="ellipsis">
              <%= host_label(host) %>
             </td>
-            <td class="hidden-s hidden-xs"><%= host.ip %></td>
+            <td class="ellipsis">
+              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.os %>
+            </td>
+            <td><%= host.model_type %></td>
+            <td class="ellipsis">
+              <%= link_to(host.hostgroup.role, hosts_path(:search => "os_description = #{host.hostgroup.role}")) if host.hostgroup %>
+            </td>
+            <td><%= host.last_report %></td>
           </tr>
         <% end %>
       </tbody>

@@ -7,12 +7,13 @@ module Staypuft
     STEP_CONFIGURATION = :configuration
     STEP_COMPLETE      = :complete
     STEP_OVERVIEW      = :overview
+    STEP_NETWORKING    = :networking
 
     NEW_NAME_PREFIX = 'uninitialized_'
 
     # supporting import/export
     EXPORT_PARAMS   = [:amqp_provider, :networking, :layout_name, :platform]
-    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords] 
+    EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords, :ceph]
 
     attr_accessible :description, :name, :layout_id, :layout,
                     :amqp_provider, :layout_name, :networking, :platform
@@ -22,7 +23,6 @@ module Staypuft
     belongs_to :layout
 
     # needs to be defined before hostgroup association
-    before_destroy :prepare_destroy
     belongs_to :hostgroup, :dependent => :destroy
 
     has_many :deployment_role_hostgroups, :dependent => :destroy
@@ -41,10 +41,16 @@ module Staypuft
     has_many :services, :through => :roles
     has_many :hosts, :through => :child_hostgroups
 
+    has_many :subnet_typings, :dependent => :destroy
+    has_many :subnet_types, :through => :subnet_typings
+    has_many :subnets, :through => :subnet_typings
+
     validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true
     validates :hostgroup, :presence => true
+
+    validate :all_required_subnet_types_associated, :if => Proc.new { |o| o.form_step == STEP_NETWORKING }
 
     after_validation :check_form_complete
     before_save :update_layout
@@ -55,8 +61,7 @@ module Staypuft
               [:glance, :@glance_service, GlanceService],
               [:cinder, :@cinder_service, CinderService],
               [:passwords, :@passwords, Passwords],
-              [:vips, :@vips, VIPS],
-              [:ips, :@ips, IPS]]
+              [:ceph, :@ceph, CephService]]
 
     SCOPES.each do |name, ivar, scope_class|
       define_method name do
@@ -86,6 +91,7 @@ module Staypuft
       self.glance.set_defaults
       self.cinder.set_defaults
       self.passwords.set_defaults
+      self.ceph.set_defaults
       self.layout = Layout.where(:name       => self.layout_name,
                                  :networking => self.networking).first
     end
@@ -115,6 +121,10 @@ module Staypuft
       ForemanTasks::Lock.locked? self, nil
     end
 
+    def hide_ceph_notification?
+      ceph_hostgroup.hosts.empty?
+    end
+
     # Helper method for getting the in progress foreman task for this
     # deployment.
     def task
@@ -128,7 +138,7 @@ module Staypuft
     end
 
     def progress_summary
-      self.in_progress? ? self.task.humanized[:output] : nil 
+      self.in_progress? ? self.task.humanized[:output] : nil
     end
 
     # Helper method for getting the progress of this deployment
@@ -187,7 +197,8 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :vips, :ips, :ha?, :non_ha?
+        :nova, :neutron, :glance, :cinder, :passwords, :ceph, :ha?, :non_ha?,
+        :hide_ceph_notification?, :network_query
     end
 
     # TODO(mtaylor)
@@ -245,9 +256,9 @@ module Staypuft
 
     def horizon_url
       if ha?
-        "http://#{self.vips.get(:horizon)}"
+        "http://#{network_query.get_vip(:horizon_public_vip)}"
       else
-        self.ips.controller_ips.empty? ? nil : "http://#{self.ips.controller_ip}"
+        network_query.controller_ips(Staypuft::SubnetType::PUBLIC_API).empty? ? nil : "http://#{network_query.controller_ip(Staypuft::SubnetType::PUBLIC_API)}"
       end
     end
 
@@ -256,6 +267,21 @@ module Staypuft
         where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
                                                       role_id:       Staypuft::Role.controller }).
         first
+    end
+
+    def unassigned_subnet_types
+      self.layout.subnet_types - self.subnet_types
+    end
+
+    def ceph_hostgroup
+      Hostgroup.includes(:deployment_role_hostgroup).
+        where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
+                                                      role_id:       Staypuft::Role.cephosd }).
+        first
+    end
+
+    def network_query
+      @network_query || NetworkQuery.new(self)
     end
 
     private
@@ -270,17 +296,27 @@ module Staypuft
       update_hostgroup_list
     end
 
+    def all_required_subnet_types_associated
+      associated_subnet_types = self.subnet_typings.map(&:subnet_type)
+      missing_required = self.layout.subnet_types.required.select { |t| !associated_subnet_types.include?(t) }
+      unless missing_required.empty?
+        errors.add :base,
+                   _("Some required subnet types are missing association of a subnet. Please drag and drop following types: %s") % missing_required.map(&:name).join(', ')
+      end
+    end
+
     def update_hostgroup_name
       hostgroup.name = self.name
       hostgroup.save!
     end
 
     def update_operating_system
+      name = Setting[:base_hostgroup].include?('RedHat') ? 'RedHat' : 'CentOS'
       self.hostgroup.operatingsystem = case platform
                                        when Platform::RHEL6
-                                         Operatingsystem.where(name: 'RedHat', major: '6', minor: '5').first
+                                         Operatingsystem.where(name: name, major: '6', minor: '5').first
                                        when Platform::RHEL7
-                                         Operatingsystem.where(name: 'RedHat', major: '7', minor: '0').first
+                                         Operatingsystem.where(name: name, major: '7', minor: '0').first
                                        end or
           raise 'missing Operatingsystem'
       self.hostgroup.save!
@@ -316,11 +352,6 @@ module Staypuft
     # the form_step field to complete.
     def check_form_complete
       self.form_step = Deployment::STEP_COMPLETE if self.form_step.to_sym == Deployment::STEP_CONFIGURATION
-    end
-
-    def prepare_destroy
-      hosts.each &:open_stack_unassign
-      child_hostgroups.each &:destroy
     end
 
   end

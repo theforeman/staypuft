@@ -1,12 +1,16 @@
 <% if hosts.any? %>
+<h4 class="pull-left"><%= _("Assigned Hosts") %></h4>
 <div class="" id="table_assigned_hosts">
-  <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
+  <%= form_tag(unassign_host_deployment_path(id: @deployment), class: 'form-horizontal association', method: 'post') do |f| %>
     <div class="pull-right top_actions">
-      <%= submit_tag _("Configure Networks"), :class => "btn btn-default btn-sm", :style => "visibility: hidden" %>
-      <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :style => "visibility: hidden" %>
+      <%= render partial: "hosts_filter" %>
+      <div class="pull-right">
+        <button type="button" class= "btn btn-default btn-sm"
+                id="configure_networks_button" data-toggle = "modal"
+                data-target = "#configure_networks_modal" disabled="true"><%= _("Configure Networks") %></button>
+        <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :disabled => true, :id => "unassign_hosts_button" %>
+      </div>
     </div>
-    <h4 class="pull-left"><%= _("Assigned Hosts") %></h4>
-    <p class="clearfix"></p>
     <table class="table table-bordered table-striped table-condensed">
       <thead>
         <tr>
@@ -14,10 +18,14 @@
             <%= tag :input, type: 'checkbox', class: 'check_all' %>
           </th>
           <th><%= sort :name, :as => _('Name') %></th>
+          <th><%= _("Deployment Role") %></th>
+          <th><%= _("CPUs") %><br/><span class="text-muted small"><%= _("(cores)") %></span></th>
+          <th><%= _("Memory") %><br/><span class="text-muted small"><%= _("(GB)") %></span></th>
+          <th><%= _("NICs") %></th>
           <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="searchable">
         <% hosts.each do |host| %>
           <tr class="checkbox_highlight">
             <td class="ca">
@@ -29,11 +37,37 @@
             <td class="ellipsis">
              <%= host_label(host) %>
             </td>
+            <td class="ellipsis">
+              <%= link_to(host.hostgroup.role, hosts_path(:search => "os_description = #{host.hostgroup.role}")) if host.hostgroup %>
+            </td>
+            <td><%= host.cpus %></td>
+            <td><%= host.mem %></td>
+            <td><%= host_nics(host) %></td>
             <td class="hidden-s hidden-xs"><%= host.ip %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
+    <div class="modal fade" id="configure_networks_modal" tabindex="-1" role="dialog" aria-labelledby="<%= _("Configure Networks") %>" aria-hidden="true" data-path="<%= deployment_interface_assignments_path(@deployment.id) %>">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title" id="configure_networks_modal_label">
+                  <span class="glyphicon glyphicon-link">
+                  </span> <%= _("Configure Networks") %>
+                </h2>
+              </div>
+              <div class="modal-body">
+                <div id="interfaces"><%= image_tag '/assets/spinner.gif', style: "display: block; margin-left: auto; margin-right: auto" %></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
+                <button type="button" class="btn btn-primarym" data-dismiss="modal"><%= _("Done") %></button>
+              </div>
+            </div>
+          </div>
+        </div>
   <% end %>
 </div>
 <% else %>

@@ -46,6 +46,10 @@
   padding: 19px 36px;
   background-color: #f5f5f5;
   @include center-block;
+
+  table tbody td {
+    background-color: #fff;
+  }
 }
 
 .tabbed_side_nav_form{
@@ -70,6 +74,22 @@
         -webkit-transform:rotate(360deg);
       }
     }
+
+    & > li.tab-error > a.tab-error span {
+      visibility: visible !important;
+      padding-left: 6px;
+    }
+
+    & > li.tab-error.active {
+      a {
+        background-color: $state-danger-text;
+        color: white !important;
+      }
+
+      a:after {
+        border-color: transparent transparent transparent $state-danger-text;
+      }
+    }
   }
   .tab-content {
     min-height: 520px;
@@ -80,7 +100,7 @@
 }
 
 .wizard {
-  width: 675px;
+  width: 900px;
   display: block;
   @include center-block;
 }

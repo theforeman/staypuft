@@ -1,0 +1,12 @@
+<tr>
+  <th class="ca">
+    <%= tag :input, type: 'checkbox', class: 'check_all' %>
+  </th>
+  <th><%= sort :name, :as => _('Name') %></th>
+  <th><%= _('NICs') %></th>
+  <% if local_assigns[:deploying_col] %>
+    <th class="hidden-s hidden-xs"><%= _('Deploying?') %></th>
+  <% end %>
+  <th class="hidden-s hidden-xs"><%= _('Managed?') %></th>
+  <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+</tr>

@@ -1,0 +1,38 @@
+<tr class="checkbox_highlight <%= local_assigns[:custom_css_class] %>">
+  <td class="ca">
+    <%= check_box_tag 'host_ids[]',
+                      host.id,
+                      checkbox_value,
+                      id:       "host_ids_#{host.id}",
+                      disabled: local_assigns[:disabled]%>
+    <%= hidden_field_tag 'host_ids[]', host.id if local_assigns[:disabled] %>
+  </td>
+
+  <td class="ellipsis">
+    <%= host_label(host) %>
+  </td>
+
+  <td>
+    <%= host_nics(host) %>
+  </td>
+
+  <% unless local_assigns[:disabled].nil? %>
+    <td class="hidden-s hidden-xs">
+      <% if disabled %>
+        <span class="glyphicon glyphicon-cloud-upload"></span>
+      <% else %>
+        <span class="glyphicon glyphicon-minus"></span>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td class="hidden-s hidden-xs">
+    <% if host.managed? %>
+      <span class="glyphicon glyphicon-ok"></span>
+    <% else %>
+      <span class="glyphicon glyphicon-minus"></span>
+    <% end %>
+  </td>
+
+  <td class="hidden-s hidden-xs"><%= host.ip %></td>
+</tr>

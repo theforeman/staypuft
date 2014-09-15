@@ -4,11 +4,9 @@ module Staypuft
       'nova'
     end
 
-    INTERFACE_HELP    = Deployment::NeutronService::INTERFACE_HELP
     VLAN_HELP         = Deployment::NeutronService::VLAN_HELP
 
-    param_attr :network_manager, :vlan_range, :external_interface_name, :public_floating_range,
-               :compute_tenant_interface, :private_fixed_range
+    param_attr :network_manager, :vlan_range, :public_floating_range, :private_fixed_range
 
     class NetworkRangesValidator < ActiveModel::Validator
       def validate(record)
@@ -73,38 +71,19 @@ module Staypuft
               :if              => :vlan_manager?,
               :nova_vlan_range => true
 
-    module ExternalInterfaceName
-      HUMAN       = N_('Which interface to use for external networks')
-      HUMAN_AFTER = INTERFACE_HELP
-    end
-
-    validates :external_interface_name, presence: true
-    # TODO: interface name format validation
-
     module PublicFloatingRange
       HUMAN       = N_('Floating IP range for external network')
       HUMAN_AFTER = N_('(e.g. "10.0.0.0/24")')
     end
 
     validates :public_floating_range, presence: true
-    # TODO: interface format validation
-
-    module ComputeTenantInterface
-      HUMAN       = N_('Which interface to use for tenant networks')
-      HUMAN_AFTER = INTERFACE_HELP
-    end
-
-    validates :compute_tenant_interface,
-              :presence => true
-    # TODO: interface name format validation
 
     module PrivateFixedRange
-      HUMAN       = N_('Private IP range for tenant networks')
+      HUMAN       = N_('Fixed IP range for tenant networks')
       HUMAN_AFTER = PublicFloatingRange::HUMAN_AFTER
     end
 
     validates :private_fixed_range, presence: true
-    # TODO: interface format validation
 
     def set_defaults
       self.network_manager = NetworkManager::FLAT_DHCP
@@ -143,15 +122,13 @@ module Staypuft
     def param_hash
       { 'network_manager'          => network_manager,
         'vlan_range'               => vlan_range,
-        'external_interface_name'  => external_interface_name,
         'public_floating_range'    => public_floating_range,
-        'compute_tenant_interface' => compute_tenant_interface,
         'private_fixed_range'      => private_fixed_range }
     end
 
     class Jail < Safemode::Jail
       allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
-        :compute_tenant_interface, :external_interface_name, :num_networks
+        :num_networks
     end
 
   end

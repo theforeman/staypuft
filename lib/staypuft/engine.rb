@@ -27,21 +27,27 @@ module Staypuft
     end
 
     config.to_prepare do
+      ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Host::Managed.send :include, Staypuft::Concerns::HostDetailsHelper
       ::Host::Discovered.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
+      ::Nic::Base.send :include, Staypuft::Concerns::SubnetIpManagement
+      ::Nic::Base.send :include, Staypuft::Concerns::VipNicScopes
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
+      ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
 
-      # preload all the Foreman's lib files
-      Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
-          map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
-          map { |v| v.gsub /\.rb$/, '' }.
-          sort_by { |v| v.scan('/').size }. # ordered by the directory depth
-          map { |v| require_dependency v }
+      # preload all the Foreman's lib files but only in production
+      if Rails.env.production?
+        Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
+            map { |p| p.to_s.gsub "#{Rails.root}/lib/", '' }.
+            map { |v| v.gsub /\.rb$/, '' }.
+            sort_by { |v| v.scan('/').size }. # ordered by the directory depth
+            map { |v| require_dependency v }
+      end
     end
 
     rake_tasks do
@@ -57,7 +63,7 @@ module Staypuft
     end
 
     initializer "staypuft.assets.precompile" do |app|
-      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js)
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js)
     end
 
     initializer "load default settings" do |app|
@@ -68,7 +74,7 @@ module Staypuft
 
     initializer 'staypuft.configure_assets', :group => :assets do
       SETTINGS[:staypuft] =
-          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css) } }
+          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js) } }
     end
 
   end
