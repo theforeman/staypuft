@@ -18,6 +18,13 @@ Rails.application.routes.draw do
       resources :steps
 
       resources :interface_assignments, :only => [:index, :create, :destroy]
+
+      resources :bonds, :only => [:create, :destroy] do
+        member do
+          put 'add_slave'
+          put 'remove_slave'
+        end
+      end
     end
 
     resources :subnet_typings, :only => [:create, :destroy, :update]

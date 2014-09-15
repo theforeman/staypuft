@@ -5,6 +5,11 @@
 
 <% title _("Configure Interfaces (%s hosts)") % @hosts.size %>
 
+<%= link_to 'add bond with eth1', deployment_bonds_path(:host_ids => [280], :interface => 'eth1'), :remote => true, :method => 'POST' %>
+<%= link_to 'deleted bond0', deployment_bond_path(:host_ids => [280], :id => 'bond0'), :remote => true, :method => 'DELETE' %>
+<%= link_to 'add eth2 to bond0', add_slave_deployment_bond_path(:host_ids => [280], :id => 'bond0', :interface => 'eth2'), :remote => true, :method => 'PUT' %>
+<%= link_to 'remove eth2 from bond0', remove_slave_deployment_bond_path(:host_ids => [280], :id => 'bond0', :interface => 'eth2'), :remote => true, :method => 'PUT' %>
+
 <div class="row">
   <div class="col-md-12">
     <h3 data-toggle="collapse" data-target="#hosts_to_configure"><%= @hosts.count %> <%= "#{n_('Host', 'Hosts', @hosts.count)} #{_('to be configured')}" %> <span class="small glyphicon glyphicon-chevron-down"></span></h3>

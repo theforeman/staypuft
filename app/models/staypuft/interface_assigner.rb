@@ -69,7 +69,7 @@ module Staypuft
     def assign_virtual
       interface = Nic::Managed.new(
           :subnet => @subnet,
-          :physical_device => @interface.identifier,
+          :attached_to => @interface.identifier,
           :mac => @interface.mac,
           :host => @host,
           :virtual => true,
