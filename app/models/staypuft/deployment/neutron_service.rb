@@ -41,7 +41,7 @@ module Staypuft
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
-        :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks
+        :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types
     end
 
     def set_defaults
@@ -96,6 +96,17 @@ module Staypuft
 
     def external_interface_name(host)
       deployment.network_query.interface_for_host(host, Staypuft::SubnetType::EXTERNAL)
+    end
+
+    def ovs_tunnel_types
+      case network_segmentation
+      when NetworkSegmentation::VXLAN
+        ['vxlan']
+      when NetworkSegmentation::GRE
+        ['gre']
+      else
+        []
+      end
     end
 
     def param_hash
