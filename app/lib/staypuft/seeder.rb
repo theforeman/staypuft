@@ -236,7 +236,7 @@ module Staypuft
       ml2_tenant_network_types    = [ tenant_network_type ]
       ml2_tunnel_id_ranges        = ['10:1000']
       ml2_vni_ranges              = ['10:1000']
-      ovs_tunnel_types            = ['vxlan', 'gre']
+      ovs_tunnel_types            = { :array =>  '<%= @host.deployment.neutron.ovs_tunnel_types %>' }
       ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host) : "" %>' }
       ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings(@host) %>' }
       ovs_bridge_uplinks          = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_uplinks(@host) %>' }
