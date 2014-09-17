@@ -27,6 +27,7 @@ module Staypuft
     end
 
     config.to_prepare do
+      # Model concerns
       ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
@@ -39,6 +40,9 @@ module Staypuft
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
+
+      # Controller concerns
+      ::HostsController.send :include, Staypuft::Concerns::HostFencing
 
       # preload all the Foreman's lib files but only in production
       if Rails.env.production?
