@@ -37,20 +37,21 @@ module Staypuft
     }
     COUNT     = VIP_NAMES.size
 
-    def initialize(deployment)
+    def initialize(deployment, host=nil)
       @deployment = deployment
+      @host       = host
     end
 
-    def ip_for_host(host, subnet_type_name)
-      interface_hash_for_host(host, subnet_type_name)[:ip]
+    def ip_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:ip]
     end
 
-    def interface_for_host(host, subnet_type_name)
-      interface_hash_for_host(host, subnet_type_name)[:interface]
+    def interface_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:interface]
     end
 
-    def network_address_for_host(host, subnet_type_name)
-      subnet = interface_hash_for_host(host, subnet_type_name)[:subnet]
+    def network_address_for_host(subnet_type_name, host=@host)
+      subnet = interface_hash_for_host(subnet_type_name, host)[:subnet]
       subnet.network_address if subnet
     end
 
@@ -59,11 +60,11 @@ module Staypuft
     end
 
     def controller_ips(subnet_type_name)
-      controllers.map { |controller| ip_for_host(controller, subnet_type_name) }
+      controllers.map { |controller| ip_for_host(subnet_type_name, controller) }
     end
 
     def controller_ip(subnet_type_name)
-      ip_for_host(controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first, subnet_type_name)
+      ip_for_host(subnet_type_name, controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first)
     end
 
     def controller_fqdns
@@ -91,7 +92,7 @@ module Staypuft
     end
 
     private
-    def interface_hash_for_host(host, subnet_type_name)
+    def interface_hash_for_host(subnet_type_name, host)
       if host.nil?
         raise ArgumentError, "no host specified"
       end
