@@ -91,11 +91,11 @@ module Staypuft
     end
 
     def tenant_iface(host)
-      deployment.network_query.interface_for_host(host, Staypuft::SubnetType::TENANT)
+      deployment.network_query.interface_for_host(Staypuft::SubnetType::TENANT, host)
     end
 
     def external_interface_name(host)
-      deployment.network_query.interface_for_host(host, Staypuft::SubnetType::EXTERNAL)
+      deployment.network_query.interface_for_host(Staypuft::SubnetType::EXTERNAL, host)
     end
 
     def ovs_tunnel_types

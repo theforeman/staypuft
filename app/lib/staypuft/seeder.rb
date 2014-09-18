@@ -209,7 +209,7 @@ module Staypuft
 
     # virtual ip addresses
     def vip_format(param_name)
-      { :string => '<%%= @host.deployment.network_query.get_vip(:%s) %%>' % param_name }
+      { :string => '<%%= @host.network_query.get_vip(:%s) %%>' % param_name }
     end
 
     def functional_dependencies
@@ -224,8 +224,8 @@ module Staypuft
       network_num_networks        = { :string => '<%= @host.deployment.nova.num_networks %>' }
       network_fixed_range         = { :string => '<%= @host.deployment.nova.private_fixed_range %>' }
       network_floating_range      = { :string => '<%= @host.deployment.nova.public_floating_range %>' }
-      network_private_iface       = { :string => "<%= @host.deployment.network_query.interface_for_host(@host, '#{Staypuft::SubnetType::TENANT}') %>" }
-      network_public_iface        = { :string => "<%= @host.deployment.network_query.interface_for_host(@host, '#{Staypuft::SubnetType::EXTERNAL}') %>" }
+      network_private_iface       = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::TENANT}') %>" }
+      network_public_iface        = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::EXTERNAL}') %>" }
       network_create_networks     = true
 
       # Neutron
@@ -295,15 +295,15 @@ module Staypuft
       keystonerc = 'true'
 
       # Ceph
-      ceph_cluster_network      = { :string => "<%= @host.deployment.network_query.network_address_for_host(@host, '#{Staypuft::SubnetType::STORAGE_CLUSTERING}') %>" }
+      ceph_cluster_network      = { :string => "<%= @host.network_query.network_address_for_host('#{Staypuft::SubnetType::STORAGE_CLUSTERING}') %>" }
       # FIXME: this should actually be STORAGE instead of PXE, but only after we have a reliable way of identifying DNS names
       #        on the storage network
-      ceph_public_network      = { :string => "<%= @host.deployment.network_query.network_address_for_host(@host, '#{Staypuft::SubnetType::PXE}') %>" }
+      ceph_public_network      = { :string => "<%= @host.network_query.network_address_for_host('#{Staypuft::SubnetType::PXE}') %>" }
       ceph_fsid                = { :string => '<%= @host.deployment.ceph.fsid %>' }
       ceph_images_key          = { :string => '<%= @host.deployment.ceph.images_key %>' }
       ceph_volumes_key         = { :string => '<%= @host.deployment.ceph.volumes_key %>' }
       # FIXME: this should move to STORAGE from PXE like above
-      ceph_mon_host            = { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::PXE}') %>" }
+      ceph_mon_host            = { :array => "<%= @host.network_query.controller_ips('#{Staypuft::SubnetType::PXE}') %>" }
       # FIXME: This is currently the hostnames (which maps to fqdns on the PXE network) -- eventually we want DNS names
       #        on the Storage network
       ceph_mon_initial_members = { :array => "<%= @host.deployment.ceph.mon_initial_members %>" }
@@ -340,7 +340,7 @@ module Staypuft
       neutron_metadata_proxy_secret = { :string => '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>' }
 
 
-      private_ip   = { :string => "<%= @host.deployment.network_query.ip_for_host(@host, '#{Staypuft::SubnetType::MANAGEMENT}') %>" }
+      private_ip   = { :string => "<%= @host.deployment.network_query.ip_for_host('#{Staypuft::SubnetType::MANAGEMENT}', @host) %>" }
       # private API/management
       amqp_host    = get_host_format :amqp_vip, Staypuft::SubnetType::MANAGEMENT
       mysql_host   = get_host_format :db_vip, Staypuft::SubnetType::MANAGEMENT

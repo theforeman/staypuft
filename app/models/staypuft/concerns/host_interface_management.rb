@@ -46,6 +46,15 @@ module Staypuft
           n += 1
         end
       end
+
+      def network_query
+        @network_query || NetworkQuery.new(self.hostgroup.deployment, self)
+      end
+        
     end
   end
+end
+
+class ::Host::Managed::Jail < Safemode::Jail
+  allow :network_query
 end
