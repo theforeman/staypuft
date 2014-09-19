@@ -51,8 +51,20 @@ module Staypuft
     end
 
     def network_address_for_host(subnet_type_name, host=@host)
-      subnet = interface_hash_for_host(subnet_type_name, host)[:subnet]
+      subnet = subnet_for_host(subnet_type_name, host)
       subnet.network_address if subnet
+    end
+
+    def subnet_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:subnet]
+    end
+
+    def gateway_subnet(host=@host)
+      gateway_hash_for_host(host)[:subnet]
+    end
+
+    def gateway_interface(host=@host)
+      gateway_hash_for_host(host)[:interface]
     end
 
     def controllers
@@ -88,7 +100,8 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
-            :controller_ip, :controller_ips, :controller_fqdns, :get_vip
+            :controller_ip, :controller_ips, :controller_fqdns, :get_vip,
+            :subnet_for_host, :gateway_subnet, :gateway_interface
     end
 
     private
@@ -120,6 +133,12 @@ module Staypuft
       else
         {}
       end
+    end
+
+    def gateway_hash_for_host(host)
+      gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PUBLIC_API, host)
+      gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PXE, host) unless gateway_hash[:subnet]
+      gateway_hash
     end
   end
 end
