@@ -3,6 +3,10 @@ module Staypuft
     module NicFencingExtensions
       extend ActiveSupport::Concern
 
+      FENCING_TYPES = {
+        'fence_ipmilan' => 'IPMI'
+      }
+
       included do
         attr_accessible :attrs
       end
