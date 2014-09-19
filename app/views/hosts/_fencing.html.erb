@@ -3,7 +3,7 @@
     <%= fencing_fields.fields_for :attrs do |attrs_fields| %>
       <%= checkbox_f attrs_fields, :fencing_enabled,
                                    label: _("Enable Fencing") %>
-      <%= select_f attrs_fields, :fencing_type, [_("IPMI")], :to_s, :to_s,
+      <%= select_f attrs_fields, :fencing_type, ::Nic::Base::FENCING_TYPES, :first, :last,
                                  { include_blank: true },
                                  { label: _("Type") } %>
       <%= text_f attrs_fields, :fence_ipmilan_address,
