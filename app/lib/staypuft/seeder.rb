@@ -355,7 +355,7 @@ module Staypuft
       controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
       controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
 
-      fencing_type                   = { :string => '<%= @host.bmc_nic.attrs["fencing_type"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
+      fencing_type                   = { :string => '<%= (@host.bmc_nic && @host.bmc_nic.fencing_enabled?) ? @host.bmc_nic.attrs["fencing_type"] : "disabled" %>' }
       fence_ipmilan_address          = { :string => '<%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_username         = { :string => '<%= @host.bmc_nic.username if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_password         = { :string => '<%= @host.bmc_nic.password if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
