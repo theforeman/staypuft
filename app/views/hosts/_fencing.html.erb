@@ -1,23 +1,21 @@
 <div id="fencing_form">
-  <%= f.fields_for :fencing do |fencing_fields| %>
-    <%= fencing_fields.fields_for :attrs do |attrs_fields| %>
-      <%= checkbox_f attrs_fields, :fencing_enabled,
+  <%= f.fields_for :fencing, @host.fencing do |fencing_fields| %>
+      <%= checkbox_f fencing_fields, :fencing_enabled,
                                    label: _("Enable Fencing") %>
-      <%= select_f attrs_fields, :fencing_type, ::Nic::Base::FENCING_TYPES, :first, :last,
+      <%= select_f fencing_fields, :fencing_type, ::Host::Managed::FENCING_TYPES, :first, :last,
                                  { include_blank: true },
                                  { label: _("Type") } %>
-      <%= text_f attrs_fields, :fence_ipmilan_address,
+      <%= text_f fencing_fields, :fence_ipmilan_address,
                                label: _("IP Address") %>
-      <%= text_f attrs_fields, :fence_ipmilan_username,
+      <%= text_f fencing_fields, :fence_ipmilan_username,
                                label: _("Username")%>
-      <%= password_f attrs_fields, :fence_ipmilan_password,
+      <%= password_f fencing_fields, :fence_ipmilan_password,
                                    label: _("Password"),
                                    placeholder: '********' %>
-      <%= checkbox_f attrs_fields, :fence_ipmilan_expose_lanplus,
+      <%= checkbox_f fencing_fields, :fence_ipmilan_expose_lanplus,
                                    label: _("Expose Lanplus") %>
-      <%= text_f attrs_fields, :fence_ipmilan_lanplus_options,
+      <%= text_f fencing_fields, :fence_ipmilan_lanplus_options,
                                label: _("Lanplus Options") %>
-    <% end %>
   <% end %>
 </div>
 <div id="fencing_disabled_notice" style="display: none;">

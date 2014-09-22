@@ -3,10 +3,6 @@ module Staypuft
     module NicFencingExtensions
       extend ActiveSupport::Concern
 
-      FENCING_TYPES = {
-        'fence_ipmilan' => 'IPMI'
-      }
-
       included do
         attr_accessible :attrs
       end
@@ -21,10 +17,6 @@ module Staypuft
 
     end
   end
-end
-
-class ::Host::Managed::Jail < Safemode::Jail
-  allow :bmc_nic
 end
 
 class ::Nic::Base::Jail < Safemode::Jail
