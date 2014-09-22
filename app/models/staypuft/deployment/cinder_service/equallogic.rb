@@ -5,12 +5,17 @@ module Staypuft
     include ActiveModel::Validations
     extend ActiveModel::Naming
 
-    attr_accessor :id, :san_ip, :san_login, :san_password, :pool, :group_name
+    attr_accessor :id, :san_ip, :san_login, :san_password, :pool, :group_name,
+                  :thin_provision, :use_chap, :chap_login, :chap_password
     attr_reader :errors
 
     def initialize(attrs = {})
       @errors = ActiveModel::Errors.new(self)
       self.attributes = attrs
+      self.thin_provision = false
+      self.use_chap = false
+      self.chap_login = ''
+      self.chap_password = ''
     end
 
     def self.human_attribute_name(attr, options = {})
@@ -22,7 +27,9 @@ module Staypuft
     end
 
     def attributes
-      { 'san_ip' => nil, 'san_login' => nil, 'san_password' => nil, 'pool' => nil, 'group_name' => nil }
+      { 'san_ip' => nil, 'san_login' => nil, 'san_password' => nil, 'pool' => nil,
+        'group_name' => nil, 'thin_provision' => nil, 'use_chap' => nil,
+        'chap_login' => nil, 'chap_password' => nil }
     end
 
     def attributes=(attrs)
