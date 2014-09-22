@@ -580,7 +580,7 @@ module Staypuft
               'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_fqdns %>' } },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').join(' ') %>" },
+              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::CLUSTER_MGMT}').join(' ') %>" },
               'fencing_type'                  => fencing_type,
               'fence_ipmilan_address'         => fence_ipmilan_address,
               'fence_ipmilan_username'        => fence_ipmilan_username,
