@@ -61,7 +61,9 @@ module Staypuft
       allow :lvm_backend?, :nfs_backend?, :ceph_backend?, :equallogic_backend?,
         :multiple_backends?, :rbd_secret_uuid, :nfs_uri, :eqlxs, :eqlxs_attributes=,
         :compute_eqlx_san_ips, :compute_eqlx_san_logins, :compute_eqlx_san_passwords,
-        :compute_eqlx_group_names, :compute_eqlx_pools
+        :compute_eqlx_group_names, :compute_eqlx_pools, :compute_eqlx_thin_provision,
+        :compute_eqlx_use_chap, :compute_eqlx_chap_logins, :compute_eqlx_chap_passwords,
+        :compute_eqlx_backend_names
     end
 
     def set_defaults
@@ -121,10 +123,20 @@ module Staypuft
       Ptable.find_by_name('LVM with cinder-volumes')
     end
 
-    %w{san_ip san_login san_password group_name pool}.each do |name|
+    %w{san_ip san_login san_password group_name pool chap_login chap_password}.each do |name|
       define_method "compute_eqlx_#{name}s" do
         self.eqlxs.collect { |e| e.send name }
       end
+    end
+
+    %w{thin_provision use_chap}.each do |name|
+      define_method "compute_eqlx_#{name}" do
+        self.eqlxs.collect { |e| e.send name }
+      end
+    end
+
+    def compute_eqlx_backend_names
+      self.eqlxs.collect.with_index { |e,i| "eqlx_backend#{i+1}" }
     end
 
     private

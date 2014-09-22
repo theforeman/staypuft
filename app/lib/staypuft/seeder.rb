@@ -277,19 +277,19 @@ module Staypuft
       cinder_rbd_secret_uuid                  = { :string => '<%= @host.deployment.cinder.rbd_secret_uuid %>' }
 
       cinder_backend_eqlx           = { :string => '<%= @host.deployment.cinder.equallogic_backend? %>' }
-      cinder_backend_eqlx_name      = ['eqlx_backend']
+      cinder_backend_eqlx_name      = { :array => '<%= @host.deployment.cinder.compute_eqlx_backend_names %>'}
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
       cinder_san_ip                 = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_ips %>' }
       cinder_san_login              = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_logins %>' }
       cinder_san_password           = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_passwords %>' }
       cinder_eqlx_group_name        = { :array => '<%= @host.deployment.cinder.compute_eqlx_group_names %>' }
-      cinder_eqlx_pool              = { :array => '<%= @host.deployment.cinder.compute_eqlx_pools %>'}
+      cinder_eqlx_pool              = { :array => '<%= @host.deployment.cinder.compute_eqlx_pools %>' }
 
-      cinder_san_thin_provision     = ['false']
-      cinder_eqlx_use_chap          = ['false']
-      cinder_eqlx_chap_login        = ['']
-      cinder_eqlx_chap_password     = ['']
+      cinder_san_thin_provision     = { :array => '<%= @host.deployment.cinder.compute_eqlx_thin_provision %>' }
+      cinder_eqlx_use_chap          = { :array => '<%= @host.deployment.cinder.compute_eqlx_use_chap %>' }
+      cinder_eqlx_chap_login        = { :array => '<%= @host.deployment.cinder.compute_eqlx_chap_logins %>' }
+      cinder_eqlx_chap_password     = { :array => '<%= @host.deployment.cinder.compute_eqlx_chap_passwords %>' }
 
       # Keystone
       keystonerc = 'true'
