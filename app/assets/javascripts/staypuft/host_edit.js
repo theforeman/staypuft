@@ -28,11 +28,11 @@ $(function() {
     selected_provider = find_network_interface_field(bmc_fieldset, 'provider', 'select');
 
     ip = find_network_interface_field(bmc_fieldset, 'ip', 'input').val();
-    $('#host_fencing_attrs_fence_ipmilan_address').val(ip);
+    $('#host_fencing_fence_ipmilan_address').val(ip);
     username = find_network_interface_field(bmc_fieldset, 'username', 'input').val();
-    $('#host_fencing_attrs_fence_ipmilan_username').val(username);
+    $('#host_fencing_fence_ipmilan_username').val(username);
     password = find_network_interface_field(bmc_fieldset, 'password', 'input').val();
-    $('#host_fencing_attrs_fence_ipmilan_password').val(password);
+    $('#host_fencing_fence_ipmilan_password').val(password);
   }
 
   function disable_fencing_form() {
@@ -51,11 +51,11 @@ $(function() {
     bmc_fieldset = get_bmc_interface_form();
     selected_provider = find_network_interface_field(bmc_fieldset, 'provider', 'select');
 
-    ip = $('#host_fencing_attrs_fence_ipmilan_address').val();
+    ip = $('#host_fencing_fence_ipmilan_address').val();
     find_network_interface_field(bmc_fieldset, 'ip', 'input').val(ip);
-    username = $('#host_fencing_attrs_fence_ipmilan_username').val();
+    username = $('#host_fencing_fence_ipmilan_username').val();
     find_network_interface_field(bmc_fieldset, 'username', 'input').val(username);
-    password = $('#host_fencing_attrs_fence_ipmilan_password').val();
+    password = $('#host_fencing_fence_ipmilan_password').val();
     find_network_interface_field(bmc_fieldset, 'password', 'input').val(password);
   }
 
