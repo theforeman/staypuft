@@ -67,6 +67,10 @@ module Staypuft
       gateway_hash_for_host(host)[:interface]
     end
 
+    def gateway_interface_mac(host=@host)
+      gateway_hash_for_host(host)[:mac]
+    end
+
     def controllers
       @controllers ||= @deployment.controller_hostgroup.hosts.order(:id)
     end
@@ -101,7 +105,7 @@ module Staypuft
     class Jail < Safemode::Jail
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
             :controller_ip, :controller_ips, :controller_fqdns, :get_vip,
-            :subnet_for_host, :gateway_subnet, :gateway_interface
+            :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac
     end
 
     private
