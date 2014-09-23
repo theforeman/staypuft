@@ -12,6 +12,12 @@ module Staypuft
           instance_variable_get(:@fencing_config) or
             instance_variable_set(:@fencing_config, ::Staypuft::Host::Fencing.new(self))
         end
+
+        define_method :fencing= do |value|
+          fencing.update(value)
+        end
+
+        validates_associated :fencing
       end
     end
   end
