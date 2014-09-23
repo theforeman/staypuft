@@ -10,7 +10,7 @@ module Staypuft
       included do
         define_method :fencing do
           instance_variable_get(:@fencing_config) or
-            instance_variable_set(:@fencing_config, ::Staypuft::Host::Fencing.new(self))
+            instance_variable_set(:@fencing_config, ::Staypuft::Fencing.new(self))
         end
 
         define_method :fencing= do |value|
