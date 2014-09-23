@@ -1,6 +1,7 @@
 module Staypuft
   module Host
     class Fencing
+      include ActiveModel::Validations
 
       FENCING_ATTRS = {
         'general' => ['fencing_enabled',
@@ -12,7 +13,13 @@ module Staypuft
                             'fence_ipmilan_lanplus_options']
       }
 
+      validates :fencing_type, :presence => true, :if => Proc.new { |f|
+        f.fencing_enabled == '1' &&
+          @host.interfaces.any?{ |nic| nic.type == 'Nic::BMC' && !nic.marked_for_destruction? }
+      }
+
       def initialize(host)
+        @host = host
         FENCING_ATTRS.each do |key, attrs|
           attrs.each do |name|
             instance_var_name  = :"@#{name}"
@@ -25,6 +32,24 @@ module Staypuft
         end
       end
 
+      def update(values)
+        values.each do |key, value|
+          instance_var_name  = :"@#{key}"
+          instance_variable_set(instance_var_name, value)
+        end
+
+        bmc_nics = @host.interfaces.select{ |interface| interface.type == "Nic::BMC" }
+        return if bmc_nics.empty?
+
+        bmc_nic = bmc_nics[0]
+        bmc_nic.attrs.merge!(values)
+        bmc_nic.save
+      end
+
+      # compatibility with validates_associated
+      def marked_for_destruction?
+        false
+      end
     end
   end
 end

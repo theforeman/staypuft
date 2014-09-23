@@ -42,9 +42,6 @@ module Staypuft
       ::Host::Managed.send :include, Staypuft::Concerns::HostFencingExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
 
-      # Controller concerns
-      ::HostsController.send :include, Staypuft::Concerns::HostFencing
-
       # preload all the Foreman's lib files but only in production
       if Rails.env.production?
         Dir.glob(File.join(Rails.root, 'lib', '**', '*.rb')).
