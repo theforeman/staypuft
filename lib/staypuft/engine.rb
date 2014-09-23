@@ -27,6 +27,7 @@ module Staypuft
     end
 
     config.to_prepare do
+      # Model concerns
       ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
@@ -38,6 +39,7 @@ module Staypuft
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
+      ::Host::Managed.send :include, Staypuft::Concerns::HostFencingExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
 
       # preload all the Foreman's lib files but only in production

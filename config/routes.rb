@@ -22,10 +22,4 @@ Rails.application.routes.draw do
 
     resources :subnet_typings, :only => [:create, :destroy, :update]
   end
-
-  constraints(:id => /[^\/]+/) do
-    scope 'staypuft', module: 'staypuft' do
-      resources :hosts, as: 'staypuft_hosts'
-    end
-  end
 end
