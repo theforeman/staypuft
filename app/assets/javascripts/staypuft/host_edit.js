@@ -35,6 +35,20 @@ $(function() {
     $('#host_fencing_fence_ipmilan_password').val(password);
   }
 
+  $(document).on('click', 'fieldset#interface a.remove_nested_fields', function() { check_existence_of_bmc_interface(); });
+  function check_existence_of_bmc_interface() {
+    visible_bmc_forms = $.grep(get_bmc_interface_form(), function(fieldset) {
+      // NOTE: The second part of the condition is necessary because Foreman
+      //       inserts the form to the DOM tree incorrectly after the second
+      //       time
+      return $(fieldset).parent().is(':visible') && $(fieldset).find(':first').is(':visible');
+    });
+
+    if(visible_bmc_forms.length == 0) {
+      disable_fencing_form();
+    }
+  }
+
   function disable_fencing_form() {
     $('#fencing_form').hide();
     $('#fencing_disabled_notice').show();
