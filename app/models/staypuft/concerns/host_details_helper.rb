@@ -51,6 +51,15 @@ module Staypuft
           nil
         end
       end
+
+      # Returns array of block device names
+      def blockdevices
+        if self.facts_hash["blockdevices"]
+          self.facts_hash["blockdevices"].split(",")
+        else
+          nil
+        end
+      end
     end
   end
 end
