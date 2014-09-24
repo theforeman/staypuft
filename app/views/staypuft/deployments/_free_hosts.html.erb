@@ -11,43 +11,7 @@
                 data-target = "#role_modal" disabled="true"><%= _("Assign Hosts") %></button>
         </div>
     </div>
-    <table class="table table-bordered table-striped table-condensed">
-      <thead>
-        <tr>
-          <th class="ca">
-            <%= tag :input, type: 'checkbox', class: 'check_all' %>
-          </th>
-          <th><%= sort :name, :as => _('Name') %></th>
-          <th><%= _("Operating System") %></th>
-          <th><%= _("CPUs") %><br/><span class="text-muted small"><%= _("(cores)") %></span></th>
-          <th><%= _("Memory") %><br/><span class="text-muted small"><%= _("(GB)") %></span></th>
-          <th><%= _("NICs") %></th>
-          <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
-        </tr>
-      </thead>
-      <tbody class="searchable">
-        <% hosts.each do |host| %>
-          <tr class="checkbox_highlight">
-            <td class="ca">
-              <%= check_box_tag 'host_ids[]',
-                                host.id,
-                                false,
-                                id:       "host_ids_#{host.id}" %>
-            </td>
-            <td class="ellipsis">
-             <%= host_label(host) %>
-            </td>
-            <td class="ellipsis">
-              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.respond_to?(:os) && host.os %>
-            </td>
-            <td><%= host.cpus if host.respond_to?(:cpu) %></td>
-            <td><%= host.mem if host.respond_to?(:mem) %></td>
-            <td><%= host_nics(host) %></td>
-            <td class="hidden-s hidden-xs"><%= host.ip %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render partial: "hosts_table", locals: { hosts: hosts, operating_system_col: true } %>
     <div class="modal fade" id="role_modal" tabindex="-1" role="dialog" aria-labelledby="Deployment Roles" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">

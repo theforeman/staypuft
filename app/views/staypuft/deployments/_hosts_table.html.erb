@@ -1,0 +1,51 @@
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+        <tr>
+          <th class="ca">
+            <%= tag :input, type: 'checkbox', class: 'check_all' %>
+          </th>
+          <th><%= sort :name, :as => _('Name') %></th>
+          <% if local_assigns[:deployment_role_col] %>
+            <th><%= _("Deployment Role") %></th>
+          <% end %>
+          <% if local_assigns[:operating_system_col] %>
+            <th><%= _("Operating System") %></th>
+          <% end %>
+          <th><%= _("CPUs") %><br/><span class="text-muted small"><%= _("(cores)") %></span></th>
+          <th><%= _("Memory") %><br/><span class="text-muted small"><%= _("(GB)") %></span></th>
+          <th><%= _("Storage") %></th>
+          <th><%= _("NICs") %></th>
+          <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
+        </tr>
+      </thead>
+      <tbody class="searchable">
+        <% hosts.each do |host| %>
+          <tr class="checkbox_highlight">
+            <td class="ca">
+              <%= check_box_tag 'host_ids[]',
+                                host.id,
+                                false,
+                                id:       "host_ids_#{host.id}" %>
+            </td>
+            <td class="ellipsis">
+             <%= host_label(host) %>
+            </td>
+            <% if local_assigns[:deployment_role_col] %>
+            <td class="ellipsis">
+              <%= link_to(host.hostgroup.role, hosts_path(:search => "os_description = #{host.hostgroup.role}")) if host.hostgroup %>
+            </td>
+            <% end %>
+            <% if local_assigns[:operating_system_col] %>
+            <td class="ellipsis">
+              <%= link_to(host.os.to_label, hosts_path(:search => "os_description = #{host.os.description}")) if host.respond_to?(:os) && host.os %>
+            </td>
+            <% end %>
+            <td><%= host.cpus if host.respond_to?(:cpus) %></td>
+            <td><%= host.mem if host.respond_to?(:mem) %></td>
+            <td><%= host_disks(host) %></td>
+            <td><%= host_nics(host) %></td>
+            <td class="hidden-s hidden-xs"><%= host.ip %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
