@@ -6,9 +6,14 @@ module Staypuft
       host_ids = params[:host_ids]
       host_ids = host_ids.split(',') unless host_ids.is_a? Array
       @hosts = Host::Managed.where(:id => host_ids).includes(:interfaces)
-      @subnets = @deployment.subnets.uniq
       @host = @hosts.first
-      @interfaces = @host ? @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).physical : []
+      assigned_subnet_ids = ([@host.subnet_id] + @host.interfaces.non_vip.map(&:subnet_id)).compact.uniq
+      @subnets = @deployment.subnets.where(["#{Subnet.table_name}.id NOT IN (?)", assigned_subnet_ids]).uniq
+      if @host
+        @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
+      else
+        @interfaces = []
+      end
 
       errors = {}
       @hosts.each do |host|

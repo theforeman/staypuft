@@ -9,11 +9,11 @@ module Staypuft
       else
         # interface may be Host::Managed which means primary interface, so we create pseudo-interface object
         @interface = Nic::Managed.new(
-            :mac => interface.mac,
-            :virtual => false,
-            :identifier => interface.primary_interface,
-            :host => interface,
-            :subnet => interface.subnet)
+                :mac => interface.mac,
+                :virtual => false,
+                :identifier => interface.primary_interface,
+                :host => interface,
+                :subnet => interface.subnet)
       end
 
       @host = @interface.host
@@ -51,7 +51,15 @@ module Staypuft
 
     def unassign
       base = @host.interfaces
-      base = virtual_assignment? ? base.virtual : base.physical
+
+      # we should make sure that we delete from right base, subnet vlan may have changed meanwhile which affects
+      # virtual_assignment? result
+      if @interface.is_a?(Nic::Bond)
+        base = base.bonds
+      else
+        base = virtual_assignment? ? base.virtual : base.physical
+      end
+
       ActiveRecord::Base.transaction do
         base.where(:subnet_id => @subnet.id).each do |interface|
           virtual_assignment? ? unassign_virtual(interface) : unassign_physical(interface)
@@ -66,25 +74,30 @@ module Staypuft
 
     private
 
+    def build_new_interface(klass = Nic::Managed)
+      klass.new(
+              :attached_to => @interface.identifier,
+              :mac => @interface.mac,
+              :host => @host,
+              :virtual => true,
+              :identifier => @interface.identifier + ".#{@subnet.vlanid}"
+          )
+    end
+
     def assign_virtual
-      interface = Nic::Managed.new(
-          :subnet => @subnet,
-          :attached_to => @interface.identifier,
-          :mac => @interface.mac,
-          :host => @host,
-          :virtual => true,
-          :identifier => @interface.identifier + ".#{@subnet.vlanid}")
-      suggest_ip(interface) if @subnet.ipam?
-      unless interface.save
-        @errors.push(*interface.errors.full_messages)
-      end
+      interface = build_new_interface
+      assign_interface(interface)
     end
 
     def assign_physical
-      @interface.subnet = @subnet
-      suggest_ip(@interface) if @subnet.ipam?
-      unless @interface.save
-        @errors.push(*@interface.errors.full_messages)
+      assign_interface(@interface)
+    end
+
+    def assign_interface(interface)
+      interface.subnet = @subnet
+      suggest_ip(interface) if @subnet.ipam?
+      unless interface.save
+        @errors.push(*interface.errors.full_messages)
       end
     end
 
@@ -92,6 +105,7 @@ module Staypuft
     # subnet could become virtual/physical meanwhile
     def unassign_from_other_nics
       unassign_physicals
+      unassign_bonds
       unassign_virtuals
     end
 
@@ -111,8 +125,14 @@ module Staypuft
       end
     end
 
+    def unassign_bonds
+      @host.interfaces.bonds.where(:subnet_id => @subnet.id).each do |interface|
+        unassign_physical(interface)
+      end
+    end
+
     def unassign_virtuals
-      @host.interfaces.virtual.where(:subnet_id => @subnet.id).each do |interface|
+      @host.interfaces.virtual.where('type <> ?', Nic::Bond.to_s).where(:subnet_id => @subnet.id).each do |interface|
         unassign_virtual(interface)
       end
     end
