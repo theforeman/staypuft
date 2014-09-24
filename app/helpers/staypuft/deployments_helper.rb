@@ -52,6 +52,16 @@ module Staypuft
       host.interfaces_identifiers.compact.sort.join(tag(:br)).html_safe
     end
 
+    def host_disks(host)
+      hosts_facts = FactValue.joins(:fact_name).where(host_id: host.id)
+      blockdevices = hosts_facts.where(fact_names: { name: 'blockdevices'})
+      blockdevices.collect do |blockdevice|
+        disk_size = hosts_facts.
+            where(fact_names: { name: 'blockdevice_#{blockdevice.value}_size'}).first.try(:value)
+        "#{blockdevice.value}: #{disk_size or 'Unknown'}"
+      end.join(tag(:br)).html_safe
+    end
+
     def is_pxe?(deployment, subnet)
       subnet_typings(deployment, subnet).any? { |t| t.subnet_type.name == Staypuft::SubnetType::PXE }
     end
