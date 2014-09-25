@@ -41,6 +41,11 @@ module Staypuft
             end
           end
         end
+        unless record.private_fixed_range.empty?
+          if record.network_size < 4
+            record.errors[:private_fixed_range] << "Fixed range is too small. Specify CIDR for network size #{record.min_fixed_range_cidr} or larger"
+          end
+        end
       end
     end
 
@@ -119,6 +124,37 @@ module Staypuft
       end
     end
 
+    def fixed_range_size
+      fixed_range_str = private_fixed_range
+      if fixed_range_str.empty?
+        0
+      else
+        fixed_range = IPAddr.new(fixed_range_str).to_range
+        fixed_range.last.to_i - fixed_range.first.to_i + 1
+      end
+    end
+
+    # network size is equal to the number of IP addresses in
+    # the fixed range, divided by the number of networks,
+    # rounded *down* to the next power of two (or zero if <1)
+    def network_size
+      unrounded_size = fixed_range_size / num_networks
+      if unrounded_size < 1
+        0
+      else
+        2**Math.log(unrounded_size,2).floor
+      end
+    end
+
+    # for the current num_networks value (1 for non-vlan;
+    # based on the vlan range for VLAN, this calculates
+    # the smallest fixed range network cidr assuming the
+    # smallest useful network size of 4 (2 hosts+network
+    # address+broadcast address)
+    def min_fixed_range_cidr
+      "/#{32 - Math.log(4*num_networks,2).ceil}"
+    end
+
     def param_hash
       { 'network_manager'          => network_manager,
         'vlan_range'               => vlan_range,
@@ -128,7 +164,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
-        :num_networks
+        :num_networks, :network_size
     end
 
   end

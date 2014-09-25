@@ -222,6 +222,7 @@ module Staypuft
       # multi_host handled inline, since it's two separate static values 'true' and 'True'
       network_overrides           = { :hash =>   '<%= @host.deployment.nova.network_overrides %>' }
       network_num_networks        = { :string => '<%= @host.deployment.nova.num_networks %>' }
+      network_network_size        = { :string => '<%= @host.deployment.nova.network_size %>' }
       network_fixed_range         = { :string => '<%= @host.deployment.nova.private_fixed_range %>' }
       network_floating_range      = { :string => '<%= @host.deployment.nova.public_floating_range %>' }
       network_private_iface       = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::TENANT}') %>" }
@@ -686,6 +687,7 @@ module Staypuft
               'network_manager'            => network_manager,
               'network_overrides'          => network_overrides,
               'network_num_networks'       => network_num_networks,
+              'network_network_size'       => network_network_size,
               'network_fixed_range'        => network_fixed_range,
               'network_floating_range'     => network_floating_range,
               'network_private_iface'      => network_private_iface,
