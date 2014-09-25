@@ -54,8 +54,7 @@ module Staypuft
 
     def host_disks(host)
       hosts_facts = FactValue.joins(:fact_name).where(host_id: host.id)
-      blockdevices = host.blockdevices.nil? ? [] : host.blockdevices
-      blockdevices.collect do |blockdevice|
+      host.blockdevices.collect do |blockdevice|
         disk_size = hosts_facts.
             where(fact_names: { name: 'blockdevice_#{blockdevice}_size'}).first.try(:value)
         "#{blockdevice}: #{disk_size or 'Unknown'}"

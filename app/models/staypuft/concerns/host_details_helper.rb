@@ -57,7 +57,7 @@ module Staypuft
         if self.facts_hash["blockdevices"]
           self.facts_hash["blockdevices"].split(",")
         else
-          nil
+          []
         end
       end
     end
