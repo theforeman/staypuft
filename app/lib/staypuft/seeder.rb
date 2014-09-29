@@ -105,7 +105,9 @@ module Staypuft
         :mysql_ha           => { :name => 'Mysql (HA)', :class => ['quickstack::pacemaker::mysql'] },
         :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] },
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
-        :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)', :class => ['quickstack::openstack_common'] },
+        :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
+                                 :class => ['quickstack::openstack_common',
+                                            'quickstack::ceph::config'] },
     }
 
     # The list of roles is still from astapor
@@ -308,6 +310,9 @@ module Staypuft
       # FIXME: This is currently the hostnames (which maps to fqdns on the PXE network) -- eventually we want DNS names
       #        on the Storage network
       ceph_mon_initial_members = { :array => "<%= @host.deployment.ceph.mon_initial_members %>" }
+      ceph_osd_pool_size       = ''
+      ceph_osd_journal_size    = ''
+
 
       # effective_value grabs shared password if deployment is in shared password mode,
       # otherwise use the service-specific one
@@ -743,7 +748,19 @@ module Staypuft
               'nova_host'                  => nova_host,
               'private_ip'                 => private_ip },
           'quickstack::pacemaker::rsync::keystone' => {
-              'keystone_private_vip' => vip_format(:keystone) } }
+              'keystone_private_vip' => vip_format(:keystone) },
+          'quickstack::ceph::config' => {
+              'fsid'                       => ceph_fsid,
+              'mon_initial_members'        => ceph_mon_initial_members,
+              'mon_host'                   => ceph_mon_host,
+              'cluster_network'            => ceph_cluster_network,
+              'public_network'             => ceph_public_network,
+              'images_key'                 => ceph_images_key,
+              'volumes_key'                => ceph_volumes_key,
+              'osd_pool_default_size'      => ceph_osd_pool_size,
+              'osd_journal_size'           => ceph_osd_journal_size
+          }
+      }
     end
 
     def get_key_type_and_value(value)
