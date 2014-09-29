@@ -310,8 +310,8 @@ module Staypuft
       # FIXME: This is currently the hostnames (which maps to fqdns on the PXE network) -- eventually we want DNS names
       #        on the Storage network
       ceph_mon_initial_members = { :array => "<%= @host.deployment.ceph.mon_initial_members %>" }
-      ceph_osd_pool_size       = ''
-      ceph_osd_journal_size    = ''
+      ceph_osd_pool_size       = { :string => '<%= @host.deployment.ceph.osd_pool_size %>' }
+      ceph_osd_journal_size    = { :string => '<%= @host.deployment.ceph.osd_journal_size %>' }
 
 
       # effective_value grabs shared password if deployment is in shared password mode,
@@ -533,6 +533,8 @@ module Staypuft
               'ceph_volumes_key'              => ceph_volumes_key,
               'ceph_mon_host'                 => ceph_mon_host,
               'ceph_mon_initial_members'      => ceph_mon_initial_members,
+              'ceph_osd_pool_default_size'    => ceph_osd_pool_size,
+              'ceph_osd_journal_size'         => ceph_osd_journal_size,
               'cinder_db_password'            => cinder_db_pw,
               'cinder_user_password'          => cinder_user_pw,
               'glance_db_password'            => glance_db_pw,
