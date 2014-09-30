@@ -36,7 +36,6 @@ module Staypuft
         'auto_assign_floating_ip'      => 'true',
         'cisco_vswitch_plugin'         => 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2',
         'cisco_nexus_plugin'           => 'neutron.plugins.cisco.nexus.cisco_nexus_plugin_v2.NexusPlugin',
-        'nexus_config'                 => { :hash => {}},
         'nexus_credentials'            => [],
         'provider_vlan_auto_create'    => 'false',
         'provider_vlan_auto_trunk'     => 'false',
@@ -237,6 +236,7 @@ module Staypuft
       ml2_tenant_network_types    = [ tenant_network_type ]
       ml2_tunnel_id_ranges        = ['10:1000']
       ml2_vni_ranges              = ['10:1000']
+      ml2_mechanism_drivers       = { :array =>  '<%= @host.deployment.neutron.ml2_mechanisms %>' }
       ovs_tunnel_types            = { :array =>  '<%= @host.deployment.neutron.ovs_tunnel_types %>' }
       ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host) : "" %>' }
       ovs_bridge_mappings         = { :array =>  '<%= @host.deployment.neutron.networker_ovs_bridge_mappings(@host) %>' }
@@ -366,6 +366,9 @@ module Staypuft
       fence_ipmilan_expose_lanplus   = { :string => '<%= @host.bmc_nic.expose_lanplus? if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
       fence_ipmilan_lanplus_options  = { :string => '<%= @host.bmc_nic.attrs["fence_ipmilan_lanplus_options"] if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
 
+      # Cisco Nexus
+      cisco_nexus_config             = { :hash => '<%= n = @host.deployment.neutron; (n.active? && n.cisco_nexus_mechanism?) ? n.compute_cisco_nexus_config : {} %>' }
+
       {
           'quickstack::nova_network::controller'   => {
               'amqp_provider'                           => amqp_provider,
@@ -450,6 +453,7 @@ module Staypuft
               'ml2_tenant_network_types'                => ml2_tenant_network_types,
               'ml2_tunnel_id_ranges'                    => ml2_tunnel_id_ranges,
               'ml2_vni_ranges'                          => ml2_vni_ranges,
+              'ml2_mechanism_drivers'                   => ml2_mechanism_drivers,
               'ovs_vlan_ranges'                         => ovs_vlan_ranges,
               'enable_tunneling'                        => enable_tunneling,
               'cinder_backend_gluster'                  => cinder_backend_gluster,
@@ -515,7 +519,8 @@ module Staypuft
               'cinder_gluster_shares'                   => [],
               'controller_admin_host'                   => controller_admin_host,
               'controller_priv_host'                    => controller_priv_host,
-              'controller_pub_host'                     => controller_pub_host },
+              'controller_pub_host'                     => controller_pub_host,
+              'nexus_config'                            => cisco_nexus_config },
           'quickstack::pacemaker::params'          => {
               'include_swift'                 => 'false',
               'include_neutron'               => neutron,
@@ -595,12 +600,14 @@ module Staypuft
               'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
               'ml2_tenant_network_types' => ml2_tenant_network_types,
               'ml2_tunnel_id_ranges'     => ml2_tunnel_id_ranges,
+              'ml2_mechanism_drivers'    => ml2_mechanism_drivers,
               'enable_tunneling'         => enable_tunneling,
               'ovs_bridge_mappings'      => ovs_bridge_mappings,
               'ovs_bridge_uplinks'       => ovs_bridge_uplinks,
               'ovs_tunnel_iface'         => ovs_tunnel_iface,
               'ovs_tunnel_types'         => ovs_tunnel_types,
-              'ovs_vlan_ranges'          => ovs_vlan_ranges },
+              'ovs_vlan_ranges'          => ovs_vlan_ranges,
+              'nexus_config'             => cisco_nexus_config },
           'quickstack::pacemaker::glance'          => {
               'backend'         => backend,
               'pcmk_fs_type'    => pcmk_fs_type,
