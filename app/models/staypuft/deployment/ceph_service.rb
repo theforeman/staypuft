@@ -22,7 +22,7 @@ module Staypuft
     end
 
     def mon_initial_members
-      fqdns = deployment.network_query.controller_fqdns.map {|fqdn| fqdn.split(".").first}
+      deployment.network_query.controller_shortnames
     end
 
     def param_hash
