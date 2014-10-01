@@ -4,20 +4,29 @@ Staypuft is the name of the OpenStack Foreman Installer plugin for The Foreman.
 
 ## Installation
 
-See [How_to_Install_a_Plugin](http://projects.theforeman.org/projects/foreman/wiki/How_to_Install_a_Plugin)
+You can either use [staypuft-installer](https://github.com/theforeman/foreman-installer-staypuft) which is basically
+foreman installer with staypuft specific wizards or you can install staypuft 
+plugin into existing foreman instance. The first options is preferred and you
+can find more instructions in installer README.
+
+See [How to Install a Plugin](http://theforeman.org/manuals/1.6/index.html#6.1InstallaPlugin)
 for how to install Foreman plugins
-
-Symlink `config/staypuft.local.rb` to yours Foreman `bundle.d`.
-
-    ln -s ../../Staypuft/config/staypuft.local.rb staypuft.local.rb
 
 ## Development setup
 
-See [this](doc/setup.md) document.
+See howto for development setup
+- [fedora 19](doc/setup_fedora.md)
+- [centos 6.5](doc/setup_centos.md) - a bit easier way
 
 ## Contributing
 
-Fork and send a Pull Request. Thanks!
+If you found an issue, you can report it in [Bugzilla](https://bugzilla.redhat.com/buglist.cgi?component=rubygem-staypuft&product=Red%20Hat%20OpenStack).
+If you want to chat about the issue or staypuft in general, we are on freenode 
+irc server on channel #staypuft. We also have mailing list to which you can
+subscribe [here](https://www.redhat.com/mailman/listinfo/rdo-list). For staypuft
+related questions please add [Installer] tag in subject.
+
+If you want to send a patch, fork the projects and send a Pull Request. Thanks!
 
 ## Release a new version
 

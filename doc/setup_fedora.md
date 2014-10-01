@@ -112,6 +112,8 @@ redirected in Apache to thin running form checkout with Staypuft.
         LoadModule proxy_module modules/mod_proxy.so
         LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
         LoadModule proxy_http_module modules/mod_proxy_http.so
+        LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+        LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
         
         <Proxy balancer://thinserversforeman>
           BalancerMember http://your.machine:3000/ # use fqdn not localhost
@@ -120,6 +122,10 @@ redirected in Apache to thin running form checkout with Staypuft.
         RewriteEngine On
         # RewriteCond %{REQUEST_URI} !^/pulp.*$ # needed when installed with Katello
         RewriteRule ^/(.*)$ balancer://thinserversforeman%{REQUEST_URI} [P,QSA,L]
+        ProxyPassReverse / http://your.machine:3000/
+        ProxyPass / balancer://thinserversforeman
+        ProxyPreserveHost on
+
 
 -   Use same DB or copy to the other machine.
 -   check the settings of your new foreman process: modulepath, foreman_url,
@@ -145,8 +151,8 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
 -   the plugin it is a dependency of Staypuft _when #39 is merged_
 -   install tftp images, on the machine with proxy execute:
     -   `cd /var/lib/tftpboot/boot`
-    -   `wget http://yum.theforeman.org/discovery/releases/0.3/discovery-prod-0.3.0-1-initrd.img`
-    -   `wget http://yum.theforeman.org/discovery/releases/0.3/discovery-prod-0.3.0-1-vmlinuz`
+    -   `wget http://downloads.theforeman.org/discovery/nightly/foreman-discovery-image-latest.el6.iso-img`
+    -   `wget http://downloads.theforeman.org/discovery/nightly/foreman-discovery-image-latest.el6.iso-vmlinuz`
 -   turn off setting Provisioning/`safemode_render` for `<%= Setting['foreman_url'] %>` to work
 -   change PXELinux global default template to following
 
@@ -166,8 +172,8 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
         
         LABEL discovery
         MENU LABEL Foreman Discovery
-        KERNEL boot/discovery-prod-0.3.0-1-vmlinuz
-        APPEND rootflags=loop initrd=boot/discovery-prod-0.3.0-1-initrd.img root=live:/foreman.iso rootfstype=auto ro rd.live.image rd.live.check rd.lvm=0 rootflags=ro crashkernel=128M elevator=deadline max_loop=256 rd.luks=0 rd.md=0 rd.dm=0 foreman.url=<%= Setting['foreman_url'] %> nomodeset selinux=0 stateless
+        KERNEL boot/foreman-discovery-image-latest.el6.iso-vmlinuz
+        APPEND rootflags=loop initrd=boot/foreman-discovery-image-latest.el6.iso-img root=live:/foreman.iso rootfstype=auto ro rd.live.image rd.live.check rd.lvm=0 rootflags=ro crashkernel=128M elevator=deadline max_loop=256 rd.luks=0 rd.md=0 rd.dm=0 foreman.url=<%= Setting['foreman_url'] %> nomodeset selinux=0 stateless
 -   build PXE default
 -   foreman web process has to have access to discovered hosts by IP adresses, 
     if the foreman web process is running on the same machine as the virtual network then all is good, otherwise:

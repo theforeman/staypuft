@@ -27,6 +27,7 @@ module Staypuft
     end
 
     config.to_prepare do
+      # Model concerns
       ::Host::Base.send :include, Staypuft::Concerns::HostInterfaceManagement
       ::Host::Managed.send :include, Staypuft::Concerns::HostOrchestrationBuildHook
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
@@ -38,6 +39,7 @@ module Staypuft
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
+      ::Host::Managed.send :include, Staypuft::Concerns::HostFencingExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
 
       # preload all the Foreman's lib files but only in production
@@ -63,7 +65,7 @@ module Staypuft
     end
 
     initializer "staypuft.assets.precompile" do |app|
-      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js)
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js)
     end
 
     initializer "load default settings" do |app|
@@ -74,7 +76,7 @@ module Staypuft
 
     initializer 'staypuft.configure_assets', :group => :assets do
       SETTINGS[:staypuft] =
-          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js) } }
+          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js) } }
     end
 
   end

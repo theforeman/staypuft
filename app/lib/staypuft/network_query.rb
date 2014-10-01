@@ -37,21 +37,38 @@ module Staypuft
     }
     COUNT     = VIP_NAMES.size
 
-    def initialize(deployment)
+    def initialize(deployment, host=nil)
       @deployment = deployment
+      @host       = host
     end
 
-    def ip_for_host(host, subnet_type_name)
-      interface_hash_for_host(host, subnet_type_name)[:ip]
+    def ip_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:ip]
     end
 
-    def interface_for_host(host, subnet_type_name)
-      interface_hash_for_host(host, subnet_type_name)[:interface]
+    def interface_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:interface]
     end
 
-    def network_address_for_host(host, subnet_type_name)
-      subnet = interface_hash_for_host(host, subnet_type_name)[:subnet]
+    def network_address_for_host(subnet_type_name, host=@host)
+      subnet = subnet_for_host(subnet_type_name, host)
       subnet.network_address if subnet
+    end
+
+    def subnet_for_host(subnet_type_name, host=@host)
+      interface_hash_for_host(subnet_type_name, host)[:subnet]
+    end
+
+    def gateway_subnet(host=@host)
+      gateway_hash_for_host(host)[:subnet]
+    end
+
+    def gateway_interface(host=@host)
+      gateway_hash_for_host(host)[:interface]
+    end
+
+    def gateway_interface_mac(host=@host)
+      gateway_hash_for_host(host)[:mac]
     end
 
     def controllers
@@ -59,11 +76,11 @@ module Staypuft
     end
 
     def controller_ips(subnet_type_name)
-      controllers.map { |controller| ip_for_host(controller, subnet_type_name) }
+      controllers.map { |controller| ip_for_host(subnet_type_name, controller) }
     end
 
     def controller_ip(subnet_type_name)
-      ip_for_host(controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first, subnet_type_name)
+      ip_for_host(subnet_type_name, controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first)
     end
 
     def controller_fqdns
@@ -87,11 +104,12 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
-            :controller_ip, :controller_ips, :controller_fqdns, :get_vip
+            :controller_ip, :controller_ips, :controller_fqdns, :get_vip,
+            :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac
     end
 
     private
-    def interface_hash_for_host(host, subnet_type_name)
+    def interface_hash_for_host(subnet_type_name, host)
       if host.nil?
         raise ArgumentError, "no host specified"
       end
@@ -119,6 +137,12 @@ module Staypuft
       else
         {}
       end
+    end
+
+    def gateway_hash_for_host(host)
+      gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PUBLIC_API, host)
+      gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PXE, host) unless gateway_hash[:subnet]
+      gateway_hash
     end
   end
 end
