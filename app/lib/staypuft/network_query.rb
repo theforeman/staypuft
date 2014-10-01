@@ -87,6 +87,10 @@ module Staypuft
       controllers.map &:fqdn
     end
 
+    def controller_shortnames
+      controllers.map &:shortname
+    end
+
     def vip_controller
       controllers.each do |controller|
         return controller unless controller.interfaces.vip.empty?
