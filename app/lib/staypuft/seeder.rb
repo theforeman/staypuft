@@ -304,7 +304,7 @@ module Staypuft
       ceph_images_key          = { :string => '<%= @host.deployment.ceph.images_key %>' }
       ceph_volumes_key         = { :string => '<%= @host.deployment.ceph.volumes_key %>' }
       # FIXME: this should move to STORAGE from PXE like above
-      ceph_mon_host            = { :array => "<%= @host.network_query.controller_ips('#{Staypuft::SubnetType::PXE}') %>" }
+      ceph_mon_host            = { :array => "<%= @host.network_query.controller_ips('#{Staypuft::SubnetType::STORAGE}') %>" }
       # FIXME: This is currently the hostnames (which maps to fqdns on the PXE network) -- eventually we want DNS names
       #        on the Storage network
       ceph_mon_initial_members = { :array => "<%= @host.deployment.ceph.mon_initial_members %>" }
