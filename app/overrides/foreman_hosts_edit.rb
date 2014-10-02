@@ -7,7 +7,7 @@ end
 
 Deface::Override.new(:virtual_path => "hosts/_form",
                      :name => "include_custom_js_for_hosts_edit",
-                     :insert_after => "erb[loud]:contains('form_for')",
+                     :insert_after => "li > a[href='#network']",
                      :text => "<%= javascript 'staypuft/host_edit'%>"
                      )
 
