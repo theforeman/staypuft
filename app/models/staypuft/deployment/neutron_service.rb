@@ -165,8 +165,7 @@ module Staypuft
     private
 
     def at_least_one_mechanism_selected
-      params = ML2MECHANISM_TYPES.clone
-      unless params.detect(lambda { false }) { |field| self.send(field) == "true" }
+      if ml2_mechanisms.empty?
         errors.add :base, _("At least one ML2 mechanism must be selected")
       end
     end
