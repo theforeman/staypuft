@@ -15,7 +15,9 @@ module Staypuft
 
         bond = Nic::Bond.new
         bond.identifier = "bond#{i}"
-        bond.add_slave(params[:interface])
+        params[:interfaces].each do |interface|
+          bond.add_slave(interface)
+        end
         bond.mode = 'balance-tlb'
         bond.bond_options = 'miimon=100'
         bond.host = host
@@ -67,6 +69,9 @@ module Staypuft
 
     def find_hosts
       @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)
+      @host = @hosts.first
+      @deployment = Deployment.find(params[:deployment_id])
+      @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
     end
   end
 end

@@ -1,0 +1,8 @@
+<% if @result %>
+  $("#network-interfaces > .col-md-12").html(
+    '<%=j render :partial => 'staypuft/interface_assignments/interfaces',
+                 :locals => { :host => @host,
+                              :hosts => @hosts,
+                              :deployment => @deployment,
+                              :interfaces => @interfaces } %>');
+<% end %>
