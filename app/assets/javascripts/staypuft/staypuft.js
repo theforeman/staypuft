@@ -234,6 +234,12 @@ $(function () {
           });
         }
     });
+    $('#configure_networks_modal .done').live('click', function(){
+      $("input:checkbox[name=host_ids[]]:checked").removeAttr('checked')
+      $("tr.checkbox_highlight").removeClass('checkbox_highlight');
+      $("tr.info").removeClass('info');
+
+    })
   });
 
   var scrolled = false;
