@@ -18,7 +18,6 @@ module Staypuft
 
       if errors.present?
         flash[:error] = errors.map{ |k, v| "#{k}: #{v}" }.join('<br />')
-        redirect_to deployment_path(@deployment)
       end
     end
 
