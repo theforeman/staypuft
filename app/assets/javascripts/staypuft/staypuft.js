@@ -148,6 +148,20 @@ $(function () {
     }
   }
 
+  showNeutronMl2CiscoNexus();
+  $("#staypuft_deployment_neutron_ml2_cisco_nexus").change(showNeutronMl2CiscoNexus);
+  function showNeutronMl2CiscoNexus() {
+    if ($('#staypuft_deployment_neutron_ml2_cisco_nexus').is(":checked")) {
+      $('.neutron_cisco_nexus').show();
+      if($('#nexuses').children().length == 0) {
+        $('.add_another_switch').click();
+      }
+    }
+    else {
+      $('.neutron_cisco_nexus').hide();
+    }
+  }
+
   showCephNotification();
   function showCephNotification() {
     var cephDeploymentNotification = readFromCookie();
@@ -305,7 +319,24 @@ $(function () {
     }
   })
 
-  $(".eqlx h5 a.remove").live("click", function(){
+  $("button.add_another_switch").live("click", function() {
+    var nexus_form = function() {
+      return $('#nexus_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
+    }
+    $('#nexuses').append(nexus_form());
+    if($('#nexuses').children().length > 1) {
+      var added_form_span = $('#nexuses').children().last().find('h5').find('.switch_number');
+      var previous_span_number = $('#nexuses').children().eq(-2).find('h5').find('.switch_number');
+      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
+    }
+  })
+
+  function remove_element_on_click(element_name) {
+    $(element_name + " h5 a.remove").live("click", function(){
       $(this).parent().parent().remove();
-  });
+    });
+  }
+
+  remove_element_on_click('.eqlx');
+  remove_element_on_click('.nexus');
 });

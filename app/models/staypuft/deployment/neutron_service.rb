@@ -6,8 +6,10 @@ module Staypuft
 
     SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
     VLAN_HELP         = N_('[1-4094] (e.g. 10:15)')
+    ML2MECHANISM_TYPES = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
 
-    param_attr :network_segmentation, :tenant_vlan_ranges
+    param_attr :network_segmentation, :tenant_vlan_ranges, *ML2MECHANISM_TYPES
+    param_attr_array :nexuses => Cisconexus
 
     module NetworkSegmentation
       VXLAN  = 'vxlan'
@@ -30,7 +32,7 @@ module Staypuft
     end
 
     class NeutronVlanRangesValidator < ActiveModel::EachValidator
-      include Staypuft::Deployment::VlanRangeValuesValidator 
+      include Staypuft::Deployment::VlanRangeValuesValidator
     end
 
     validates :tenant_vlan_ranges,
@@ -38,14 +40,36 @@ module Staypuft
               :if                  => :vlan_segmentation?,
               :neutron_vlan_ranges => true
 
+    module Ml2Mechanisms
+      OPENVSWITCH = 'openvswitch'
+      L2POPULATION = 'l2population'
+      CISCO_NEXUS = 'cisco_nexus'
+      LABELS = { OPENVSWITCH => N_('Open vSwitch'),
+                 L2POPULATION => N_('L2 Population'),
+                 CISCO_NEXUS => N_('Cisco Nexus') }
+      TYPES = LABELS.keys
+      HUMAN = N_('ML2 Mechanism Drivers')
+    end
+    validate  :at_least_one_mechanism_selected
+    validate  :cisco_nexuses,
+              :if          => :cisco_nexus_mechanism?
+    validates :nexuses,
+              :presence   => true,
+              :if         => :cisco_nexus_mechanism?
+
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
-        :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types
+        :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types,
+        :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
+        :ml2_mechanisms, :nexuses
     end
 
     def set_defaults
       self.network_segmentation   = NetworkSegmentation::VXLAN
+      self.ml2_openvswitch = "true"
+      self.ml2_l2population = "true"
+      self.ml2_cisco_nexus = "false"
     end
 
     def active?
@@ -109,9 +133,47 @@ module Staypuft
       end
     end
 
+    def openvswitch_mechanism?
+      self.ml2_openvswitch == "true"
+    end
+
+    def l2population_mechanism?
+      self.ml2_l2population == "true"
+    end
+
+    def cisco_nexus_mechanism?
+      self.ml2_cisco_nexus == "true"
+    end
+
+    def compute_cisco_nexus_config
+      Hash[nexuses.map { |nexus| [nexus.hostname, nexus.config_hash] }]
+    end
+
+    def ml2_mechanisms
+      Ml2Mechanisms::TYPES.map { |ml2_type| ml2_type if self.send("#{ml2_type}_mechanism?") }.compact
+    end
+
     def param_hash
       { 'network_segmentation'       => network_segmentation,
-        'tenant_vlan_ranges'         => tenant_vlan_ranges }
+        'tenant_vlan_ranges'         => tenant_vlan_ranges,
+        'ml2_openvswitch'            => ml2_openvswitch,
+        'ml2_l2population'           => ml2_l2population,
+        'ml2_cisco_nexus'            => ml2_cisco_nexus,
+        'nexuses'                    => nexuses }
+    end
+
+    private
+
+    def at_least_one_mechanism_selected
+      if ml2_mechanisms.empty?
+        errors.add :base, _("At least one ML2 mechanism must be selected")
+      end
+    end
+
+    def cisco_nexuses
+      unless self.nexuses.all? { |item| item.valid? }
+        errors.add :base, _("Please fix the problems in selected mechanisms")
+      end
     end
 
   end

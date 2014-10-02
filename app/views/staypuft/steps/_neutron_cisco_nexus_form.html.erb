@@ -1,0 +1,17 @@
+          <div class="nexus well">
+          <h5 class="muted"><a href="#" class="remove"><i class="glyphicon glyphicon-remove-sign ">&nbsp;</i></a>&nbsp;Switch #<span class="switch_number">1</span></h5>
+          <%= text_f e, :hostname, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::Hostname::HUMAN) %>
+          <%= text_f e, :ip, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::Ip::HUMAN) %>
+          <%= text_f e, :login, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::Login::HUMAN) %>
+          <%= text_f e, :password, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::Password::HUMAN) %>
+          <%= text_f e, :ssh_port, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::SshPort::HUMAN) %>
+          <%= textarea_f e, :port_map, class: "neutron_cisco_nexus",
+                    label: _(Staypuft::Deployment::NeutronService::Cisconexus::PortMap::HUMAN),
+                    rows: 5,
+                    help_inline: _(Staypuft::Deployment::NeutronService::Cisconexus::PortMap::HELP_INLINE) %>
+          </div>

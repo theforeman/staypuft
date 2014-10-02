@@ -1,4 +1,6 @@
 <%= f.fields_for :neutron, @deployment.neutron do |p| %>
+  <%= base_errors_for @deployment.neutron %>
+  <div class="form-group <%= @deployment.neutron.errors.empty? ? "" : 'has-error' %> hide"></div>
   <%= change_label_width(4, field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
     Staypuft::Deployment::NeutronService::NetworkSegmentation::LABELS.map do |value, label|
       radio_button_f_non_inline(p, :network_segmentation,
@@ -12,6 +14,43 @@
     <%= change_label_width 4, text_f(p, :tenant_vlan_ranges, class: "neutron_tenant_vlan_ranges",
                                      label:                         _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN),
                                      help_inline:                   _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER)) %>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-4 control-label"><%= _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::HUMAN) %></label>
+    <div class="col-md-4">
+      <%= check_box_f_non_inline(p, :ml2_openvswitch,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :checked         => @deployment.neutron.openvswitch_mechanism?,
+                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['openvswitch']))
+      %>
+      <%= check_box_f_non_inline(p, :ml2_l2population,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :checked         => @deployment.neutron.l2population_mechanism?,
+                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['l2population']))
+      %>
+      <%= check_box_f_non_inline(p, :ml2_cisco_nexus,
+                                 :checked_value   => 'true',
+                                 :unchecked_value => 'false',
+                                 :checked         => @deployment.neutron.cisco_nexus_mechanism?,
+                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['cisco_nexus']))
+      %>
+    </div>
+  </div>
+  <div class="neutron_cisco_nexus col-md-offset-1 hide">
+    <div id="nexuses" class="neutron_nexus_picker">
+      <% @deployment.neutron.nexuses.each_with_index do |nexus, index| %>
+        <%= p.fields_for "nexuses[]", nexus, index: index do |e| %>
+          <% render partial: 'neutron_cisco_nexus_form', locals: {e: e} %>
+        <% end %>
+      <% end %>
+    </div>
+    <script type='html/template' id='nexus_form_template'>
+      <%= p.fields_for 'nexuses[]', Staypuft::Deployment::NeutronService::Cisconexus.new, index: 'NEW_RECORD' do |e| render(partial: 'neutron_cisco_nexus_form', locals: {e: e}); end %>
+    </script>
+    <button type="button" class= "btn btn-primary btn-sm add_another_switch"><%= _("Add Another Switch") %></button> 
   </div>
 
 <% end %>
