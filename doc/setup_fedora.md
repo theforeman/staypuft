@@ -17,7 +17,9 @@ redirected in Apache to thin running form checkout with Staypuft.
 -   `yum -y install http://yum.theforeman.org/releases/1.5/f19/x86_64/foreman-release.rpm`
 -   `yum -y install foreman-installer`
 -   `yum -y install foreman-libvirt`
--   disabled selinux `setenforce` and edit `/etc/sysconfig/selinux`
+-   disable selinux:
+    - `setenforce Permissive`
+    - edit `/etc/sysconfig/selinux` and set SELINUX=disabled
 
 -   allow ports in firewall
     _I've used F19 firewall config tool:_ `firewall-config`
@@ -144,17 +146,30 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
         [production]
         modulepath     = /etc/puppet/environments/production/modules:/etc/puppet/environments/common:/usr/share/puppet/modules:/{git-root}/openstack-puppet-modules:{git-root}/astapor/puppet/modules
 
--   `rake puppet:import:puppet_classes[batch]` alternatively use `foreman-rake` when on rpm version
+-   `rake puppet:import:puppet_classes[batch]`
+    - If using the rpm version, then substitute `foreman-rake` for `rake`
+-   If an error results stating that the sqlite3 gem is required, then:
+        yum -y install ruby-devel gcc libsqlite3x-devel
+        gem install sqlite3
 
 ## Foreman Discovery setup
 
 -   the plugin it is a dependency of Staypuft _when #39 is merged_
+-   install the discovery plugin
+    - Create /etc/yum.repos.d/foreman_plugins.repo containing the following:
+        [foreman-plugins]
+        name=Foreman plugins
+        baseurl=http://yum.theforeman.org/plugins/1.6/el6/x86_64/
+        enabled=1
+        gpgcheck=0
+    - `yum -y install rubygem-foreman_discovery.noarch`
+    - reboot the system (`systemctl restart foreman` is not sufficient by itself)
 -   install tftp images, on the machine with proxy execute:
     -   `cd /var/lib/tftpboot/boot`
     -   `wget http://downloads.theforeman.org/discovery/nightly/foreman-discovery-image-latest.el6.iso-img`
     -   `wget http://downloads.theforeman.org/discovery/nightly/foreman-discovery-image-latest.el6.iso-vmlinuz`
--   turn off setting Provisioning/`safemode_render` for `<%= Setting['foreman_url'] %>` to work
--   change PXELinux global default template to following
+-   in the foreman GUI, navigate to Administer->Settings->Provisioning.  Set `safemode_render` to false and click Save.  This is required for `<%= Setting['foreman_url'] %>` to work in the PXELinux global default template below.
+-   navigate to Hosts->Provisioning templates.  Edit the `PXELinux global default` template.  Change the template code to the following and click Submit:
 
         <%#
           kind: PXELinux
@@ -174,7 +189,8 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
         MENU LABEL Foreman Discovery
         KERNEL boot/foreman-discovery-image-latest.el6.iso-vmlinuz
         APPEND rootflags=loop initrd=boot/foreman-discovery-image-latest.el6.iso-img root=live:/foreman.iso rootfstype=auto ro rd.live.image rd.live.check rd.lvm=0 rootflags=ro crashkernel=128M elevator=deadline max_loop=256 rd.luks=0 rd.md=0 rd.dm=0 foreman.url=<%= Setting['foreman_url'] %> nomodeset selinux=0 stateless
--   build PXE default
+        IPAPPEND 2
+-   click the Build PXE Default button in the upper right corner
 -   foreman web process has to have access to discovered hosts by IP adresses, 
     if the foreman web process is running on the same machine as the virtual network then all is good, otherwise:
     -   set static routes from machine with foreman web process to the virtual network
@@ -194,7 +210,7 @@ Configure `/etc/puppet/puppet.conf` to point to openstack-puppet-modules and ast
         -   TODO make static routes and iptable changes permanent
 -   create a machine in libvirt and let it be discovered
 
-## Create a provision kick start file for open stack:
+## Create a provision kick start template for open stack:
 
 -   Host -> Provisioning Templates -> New Template
 -   Add the following
@@ -229,7 +245,7 @@ This will be needed in future versions of Staypuft for orchestration tasks.
 
         Taken from <http://projects.theforeman.org/projects/smart-proxy/repository/revisions/13ed47120944776d31a63386b650bb796462f896/diff/config/settings.yml.example>.
 
--   Create SSH Key fore foreman-proxy
+-   Create SSH Key for foreman-proxy
 
         # Create SSH Key using ssh-keygen
         # cp private key to /etc/foreman-proxy/
