@@ -1,5 +1,20 @@
 <div class="panel panel-default interface" id="<%= identifier %>-interface" data-interface="<%= identifier %>">
-  <div class="panel-heading">
+  <div class="panel-heading clearfix">
+    <% if bond_mode %>
+      <div id="bonding_mode" class="dropdown pull-right" data-path="<%= change_mode_deployment_bond_path(:id => identifier) %>">
+        <%= _('Bonding Mode:') %>
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+          <%= bond_mode %>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <% Nic::Bond::MODES.each do |mode| %>
+            <li class="<%= 'selected' if mode == bond_mode %>"><a href="#"><%= mode %></a></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <h3 class="panel-title">
       <%= identifier %>
       <em>
@@ -9,6 +24,7 @@
       </em>
     </h3>
   </div>
+
   <div class="panel-body">
     <!-- physical interface assignment (can be only one at most) -->
     <span id="<%= identifier %>-physicals">

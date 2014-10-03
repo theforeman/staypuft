@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         member do
           put 'add_slave'
           put 'remove_slave'
+          put 'change_mode'
         end
       end
     end

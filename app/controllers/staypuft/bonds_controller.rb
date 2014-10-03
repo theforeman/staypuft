@@ -1,7 +1,7 @@
 module Staypuft
   class BondsController < Staypuft::ApplicationController
     before_filter :find_hosts
-    before_filter :find_bonds, :only => %w(destroy add_slave remove_slave)
+    before_filter :find_bonds, :only => %w(destroy add_slave remove_slave change_mode)
 
     def create
       @bonds = []
@@ -48,6 +48,19 @@ module Staypuft
         raise ActiveRecord::Rollback unless @result
       end
     end
+
+    def change_mode
+      @bonds.each { |bond| bond.mode = params[:mode] }
+
+      ActiveRecord::Base.transaction do
+        results = @bonds.map(&:save)
+        @result = results.all?
+        raise ActiveRecord::Rollback unless @result
+      end
+
+      render :nothing => true
+    end
+
 
     def remove_slave
       @bonds.each { |bond| bond.remove_slave(params[:interface]) }
