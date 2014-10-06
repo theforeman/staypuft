@@ -62,7 +62,7 @@ module Staypuft
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
         :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types,
         :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
-        :ml2_mechanisms, :nexuses
+        :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config
     end
 
     def set_defaults
