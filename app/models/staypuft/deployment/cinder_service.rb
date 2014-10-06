@@ -136,7 +136,7 @@ module Staypuft
     end
 
     def compute_eqlx_backend_names
-      self.eqlxs.collect.with_index { |e,i| "eqlx_backend#{i+1}" }
+      self.eqlxs.collect.with_index { |e,i| "eqlx#{i+1}" }
     end
 
     private

@@ -261,17 +261,18 @@ module Staypuft
       # Cinder
       volume                      = true
       cinder_backend_gluster      = false
-      cinder_backend_gluster_name = 'gluster_backend'
+      cinder_backend_gluster_name = 'gluster'
       cinder_backend_iscsi        = { :string => '<%= @host.deployment.cinder.lvm_backend? %>' }
-      cinder_backend_iscsi_name   = 'iscsi_backend'
+      cinder_backend_iscsi_name   = 'iscsi'
       cinder_backend_nfs          = { :string => '<%= @host.deployment.cinder.nfs_backend? %>' }
-      cinder_backend_nfs_name     = 'nfs_backend'
+      cinder_backend_nfs_name     = 'nfs'
       cinder_multiple_backends    = { :string => '<%= @host.deployment.cinder.multiple_backends? %>' }
+      cinder_create_volume_types  = true
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = 'nosharecache'
 
       cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
-      cinder_backend_rbd_name                 = 'rbd_backend'
+      cinder_backend_rbd_name                 = 'rbd'
       cinder_rbd_pool                         = 'volumes'
       cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf'
       cinder_rbd_flatten_volume_from_snapshot = 'false'
@@ -395,6 +396,7 @@ module Staypuft
               'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
               'cinder_multiple_backends'                => cinder_multiple_backends,
+              'cinder_create_volume_types'              => cinder_create_volume_types,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
               'cinder_rbd_pool'                         => cinder_rbd_pool,
@@ -472,6 +474,7 @@ module Staypuft
               'cinder_backend_eqlx'                     => cinder_backend_eqlx,
               'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
               'cinder_multiple_backends'                => cinder_multiple_backends,
+              'cinder_create_volume_types'              => cinder_create_volume_types,
               'cinder_nfs_shares'                       => cinder_nfs_shares,
               'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
               'cinder_rbd_pool'                         => cinder_rbd_pool,
