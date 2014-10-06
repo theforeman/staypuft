@@ -273,6 +273,10 @@ module Staypuft
       self.layout.subnet_types - self.subnet_types
     end
 
+    def unassigned_pxe_default_subnet_types
+      self.layout.subnet_types.pxe_defaults - self.subnet_types
+    end
+
     def ceph_hostgroup
       Hostgroup.includes(:deployment_role_hostgroup).
         where(DeploymentRoleHostgroup.table_name => { deployment_id: self,

@@ -7,6 +7,9 @@
   $("#<%= dom_id(@subnet_type) %>").draggable({
     revert: 'invalid'
   });
+<% else %>
+  error = '<%=j @errors.map { |k, v| "#{h(k)}: #{v.join(', ')}" }.join('<br />').html_safe %>';
+  $.jnotify(error, { type: "error", sticky: true });
 <% end %>
 
 <% if @warn.present? %>
