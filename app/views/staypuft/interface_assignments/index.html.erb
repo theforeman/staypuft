@@ -1,44 +1,47 @@
 <%= javascript 'staypuft/nics_assignment' %>
 
+<script>
+</script>
+
 <% title _("Configure Interfaces (%s hosts)") % @hosts.size %>
 
 <div class="row">
   <div class="col-md-12">
-    <h3><%= @hosts.count %> <%= "#{n_('Host', 'Hosts', @hosts.count)} #{_('to be configured')}" %></h3>
-    <table class="table table-striped table-condensed">
-      <thead>
-        <tr>
-          <th><%= sort :name, :as => _('Host Name') %></th>
-          <th><%= @host.primary_interface %></th>
-          <% @interfaces.each do |interface| %>
-            <th><%= interface.identifier %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% @hosts.each do |host| %>
+    <h3 data-toggle="collapse" data-target="#hosts_to_configure"><%= @hosts.count %> <%= "#{n_('Host', 'Hosts', @hosts.count)} #{_('to be configured')}" %> <span class="small glyphicon glyphicon-chevron-down"></span></h3>
+    <div id="hosts_to_configure" class="collapse">
+      <table class="table table-striped table-condensed">
+        <thead>
           <tr>
-            <td class="ellipsis">
-             <%= host_label(host) %>
-            </td>
-            <td>
-              <span class="glyphicon glyphicon-ok"></span> <%= _("ready") %> <br/>
-              <%= host.mac %><br/>
-              <%= host.ip %>
-            </td>
-            <% if host.interfaces.present? %>
-              <td>
-                <% host.interfaces.each do |interface| %>
-                  <span class="glyphicon glyphicon-ok"></span> <%= _("ready") %> <br/>
-                  <%= interface.mac %><br/>
-                  <%= interface.ip %>
-                <% end %>
-              </td>
+            <th><%= sort :name, :as => _('Host Name') %></th>
+            <th><%= @host.primary_interface %></th>
+            <% @interfaces.each do |interface| %>
+              <th><%= interface.identifier %></th>
             <% end %>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @hosts.each do |host| %>
+            <tr>
+              <td class="ellipsis">
+               <%= host_label(host) %>
+              </td>
+              <td>
+                <%= host.mac %><br/>
+                <%= host.ip %>
+              </td>
+              <% if host.interfaces.present? %>
+                <td>
+                  <% host.interfaces.each do |interface| %>
+                    <%= interface.mac %><br/>
+                    <%= interface.ip %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
