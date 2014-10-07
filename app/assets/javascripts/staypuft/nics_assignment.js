@@ -44,4 +44,11 @@ var nics_assignment = (function() {
       });
     }
   });
+
+  $('#hosts_to_configure').on('show.bs.collapse', function() {
+    $(this).prev('h3[data-toggle="collapse"]').addClass('active');
+  });
+  $('#hosts_to_configure').on('hide.bs.collapse', function() {
+    $(this).prev('h3[data-toggle="collapse"]').removeClass('active');
+  });
 });

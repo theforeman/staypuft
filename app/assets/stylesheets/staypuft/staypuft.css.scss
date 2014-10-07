@@ -172,3 +172,17 @@ span.editable, span.editable:hover {
     overflow-y: auto;
   }
 }
+
+h3[data-toggle="collapse"] {
+  cursor: pointer;
+  span.glyphicon:before {
+    transition: all .3s ease 0s;
+    display: inline-block;
+  }
+  &.active span.glyphicon:before {
+    color: $brand-primary;
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
+  }
+}
