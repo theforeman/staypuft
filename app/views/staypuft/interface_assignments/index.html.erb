@@ -45,32 +45,12 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <h3><%= _("Configured Networks") %></h3>
-    <div id="subnets" class="panel panel-default">
-      <div class="panel-body">
-        <% @subnets.each do |subnet| %>
-        <% next if is_pxe?(@deployment, subnet) # we skip PXE network which is always on primary interface %>
-        <% next if @host.interfaces.vip.where(:subnet_id => subnet.id).present? # we skip assigned subnets %>
-          <%= render 'staypuft/subnets/subnet_pull',
-                     :subnet => subnet,
-                     :deployment => @deployment,
-                     :active => true,
-                     :existing => false %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row" id='network-interfaces'>
-  <div class="col-md-12">
-    <%= render 'staypuft/interface_assignments/interfaces',
-               :host => @host,
-               :hosts => @hosts,
-               :deployment => @deployment,
-               :interface => @interface,
-               :interfaces => @interfaces %>
-  </div>
+<div id="nics_assignment">
+  <%= render 'staypuft/interface_assignments/nics_assignment',
+           :host => @host,
+           :hosts => @hosts,
+           :deployment => @deployment,
+           :subnets => @subnets,
+           :interface => @interface,
+           :interfaces => @interfaces %>
 </div>
