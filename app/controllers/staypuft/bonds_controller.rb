@@ -112,6 +112,11 @@ module Staypuft
             interface = host.interfaces.find_by_identifier(interface_identifier)
           end
 
+          host.interfaces.where(:attached_to => interface_identifier).map(&:subnet).compact.uniq.each do |virtual_subnet|
+            assigner = InterfaceAssigner.new(@deployment, interface, virtual_subnet)
+            assigner.unassign
+          end
+
           subnet_typing = Staypuft::SubnetTyping.includes('subnet_type').where(:deployment_id => @deployment, :subnet_id => interface.subnet).first
           if subnet_typing
             next if subnet_typing.subnet_type.name == Staypuft::SubnetType::PXE

@@ -55,7 +55,7 @@ module Staypuft
       # we should make sure that we delete from right base, subnet vlan may have changed meanwhile which affects
       # virtual_assignment? result
       if @interface.is_a?(Nic::Bond)
-        base = base.bonds
+        base = base.virtual # we want to find bond and vlans (both virtual)
       else
         base = virtual_assignment? ? base.virtual : base.physical
       end
