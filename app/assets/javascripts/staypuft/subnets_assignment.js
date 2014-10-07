@@ -56,7 +56,15 @@ $(function() {
       $.ajax({
         type: 'DELETE',
         url: ui.draggable.data('delete-url'),
-        dataType: 'script'
+        dataType: 'script',
+        success: function(data, event){
+          if(data.indexOf("error =") > -1){
+            dropped.animate({
+              left: dropped.data.left,
+              top: dropped.data.top
+            }, 1000, 'swing');
+          }
+        }          
       });
     }
   });

@@ -2,7 +2,6 @@ module Staypuft
   class SubnetTypingsController < ActionController::Base
     def create
       @errors = {}
-      #@errors[:testing] = ["forcing failure"]
       @deployment = Deployment.find(params[:deployment_id])
       @subnet_type = SubnetType.find(params[:subnet_type_id])
       @subnet = Subnet.find(params[:subnet_id])
@@ -15,7 +14,6 @@ module Staypuft
 
     def update
       @errors = {}
-      #@errors[:testing] = ["forcing failure"]
       @subnet_typing = SubnetTyping.find(params[:id])
       @deployment = @subnet_typing.deployment
       @subnet_type = @subnet_typing.subnet_type
@@ -34,6 +32,9 @@ module Staypuft
       @subnet = @subnet_typing.subnet
       check_for_existing_assignments
       @subnet_type = @subnet_typing.subnet_type
+      if @subnet_type.is_required
+        @errors[@subnet_type.name] = ["Network traffic type is required."]
+      end
       @destroyed = @errors.blank? ? @subnet_typing.destroy : false
     end
 
