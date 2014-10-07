@@ -1,11 +1,12 @@
 $(function() {
   $("div.subnet-type-pull").draggable({
-    start: function( event, ui ) {
-      dropped = $(this);
-      dropped.data.left = ui.originalPosition.left;
-      dropped.data.top = ui.originalPosition.top;
-    },
     revert: 'invalid'
+  });
+  
+  $("div.subnet-type-pull").live('dragstart', function( event, ui ) {
+    dropped = $(this);
+    dropped.data.left = ui.originalPosition.left;
+    dropped.data.top = ui.originalPosition.top;
   });
 
   $("div.subnet-drop-zone").droppable({
