@@ -13,25 +13,25 @@
     </div>
     <%= render partial: "hosts_table", locals: { hosts: hosts, deployment_role_col: true } %>
     <div class="modal fade" id="configure_networks_modal" tabindex="-1" role="dialog" aria-labelledby="<%= _("Configure Networks") %>" aria-hidden="true" data-path="<%= deployment_interface_assignments_path(@deployment.id) %>">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h2 class="modal-title" id="configure_networks_modal_label">
-                  <span class="glyphicon glyphicon-link">
-                  </span> <%= _("Configure Networks") %>
-                </h2>
-              </div>
-              <div class="modal-body">
-                <div id="interfaces"><%= image_tag '/assets/spinner.gif', style: "display: block; margin-left: auto; margin-right: auto" %></div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
-                <button type="button" class="btn btn-primary done" data-dismiss="modal"><%= _("Done") %></button>
-              </div>
-            </div>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title" id="configure_networks_modal_label">
+              <span class="glyphicon glyphicon-link">
+              </span> <%= _("Configure Networks") %>
+            </h2>
+          </div>
+          <div class="modal-body">
+            <div id="interfaces"><%= image_tag '/assets/spinner.gif', style: "display: block; margin-left: auto; margin-right: auto" %></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
+            <button type="button" class="btn btn-primary done" data-dismiss="modal"><%= _("Done") %></button>
           </div>
         </div>
+      </div>
+    </div>
   <% end %>
 </div>
 <% else %>

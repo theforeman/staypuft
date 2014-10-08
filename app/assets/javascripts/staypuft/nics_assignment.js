@@ -51,4 +51,32 @@ var nics_assignment = (function() {
   $('#hosts_to_configure').on('hide.bs.collapse', function() {
     $(this).prev('h3[data-toggle="collapse"]').removeClass('active');
   });
+
+  $('.panel-heading > #bonding_mode > ul > li').on('click', function(event) {
+    var dropdown = $($(event.target).parents('ul')[0]).prev();
+    dropdown.prop('disabled', true);
+
+    var to_assign = $('input:checkbox[name=host_ids[]]:checked').map(
+      function() {
+        return $(this).attr('value');
+      }).get().join();
+    /* remove the first if it's the select all */
+    if(to_assign.substr(0, 2) == 'on') {
+      to_assign = to_assign.substr(3);
+    }
+
+    var to_path = $('#bonding_mode').data('path');
+    $.ajax({
+      url: to_path,
+      type: 'PUT',
+      data: {
+        mode: $(event.target).text(),
+        host_ids: to_assign
+      },
+      success: function(data) {
+        dropdown.text($(event.target).text());
+        dropdown.prop('disabled', false);
+      }
+    });
+  });
 });
