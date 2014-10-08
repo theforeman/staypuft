@@ -93,7 +93,9 @@ $(function () {
   showNeutronVlanRange();
   $("input[name='staypuft_deployment[neutron][network_segmentation]']").change(showNeutronVlanRange);
   function showNeutronVlanRange() {
+    $('#staypuft_deployment_neutron_network_segmentation_vlan').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
     if ($('#staypuft_deployment_neutron_network_segmentation_vlan').is(":checked")) {
+      $('#staypuft_deployment_neutron_network_segmentation_vlan').parent().after($('.neutron_tenant_vlan_ranges'));
       $('.neutron_tenant_vlan_ranges').fadeIn(duration);
     }
     else {
@@ -115,7 +117,9 @@ $(function () {
   showGlanceNfsNetworkPath();
   $("input[name='staypuft_deployment[glance][driver_backend]']").change(showGlanceNfsNetworkPath);
   function showGlanceNfsNetworkPath() {
+    $('#staypuft_deployment_glance_driver_backend_nfs').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
     if ($('#staypuft_deployment_glance_driver_backend_nfs').is(":checked")) {
+      $('#staypuft_deployment_glance_driver_backend_nfs').parent().after($('.glance_nfs_network_path'));
       $('.glance_nfs_network_path').show();
     }
     else {

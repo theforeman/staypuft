@@ -186,3 +186,20 @@ h3[data-toggle="collapse"] {
     transform: rotate(180deg);
   }
 }
+
+.inset_form {
+  font-size: 85%;
+  .form-group {
+    margin-bottom: 0;
+    .control-label {
+      text-align: left;
+    }
+    .help-block {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.single_password.inset_form {
+  margin-left: 192px;
+}

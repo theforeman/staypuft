@@ -38,7 +38,7 @@
           end.join
         end %>
   
-        <div class="single_password col-md-offset-0 hide">
+        <div class="single_password inset_form hide">
           <%= password_f p, :single_password,
                          :label       => _("Password"),
                          :class       => "single_password",
@@ -49,7 +49,7 @@
                          :class       => "single_password",
                          :placeholder => '' %>
         </div>
-  
+
         <%= render :partial => "wizard_form_buttons", 
                    :locals => { :deployment => @deployment,
                                 :step => Staypuft::Deployment::STEP_SETTINGS } %>

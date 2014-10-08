@@ -10,7 +10,7 @@
     end.join
   end) %>
 
-  <div class="neutron_tenant_vlan_ranges col-md-offset-0 hide">
+  <div class="neutron_tenant_vlan_ranges inset_form hide">
     <%= change_label_width 4, text_f(p, :tenant_vlan_ranges, class: "neutron_tenant_vlan_ranges",
                                      label:                         _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN),
                                      help_inline:                   _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER)) %>
