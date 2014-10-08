@@ -23,6 +23,7 @@ module Staypuft
     has_many :subnets, :through => :subnet_typings
 
     scope :required, lambda { where(:is_required => true) }
+    scope :pxe_defaults, lambda { where(:default_to_provisioning => true) }
 
     class Jail < Safemode::Jail
       allow :layouts, :layout_subnet_types, :name, :subnets, :subnet_typings, :required

@@ -175,33 +175,60 @@ module Staypuft
     CEPH_ROLES = ROLES.select {|h| h.fetch(:name) =~ /Ceph/ }
 
     ALL_LAYOUTS = LAYOUTS.keys
-    SUBNET_TYPES = { :pxe             => { :name     => Staypuft::SubnetType::PXE,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :management      => { :name     => Staypuft::SubnetType::MANAGEMENT,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :external        => { :name     => Staypuft::SubnetType::EXTERNAL,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :cluster_mgmt    => { :name     => Staypuft::SubnetType::CLUSTER_MGMT,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :admin_api       => { :name     => Staypuft::SubnetType::ADMIN_API,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :public_api      => { :name     => Staypuft::SubnetType::PUBLIC_API,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :tenant          => { :name     => Staypuft::SubnetType::TENANT,
-                                           :required => true,
-                                           :layouts  => ALL_LAYOUTS},
-                     :storage         => { :name     => Staypuft::SubnetType::STORAGE,
-                                           :required => false,
-                                           :layouts  => ALL_LAYOUTS},
-                     :storage_cluster => { :name     => Staypuft::SubnetType::STORAGE_CLUSTERING,
-                                           :required => false,
-                                           :layouts  => ALL_LAYOUTS}
+    SUBNET_TYPES = { :pxe             => { :name                    => Staypuft::SubnetType::PXE,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :management      => { :name                    => Staypuft::SubnetType::MANAGEMENT,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :external        => { :name                    => Staypuft::SubnetType::EXTERNAL,
+                                           :required                => true,
+                                           :foreman_managed_ips     => false,
+                                           :default_to_provisioning => false,
+                                           :dedicated_subnet        => true,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :cluster_mgmt    => { :name                    => Staypuft::SubnetType::CLUSTER_MGMT,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :admin_api       => { :name                    => Staypuft::SubnetType::ADMIN_API,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :public_api      => { :name                    => Staypuft::SubnetType::PUBLIC_API,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :tenant          => { :name                    => Staypuft::SubnetType::TENANT,
+                                           :required                => true,
+                                           :foreman_managed_ips     => false,
+                                           :default_to_provisioning => false,
+                                           :dedicated_subnet        => true,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :storage         => { :name                    => Staypuft::SubnetType::STORAGE,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS},
+                     :storage_cluster => { :name                    => Staypuft::SubnetType::STORAGE_CLUSTERING,
+                                           :required                => true,
+                                           :foreman_managed_ips     => true,
+                                           :default_to_provisioning => true,
+                                           :dedicated_subnet        => false,
+                                           :layouts                 => ALL_LAYOUTS}
     }
 
     def get_host_format(param_name, subnet_type_name)
@@ -878,6 +905,9 @@ module Staypuft
       SUBNET_TYPES.each do |key, subnet_type_hash|
         subnet_type = Staypuft::SubnetType.where(:name => subnet_type_hash[:name]).first_or_initialize
         subnet_type.is_required = subnet_type_hash[:required]
+        subnet_type.foreman_managed_ips = subnet_type_hash[:foreman_managed_ips]
+        subnet_type.default_to_provisioning = subnet_type_hash[:default_to_provisioning]
+        subnet_type.dedicated_subnet = subnet_type_hash[:dedicated_subnet]
         subnet_type.save!
         old_layout_subnet_types_arr = subnet_type.layout_subnet_types.to_a
         subnet_type_hash[:layouts].each do |layout|
