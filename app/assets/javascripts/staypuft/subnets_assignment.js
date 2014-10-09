@@ -1,4 +1,4 @@
-$(function() {
+var subnets_assigments = (function() {
   $("div.subnet-type-pull").draggable({
     revert: 'invalid'
   });
@@ -38,4 +38,8 @@ $(function() {
       });
     }
   });
+});
+
+$(function() {
+  subnets_assigments();
 });
