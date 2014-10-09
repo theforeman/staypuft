@@ -19,9 +19,9 @@ module Staypuft
     validates :name, :dhcp_server, :network_address, presence: true
     validates :gateway, :presence => true,
                         :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
-    validates_format_of :network_address, :with => Net::Validations::IP_REGEXP
     validates_format_of :gateway, :with => Net::Validations::IP_REGEXP,
                                   :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
+    validate :validate_network_address
     validate :validate_ranges, :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
 
     def initialize(attrs={})
@@ -81,15 +81,24 @@ module Staypuft
     def get_network
       IPAddress::IPv4.new(self.network_address).network.address
     rescue Exception => ex
-      errors.add(:network_address, _("invalid Network Address"))
-      self.network_address
+      Rails.logger.warn("failed to parse network address: #{ex.message}")
+      nil
     end
 
     def get_mask
       IPAddress::IPv4.new(self.network_address).netmask
     rescue Exception => ex
-      errors.add(:network_address, _("invalid Network Address Mask"))
-      self.network_address
+      Rails.logger.warn("failed to parse network mask: #{ex.message}")
+      nil
+    end
+
+    def validate_network_address
+      network = get_network
+      mask = get_mask
+      if !network || !mask || !(network =~ Net::Validations::IP_REGEXP) ||
+         !(mask =~ Net::Validations::MASK_REGEXP)
+        errors.add(:network_address, _("invalid Network Address"))
+      end
     end
 
     def validate_ranges
