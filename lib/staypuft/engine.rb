@@ -42,6 +42,9 @@ module Staypuft
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
       ::Host::Managed.send :include, Staypuft::Concerns::HostFencingExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
+      ::Api::V1::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
+      ::Api::V2::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
+      ::HostsController.send :include, Staypuft::Concerns::HostsControllerExtensions
 
       # preload all the Foreman's lib files but only in production
       if Rails.env.production?
