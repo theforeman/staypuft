@@ -55,6 +55,8 @@
                                 :step => Staypuft::Deployment::STEP_SETTINGS } %>
   
       <% end %>
+
+      <%= textarea_f f, :custom_repos, :rows => 3, :help_inline => _('If you need to add custom repositories on provisioned hosts you can specify base urls here, one per line. These repositories will have highest priority (50)') %>
     <% end %>
   </div>
 
