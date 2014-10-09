@@ -25,6 +25,7 @@ module Staypuft
     validate :validate_ranges, :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
 
     def initialize(attrs={})
+      self.dhcp_server = 'external'
       if attrs.is_a?(::Subnet)
         @subnet = Subnet.find_by_name(attrs.name)
         convert_attributes_from

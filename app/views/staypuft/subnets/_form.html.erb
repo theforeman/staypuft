@@ -4,9 +4,10 @@
     <%= change_label_width(4, select_f(f, :dhcp_server,
                                        ::Staypuft::SimpleSubnet::DHCP_SERVER_TYPE,
                                        :first, :last,
-                                       { include_blank: true },
+                                       { include_blank: false },
                                        { label: _("DHCP server") })) %>
-    <%= change_label_width(4, text_f(f, :network_address, :label => _("Network Address"))) %>
+    <%= change_label_width(4, text_f(f, :network_address, :label => _("Network Address"),
+                                        :help_inline => _("Network Address using CIDR notation (eg. 1.2.3.4/24)"))) %>
     <%= change_label_width(4, text_f(f, :vlan, :label => _("VLAN"))) %>
     <div id="no_existing_dhcp_fields" style="display: <%= subnet.dhcp_server == 'none' ? 'block' : 'none' %>">
       <%= change_label_width(4, text_f(f, :gateway, :label => _("Gateway"))) %>
