@@ -256,12 +256,12 @@ module Staypuft
       network_private_iface       = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::TENANT}') %>" }
       network_public_iface        = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::EXTERNAL}') %>" }
       network_create_networks     = true
-      nova_conf_additional_params = { 'quota_instances' => 'default',
-                                      'quota_cores' => 'default',
-                                      'quota_ram' => 'default',
-                                      'quota_floating_ips'  => 'default',
-                                      'quota_fixed_ips' => 'default',
-                                      'quota_driver' => 'default',
+      nova_conf_additional_params = { :hash =>  { 'quota_instances' => 'default',
+                                                  'quota_cores' => 'default',
+                                                  'quota_ram' => 'default',
+                                                  'quota_floating_ips'  => 'default',
+                                                  'quota_fixed_ips' => 'default',
+                                                  'quota_driver' => 'default' }
                                     }
 
       # Neutron
@@ -284,13 +284,13 @@ module Staypuft
       neutron_core_plugin_module  = { :string => '<%= @host.deployment.neutron.core_plugin_module %>' }
       neutron_agent_type          = 'ovs'
       neutron_security_group_api  = 'neutron'
-      neutron_conf_additional_params =  { 'default_quota' => 'default',
-                                          'quota_network' => 'default',
-                                          'quota_subnet' => 'default',
-                                          'quota_port'  => 'default',
-                                          'quota_security_group' => 'default',
-                                          'quota_security_group_rule' => 'default',
-                                          'network_auto_schedule' => 'default',
+      neutron_conf_additional_params =  { :hash =>  { 'default_quota' => 'default',
+                                                      'quota_network' => 'default',
+                                                      'quota_subnet' => 'default',
+                                                      'quota_port'  => 'default',
+                                                      'quota_security_group' => 'default',
+                                                      'quota_security_group_rule' => 'default',
+                                                      'network_auto_schedule' => 'default' }
                                         }
 
       # Glance
@@ -422,13 +422,13 @@ module Staypuft
       # Cisco N1KV params
       n1kv_vsm_ip                    = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_ip : "" %>' }
       n1kv_vsm_password              = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_password : "" %>' }
-      n1kv_plugin_additional_params  = {  'default_policy_profile' => 'default-pp',
-                                          'network_node_policy_profile' => 'default-pp',
-                                          'poll_duration' => '10',
-                                          'http_pool_size' => '4',
-                                          'http_timeout' => '120',
-                                          'firewall_driver' => 'neutron.agent.firewall.NoopFirewallDriver',
-                                          'enable_sync_on_start' => 'True'
+      n1kv_plugin_additional_params  = { :hash => { 'default_policy_profile' => 'default-pp',
+                                                    'network_node_policy_profile' => 'default-pp',
+                                                    'poll_duration' => '10',
+                                                    'http_pool_size' => '4',
+                                                    'http_timeout' => '120',
+                                                    'firewall_driver' => 'neutron.agent.firewall.NoopFirewallDriver',
+                                                    'enable_sync_on_start' => 'True' }
                                       }
 
       {
