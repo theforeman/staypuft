@@ -260,6 +260,21 @@ $(function () {
     })
   });
 
+  $('#new_subnet_modal').on('shown.bs.modal', function(e) {
+    var height = $(window).height() - 200;
+    $(this).find(".modal-body").css("max-height", height);
+    var to_path = $('#new_subnet_modal').data('path');
+    $.ajax({
+        url: to_path,
+        type: "GET",
+        success: function(data){
+          $('#new_subnet_ajax_content').html(data).promise().done(function(){
+            new_subnet();
+          });
+        }
+    });
+  });
+
   var scrolled = false;
 
   $(window).scroll(function(){

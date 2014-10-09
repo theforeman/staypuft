@@ -66,7 +66,7 @@ module Staypuft
     end
 
     initializer "staypuft.assets.precompile" do |app|
-      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js)
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js staypuft/new_subnet.js)
     end
 
     initializer "load default settings" do |app|
@@ -77,7 +77,7 @@ module Staypuft
 
     initializer 'staypuft.configure_assets', :group => :assets do
       SETTINGS[:staypuft] =
-          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js) } }
+          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js staypuft/new_subnet.js) } }
     end
 
   end
