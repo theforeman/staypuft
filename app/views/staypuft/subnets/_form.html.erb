@@ -1,0 +1,23 @@
+<%= form_for(subnet, :url => staypuft_subnets_path(:deployment_id => deployment), :remote => true, :html => {:id => "new_subnet_form", :class => ""}) do |f| %>
+  <div class="modal-body">
+    <%= change_label_width(4, text_f(f, :name, :label => _("Name"))) %>
+    <%= change_label_width(4, select_f(f, :dhcp_server,
+                                       ::Staypuft::SimpleSubnet::DHCP_SERVER_TYPE,
+                                       :first, :last,
+                                       { include_blank: true },
+                                       { label: _("DHCP server") })) %>
+    <%= change_label_width(4, text_f(f, :network_address, :label => _("Network Address"))) %>
+    <%= change_label_width(4, text_f(f, :vlan, :label => _("VLAN"))) %>
+    <div id="no_existing_dhcp_fields" style="display: <%= subnet.dhcp_server == 'none' ? 'block' : 'none' %>">
+      <%= change_label_width(4, text_f(f, :gateway, :label => _("Gateway"))) %>
+      <%= change_label_width(4, text_f(f, :ip_range_from, :label => _("IP Range Start"))) %>
+      <%= change_label_width(4, text_f(f, :ip_range_to, :label => _("IP Range End"))) %>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
+    <%= submit_tag _("Create Subnet"),
+                :id => "create_subnet_btn",
+                :class => "btn btn-primary done" %>
+  </div>
+<% end %>

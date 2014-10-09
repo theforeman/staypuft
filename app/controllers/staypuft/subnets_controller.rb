@@ -1,5 +1,8 @@
 module Staypuft
   class SubnetsController < Staypuft::ApplicationController
+
+    layout false
+
     before_filter :get_deployment
 
     def new
@@ -7,9 +10,9 @@ module Staypuft
     end
 
     def create
-      @simple_subnet = SimpleSubnet.new(params[:simple_subnet])
+      @simple_subnet = SimpleSubnet.new(params[:staypuft_simple_subnet])
       @simple_subnet.deployment = @deployment
-      @simple_subnet.save
+      @result = @simple_subnet.save
     end
 
     private

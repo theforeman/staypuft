@@ -29,5 +29,9 @@ Rails.application.routes.draw do
     end
 
     resources :subnet_typings, :only => [:create, :destroy, :update]
+
+    scope 'staypuft', as: 'staypuft' do
+      resources :subnets
+    end
   end
 end

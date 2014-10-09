@@ -1,0 +1,9 @@
+<% if @result %>
+  $('#new_subnet_modal').modal('toggle');
+<% else %>
+  $("#new_subnet_ajax_content").html(
+    '<%=j render 'staypuft/subnets/form',
+                 :deployment => @deployment,
+                 :subnet => @simple_subnet %>');
+  new_subnet();
+<% end %>
