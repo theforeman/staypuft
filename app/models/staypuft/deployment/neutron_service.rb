@@ -4,11 +4,13 @@ module Staypuft
       'neutron'
     end
 
-    SEGMENTATION_LIST = ['vxlan', 'vlan', 'gre', 'flat']
-    VLAN_HELP         = N_('[1-4094] (e.g. 10:15)')
-    ML2MECHANISM_TYPES = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
+    SEGMENTATION_LIST   = ['vxlan', 'vlan', 'gre', 'flat']
+    VLAN_HELP           = N_('[1-4094] (e.g. 10:15)')
+    ML2MECHANISM_TYPES  = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
+    N1KV_PARAMS         = :n1kv_vsm_ip, :n1kv_vsm_password
 
-    param_attr :network_segmentation, :tenant_vlan_ranges, *ML2MECHANISM_TYPES
+    param_attr :network_segmentation, :tenant_vlan_ranges, :core_plugin,
+               *ML2MECHANISM_TYPES, *N1KV_PARAMS
     param_attr_array :nexuses => Cisconexus
 
     module NetworkSegmentation
@@ -26,6 +28,19 @@ module Staypuft
 
     validates :network_segmentation, presence: true, inclusion: { in: NetworkSegmentation::TYPES }
 
+    module CorePlugin
+      ML2    = 'ml2'
+      N1KV   = 'n1kv'
+      LABELS = { ML2 => N_("ML2 Core Plugin"),
+                 N1KV => N_("N1KV Core Plugin") }
+      MODULES = { ML2 => 'neutron.plugins.ml2.plugin.Ml2Plugin',
+                  N1KV => 'neutron.plugins.cisco.network_plugin.PluginV2'}
+      TYPES  = LABELS.keys
+      HUMAN  = N_('Core Plugin Type')
+    end
+
+    validates :core_plugin, presence: true, inclusion: { in: CorePlugin::TYPES }
+
     module TenantVlanRanges
       HUMAN       = N_('Tenant (VM Data) VLAN Ranges')
       HUMAN_AFTER = VLAN_HELP
@@ -40,6 +55,18 @@ module Staypuft
               :if                  => :vlan_segmentation?,
               :neutron_vlan_ranges => true
 
+    class N1kvIpAddressValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::IpAddressValidator
+    end
+
+    validates :n1kv_vsm_ip,
+              :presence        => true,
+              :if              => :n1kv_plugin?,
+              :n1kv_ip_address => true
+    validates :n1kv_vsm_password,
+              :presence        => true,
+              :if              => :n1kv_plugin?
+
     module Ml2Mechanisms
       OPENVSWITCH = 'openvswitch'
       L2POPULATION = 'l2population'
@@ -50,23 +77,27 @@ module Staypuft
       TYPES = LABELS.keys
       HUMAN = N_('ML2 Mechanism Drivers')
     end
-    validate  :at_least_one_mechanism_selected
+    validate  :at_least_one_mechanism_selected,
+              :if          => :ml2_plugin?
     validate  :cisco_nexuses,
-              :if          => :cisco_nexus_mechanism?
+              :if          => [:ml2_plugin?, :cisco_nexus_mechanism?]
     validates :nexuses,
               :presence   => true,
-              :if         => :cisco_nexus_mechanism?
+              :if         => [:ml2_plugin?, :cisco_nexus_mechanism?]
 
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
         :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types,
         :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
-        :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config
+        :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config, :core_plugin,
+        :ml2_plugin?, :n1kv_plugin?, :n1kv_vsm_ip, :n1kv_vsm_password,
+        :core_plugin_module
     end
 
     def set_defaults
       self.network_segmentation   = NetworkSegmentation::VXLAN
+      self.core_plugin = CorePlugin::ML2
       self.ml2_openvswitch = "true"
       self.ml2_l2population = "true"
       self.ml2_cisco_nexus = "false"
@@ -145,6 +176,18 @@ module Staypuft
       self.ml2_cisco_nexus == "true"
     end
 
+    def ml2_plugin?
+      self.core_plugin == CorePlugin::ML2
+    end
+
+    def n1kv_plugin?
+      self.core_plugin == CorePlugin::N1KV
+    end
+
+    def core_plugin_module
+      CorePlugin::MODULES[self.core_plugin]
+    end
+
     def compute_cisco_nexus_config
       Hash[nexuses.map { |nexus| [nexus.hostname, nexus.config_hash] }]
     end
@@ -155,11 +198,14 @@ module Staypuft
 
     def param_hash
       { 'network_segmentation'       => network_segmentation,
+        'core_plugin'                => core_plugin,
         'tenant_vlan_ranges'         => tenant_vlan_ranges,
         'ml2_openvswitch'            => ml2_openvswitch,
         'ml2_l2population'           => ml2_l2population,
         'ml2_cisco_nexus'            => ml2_cisco_nexus,
-        'nexuses'                    => nexuses }
+        'nexuses'                    => nexuses,
+        'n1kv_vsm_ip'                => n1kv_vsm_ip,
+        'n1kv_vsm_password'          => n1kv_vsm_password }
     end
 
     private

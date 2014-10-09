@@ -256,6 +256,13 @@ module Staypuft
       network_private_iface       = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::TENANT}') %>" }
       network_public_iface        = { :string => "<%= @host.network_query.interface_for_host('#{Staypuft::SubnetType::EXTERNAL}') %>" }
       network_create_networks     = true
+      nova_conf_additional_params = { 'quota_instances' => 'default',
+                                      'quota_cores' => 'default',
+                                      'quota_ram' => 'default',
+                                      'quota_floating_ips'  => 'default',
+                                      'quota_fixed_ips' => 'default',
+                                      'quota_driver' => 'default',
+                                    }
 
       # Neutron
       ovs_vlan_ranges             = { :array =>  '<%= @host.deployment.neutron.networker_vlan_ranges %>' }
@@ -274,6 +281,17 @@ module Staypuft
       compute_ovs_bridge_mappings = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_mappings(@host) %>' }
       compute_ovs_bridge_uplinks  = { :array =>  '<%= @host.deployment.neutron.compute_ovs_bridge_uplinks(@host) %>' }
       enable_tunneling            = { :string => '<%= @host.deployment.neutron.enable_tunneling?.to_s %>' }
+      neutron_core_plugin_module  = { :string => '<%= @host.deployment.neutron.core_plugin_module %>' }
+      neutron_agent_type          = 'ovs'
+      neutron_security_group_api  = 'neutron'
+      neutron_conf_additional_params =  { 'default_quota' => 'default',
+                                          'quota_network' => 'default',
+                                          'quota_subnet' => 'default',
+                                          'quota_port'  => 'default',
+                                          'quota_security_group' => 'default',
+                                          'quota_security_group_rule' => 'default',
+                                          'network_auto_schedule' => 'default',
+                                        }
 
       # Glance
       backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
@@ -400,6 +418,18 @@ module Staypuft
 
       # Cisco Nexus
       cisco_nexus_config             = { :hash => '<%= n = @host.deployment.neutron; (n.active? && n.cisco_nexus_mechanism?) ? n.compute_cisco_nexus_config : {} %>' }
+
+      # Cisco N1KV params
+      n1kv_vsm_ip                    = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_ip : "" %>' }
+      n1kv_vsm_password              = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_password : "" %>' }
+      n1kv_plugin_additional_params  = {  'default_policy_profile' => 'default-pp',
+                                          'network_node_policy_profile' => 'default-pp',
+                                          'poll_duration' => '10',
+                                          'http_pool_size' => '4',
+                                          'http_timeout' => '120',
+                                          'firewall_driver' => 'neutron.agent.firewall.NoopFirewallDriver',
+                                          'enable_sync_on_start' => 'True'
+                                      }
 
       {
           'quickstack::nova_network::controller'   => {
@@ -552,7 +582,14 @@ module Staypuft
               'controller_admin_host'                   => controller_admin_host,
               'controller_priv_host'                    => controller_priv_host,
               'controller_pub_host'                     => controller_pub_host,
-              'nexus_config'                            => cisco_nexus_config },
+              'nexus_config'                            => cisco_nexus_config,
+              'neutron_conf_additional_params'          => neutron_conf_additional_params,
+              'nova_conf_additional_params'             => nova_conf_additional_params,
+              'n1kv_plugin_additional_params'           => n1kv_plugin_additional_params,
+              'n1kv_vsm_ip'                             => n1kv_vsm_ip,
+              'n1kv_vsm_password'                       => n1kv_vsm_password,
+              'security_group_api'                      => neutron_security_group_api,
+              'neutron_core_plugin'                     => neutron_core_plugin_module },
           'quickstack::pacemaker::params'          => {
               'include_swift'                 => 'false',
               'include_neutron'               => neutron,
@@ -618,7 +655,9 @@ module Staypuft
               'private_ip'                    => private_ip,
               'cluster_control_ip'            => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
               'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
-              'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_fqdns %>' } },
+              'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_fqdns %>' },
+              'agent_type'                    => neutron_agent_type,
+              'n1kv_plugin_additional_params' => n1kv_plugin_additional_params },
           'quickstack::pacemaker::common'          => {
               'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::CLUSTER_MGMT}').join(' ') %>" },
               'fencing_type'                  => fencing_type,
@@ -631,17 +670,24 @@ module Staypuft
               'fence_ipmilan_expose_lanplus'  => fence_ipmilan_expose_lanplus,
               'fence_ipmilan_lanplus_options' => fence_ipmilan_lanplus_options },
           'quickstack::pacemaker::neutron'         => {
-              'ml2_network_vlan_ranges'  => ml2_network_vlan_ranges,
-              'ml2_tenant_network_types' => ml2_tenant_network_types,
-              'ml2_tunnel_id_ranges'     => ml2_tunnel_id_ranges,
-              'ml2_mechanism_drivers'    => ml2_mechanism_drivers,
-              'enable_tunneling'         => enable_tunneling,
-              'ovs_bridge_mappings'      => ovs_bridge_mappings,
-              'ovs_bridge_uplinks'       => ovs_bridge_uplinks,
-              'ovs_tunnel_iface'         => ovs_tunnel_iface,
-              'ovs_tunnel_types'         => ovs_tunnel_types,
-              'ovs_vlan_ranges'          => ovs_vlan_ranges,
-              'nexus_config'             => cisco_nexus_config },
+              'ml2_network_vlan_ranges'        => ml2_network_vlan_ranges,
+              'ml2_tenant_network_types'       => ml2_tenant_network_types,
+              'ml2_tunnel_id_ranges'           => ml2_tunnel_id_ranges,
+              'ml2_mechanism_drivers'          => ml2_mechanism_drivers,
+              'enable_tunneling'               => enable_tunneling,
+              'ovs_bridge_mappings'            => ovs_bridge_mappings,
+              'ovs_bridge_uplinks'             => ovs_bridge_uplinks,
+              'ovs_tunnel_iface'               => ovs_tunnel_iface,
+              'ovs_tunnel_types'               => ovs_tunnel_types,
+              'ovs_vlan_ranges'                => ovs_vlan_ranges,
+              'nexus_config'                   => cisco_nexus_config,
+              'core_plugin'                    => neutron_core_plugin_module,
+              'neutron_conf_additional_params' => neutron_conf_additional_params,
+              'nova_conf_additional_params'    => nova_conf_additional_params,
+              'n1kv_plugin_additional_params'  => n1kv_plugin_additional_params,
+              'n1kv_vsm_ip'                    => n1kv_vsm_ip,
+              'n1kv_vsm_password'              => n1kv_vsm_password,
+              'security_group_api'             => neutron_security_group_api },
           'quickstack::pacemaker::glance'          => {
               'backend'         => backend,
               'pcmk_fs_type'    => pcmk_fs_type,
@@ -705,7 +751,8 @@ module Staypuft
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
               'amqp_host'                     => amqp_host,
               'mysql_host'                    => mysql_host,
-              'controller_priv_host'          => controller_priv_host },
+              'controller_priv_host'          => controller_priv_host,
+              'agent_type'                    => neutron_agent_type },
           'quickstack::storage_backend::cinder'    => {
               'amqp_provider'        => amqp_provider,
               'cinder_db_password'   => cinder_db_pw,
@@ -782,7 +829,9 @@ module Staypuft
               'auth_host'                  => auth_host,
               'neutron_host'               => neutron_host,
               'nova_host'                  => nova_host,
-              'private_ip'                 => private_ip },
+              'private_ip'                 => private_ip,
+              'agent_type'                 => neutron_agent_type,
+              'security_group_api'         => neutron_security_group_api },
           'quickstack::pacemaker::rsync::keystone' => {
               'keystone_private_vip' => vip_format(:keystone) },
           'quickstack::ceph::config' => {
