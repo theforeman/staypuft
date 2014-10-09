@@ -29,18 +29,7 @@ module Staypuft
     end
 
     class IpValueValidator < ActiveModel::EachValidator
-      def validate_each(record, attribute, value)
-        return if value.empty?
-
-        ip_addr = IPAddr.new(value)
-        ip_range = ip_addr.to_range
-        if ip_range.begin == ip_range.end
-          true
-        else
-          record.errors.add attribute, "Specify single IP address, not range"
-          false
-        end
-      end
+      include Staypuft::Deployment::IpAddressValidator
     end
 
     class PortMapValueValidator < ActiveModel::EachValidator

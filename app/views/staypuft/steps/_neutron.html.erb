@@ -16,29 +16,42 @@
                                      help_inline:                   _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER)) %>
   </div>
 
-  <div class="form-group">
-    <label class="col-md-4 control-label"><%= _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::HUMAN) %></label>
-    <div class="col-md-4">
-      <%= check_box_f_non_inline(p, :ml2_openvswitch,
-                                 :checked_value   => 'true',
-                                 :unchecked_value => 'false',
-                                 :checked         => @deployment.neutron.openvswitch_mechanism?,
-                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['openvswitch']))
-      %>
-      <%= check_box_f_non_inline(p, :ml2_l2population,
-                                 :checked_value   => 'true',
-                                 :unchecked_value => 'false',
-                                 :checked         => @deployment.neutron.l2population_mechanism?,
-                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['l2population']))
-      %>
-      <%= check_box_f_non_inline(p, :ml2_cisco_nexus,
-                                 :checked_value   => 'true',
-                                 :unchecked_value => 'false',
-                                 :checked         => @deployment.neutron.cisco_nexus_mechanism?,
-                                 :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['cisco_nexus']))
-      %>
-    </div>
+  <%= change_label_width(4, field(p, :core_plugin, :label => _(Staypuft::Deployment::NeutronService::CorePlugin::HUMAN)) do
+    Staypuft::Deployment::NeutronService::CorePlugin::LABELS.map do |value, label|
+      radio_button_f_non_inline(p, :core_plugin,
+                                :checked => @deployment.neutron.core_plugin == value,
+                                :value   => value,
+                                :text    => label)
+    end.join
+  end) %>
+
+  <div class="neutron_ml2_mechanisms inset_form hide">
+    <%= _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::HUMAN) %>
+    <%= check_box_f_non_inline(p, :ml2_openvswitch,
+                               :checked_value   => 'true',
+                               :unchecked_value => 'false',
+                               :checked         => @deployment.neutron.openvswitch_mechanism?,
+                               :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['openvswitch']))
+    %>
+    <%= check_box_f_non_inline(p, :ml2_l2population,
+                               :checked_value   => 'true',
+                               :unchecked_value => 'false',
+                               :checked         => @deployment.neutron.l2population_mechanism?,
+                               :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['l2population']))
+    %>
+    <%= check_box_f_non_inline(p, :ml2_cisco_nexus,
+                               :checked_value   => 'true',
+                               :unchecked_value => 'false',
+                               :checked         => @deployment.neutron.cisco_nexus_mechanism?,
+                               :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['cisco_nexus']))
+    %>
   </div>
+
+  <div class="neutron_n1kv_parameters inset_form hide">
+    <%= change_label_width 4, text_f(p, :n1kv_vsm_ip, class: "neutron_n1kv_vsm_ip", label: _('VSM IP')) %>
+    <%= change_label_width 4, text_f(p, :n1kv_vsm_password, class: "neutron_n1kv_vsm_password", label: _('VSM Password')) %>
+  </div>
+
   <div class="neutron_cisco_nexus col-md-offset-1 hide">
     <div id="nexuses" class="neutron_nexus_picker">
       <% @deployment.neutron.nexuses.each_with_index do |nexus, index| %>
