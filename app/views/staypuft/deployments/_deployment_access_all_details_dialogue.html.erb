@@ -22,8 +22,13 @@
                 </div>
                 <% end %>
               <% else %>
-                <% @deployment.network_query.controller_ips(Staypuft::SubnetType::MANAGEMENT).each do |ip| %>
-                  <%= ip %> what subnet type here?
+                <% [Staypuft::SubnetType::PUBLIC_API, Staypuft::SubnetType::MANAGEMENT, Staypuft::SubnetType::ADMIN_API].each do |subnet_type| %>
+                <div class="row">
+                  <label class="col-sm-4 control-label text-muted"><%= "#{subnet_type}:" %></label>
+                  <div class="col-sm-8">
+                    <p class="form-control-static"><%= @deployment.network_query.controller_ips(subnet_type).first %></p>
+                  </div>
+                </div>
                 <% end %>
               <% end %>
           </div>
