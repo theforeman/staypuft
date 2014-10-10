@@ -19,7 +19,7 @@ module Staypuft::Concerns::HostsControllerExtensions
 
   def check_openstack_hostgroup_multiple
     if params["hostgroup"] and params["hostgroup"]["id"]
-      check_hostgroup params["hostgroup"]["id"] do
+      hostgroup_id = params["hostgroup"]["id"]
       if openstack_hostgroup? hostgroup_id
         error _('Invalid host group selected! Cannot select OpenStack deployment host group.')
         redirect_to(select_multiple_hostgroup_hosts_path) and return
