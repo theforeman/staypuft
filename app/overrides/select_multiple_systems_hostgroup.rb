@@ -10,6 +10,6 @@ Deface::Override.new(:virtual_path => "hosts/select_multiple_hostgroup",
                      :replace => "#{erb_tag}:contains(':id')",
                      :original => '<%= selectable_f f, :id, [[_("Select host group"),"disabled"],[_("*Clear host group*"), "" ]] + Hostgroup.all.map{|h| [h.to_label, h.id]}.sort,{}, :onchange => "toggle_multiple_ok_button(this)" %>'
                      ) do
-"  <%= selectable_f f, :id, [[_(\"Select host group\"),\"disabled\"],[_(\"*Clear host group*\"), \"\" ]] + Hostgroup.all.reject{ |hg| hg.to_label =~ /#{Setting[:base_hostgroup]}\\/.*/ }.map{|h| [h.to_label, h.id]}.sort,{},
+"  <%= selectable_f f, :id, [[_(\"Select host group\"),\"disabled\"],[_(\"*Clear host group*\"), \"\" ]] + Hostgroup.all.reject{ |hg| hg.to_label =~ /\#{Setting[:base_hostgroup]}\\/.*/ }.map{|h| [h.to_label, h.id]}.sort,{},
         :onchange => \"toggle_multiple_ok_button(this)\" %>"
 end
