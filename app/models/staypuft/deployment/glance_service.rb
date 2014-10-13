@@ -24,7 +24,7 @@ module Staypuft
     validates :driver_backend, presence: true, inclusion: { in: lambda {|g| g.backend_types_for_layout } }
 
     module NfsNetworkPath
-      HUMAN       = N_('network path')
+      HUMAN       = N_('Network Path')
       HUMAN_AFTER = NFS_HELP
     end
 

@@ -1,0 +1,10 @@
+<% if @result %>
+  $("#nics_assignment").html(
+    '<%=j render :partial => 'staypuft/interface_assignments/nics_assignment',
+                 :locals => { :host => @host,
+                              :hosts => @hosts,
+                              :deployment => @deployment,
+                              :subnets => @subnets,
+                              :interfaces => @interfaces } %>');
+  nics_assignment();
+<% end %>

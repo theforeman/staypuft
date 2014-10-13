@@ -33,6 +33,7 @@ module Staypuft
       ::Host::Managed.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Host::Managed.send :include, Staypuft::Concerns::HostDetailsHelper
       ::Host::Discovered.send :include, Staypuft::Concerns::HostOpenStackAffiliation
+      ::Host::Discovered.send :include, Staypuft::Concerns::HostDetailsHelper
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::SubnetIpManagement
       ::Nic::Base.send :include, Staypuft::Concerns::VipNicScopes
@@ -41,6 +42,9 @@ module Staypuft
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions
       ::Host::Managed.send :include, Staypuft::Concerns::HostFencingExtensions
       ::Nic::Base.send :include, Staypuft::Concerns::NicFencingExtensions
+      ::Api::V1::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
+      ::Api::V2::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
+      ::HostsController.send :include, Staypuft::Concerns::HostsControllerExtensions
 
       # preload all the Foreman's lib files but only in production
       if Rails.env.production?
@@ -65,7 +69,7 @@ module Staypuft
     end
 
     initializer "staypuft.assets.precompile" do |app|
-      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js)
+      app.config.assets.precompile += %w(staypuft/staypuft.css staypuft/staypuft.js staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js staypuft/new_subnet.js)
     end
 
     initializer "load default settings" do |app|
@@ -76,7 +80,7 @@ module Staypuft
 
     initializer 'staypuft.configure_assets', :group => :assets do
       SETTINGS[:staypuft] =
-          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js) } }
+          { assets: { precompile: %w(staypuft/staypuft.js staypuft/staypuft.css staypuft/subnets_assignment.js staypuft/nics_assignment.js staypuft/host_edit.js staypuft/new_subnet.js) } }
     end
 
   end

@@ -1,7 +1,30 @@
 <div class="panel panel-default interface" id="<%= identifier %>-interface" data-interface="<%= identifier %>">
-  <div class="panel-heading">
-    <h3 class="panel-title"><%= identifier %></h3>
+  <div class="panel-heading clearfix">
+    <% if bond_mode %>
+      <div id="bonding_mode" class="dropdown pull-right" data-path="<%= change_mode_deployment_bond_path(:id => identifier) %>">
+        <%= _('Bonding Mode:') %>
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+          <%= bond_mode %>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <% Nic::Bond::MODES.each do |mode| %>
+            <li class="<%= 'selected' if mode == bond_mode %>"><a href="#"><%= mode %></a></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <h3 class="panel-title">
+      <%= identifier %>
+      <em>
+        <% unless attached_devices.empty? %>
+          (<%= attached_devices.join(', ') %>)
+        <% end %>
+      </em>
+    </h3>
   </div>
+
   <div class="panel-body">
     <!-- physical interface assignment (can be only one at most) -->
     <span id="<%= identifier %>-physicals">
@@ -14,13 +37,59 @@
 
     <!-- all virtual devices attached to this physical interface assignments -->
     <span id="<%= identifier %>-virtuals">
-      <% host.interfaces.where(:physical_device => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
+      <% host.interfaces.where(:attached_to => identifier).where("subnet_id IS NOT NULL").each do |virtual| %>
         <%= render 'staypuft/subnets/subnet_pull',
                    :subnet => virtual.subnet,
                    :deployment => deployment,
                    :active => true,
                    :existing => true if virtual.subnet %>
       <% end %>
+    </span>
+
+    <span class="top_actions pull-right">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="glyphicon glyphicon-link" /><span class="caret"/>
+        </button>
+        <ul class="dropdown-menu pull-right" role="menu">
+          <lh><%= _("Bond Interface With:") %></lh>
+          <% if interface_ids.length > 0 %>
+            <% interface_ids.each do |interface_id| %>
+              <li>
+                <% if attached_devices.empty? %>
+                  <%= link_to deployment_bonds_path(:host_ids => hosts.map(&:id), :interfaces => [identifier, interface_id]), :remote => true, :method => :post do %>
+                    <span class="glyphicon glyphicon-plus-sign">
+                      <%= interface_id %>
+                    </span>
+                  <% end %>
+                <% else %>
+                  <%= link_to add_slave_deployment_bond_path(:host_ids => hosts.map(&:id), :id => identifier, :interface => interface_id), :remote => true, :method => :put do %>
+                    <span class="glyphicon glyphicon-plus-sign">
+                      <%= interface_id %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </li>
+            <% end %>
+          <% else %>
+            <li>
+              <span class="glyphicon glyphicon-info-sign" style="padding: 3px 20px;">
+                <%= _("No interface available") %>
+              </span>
+            </li>
+          <% end %>
+          <% unless attached_devices.empty? %>
+            <li role="presentation" class="divider"></li>
+            <li>
+              <%= link_to deployment_bond_path(:id => identifier, :host_ids => hosts.map(&:id)), :remote => true, :method => :delete do %>
+                <span class="glyphicon glyphicon-remove-sign">
+                  <%= _("Release Bond") %>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </span>
 
     <div class="empty-zone">

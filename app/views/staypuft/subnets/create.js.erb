@@ -1,0 +1,14 @@
+<% if @result %>
+  $("#subnets").append(
+    '<%=j render 'staypuft/subnets/drop_zone',
+                 :subnet => @simple_subnet.subnet,
+                 :deployment => @deployment %>');
+  $('#new_subnet_modal').modal('toggle');
+  subnets_assigments();
+<% else %>
+  $("#new_subnet_ajax_content").html(
+    '<%=j render 'staypuft/subnets/form',
+                 :deployment => @deployment,
+                 :subnet => @simple_subnet %>');
+  new_subnet();
+<% end %>

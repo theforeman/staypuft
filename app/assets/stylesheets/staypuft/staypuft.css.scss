@@ -172,3 +172,34 @@ span.editable, span.editable:hover {
     overflow-y: auto;
   }
 }
+
+h3[data-toggle="collapse"] {
+  cursor: pointer;
+  span.glyphicon:before {
+    transition: all .3s ease 0s;
+    display: inline-block;
+  }
+  &.active span.glyphicon:before {
+    color: $brand-primary;
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
+  }
+}
+
+.inset_form {
+  font-size: 85%;
+  .form-group {
+    margin-bottom: 0;
+    .control-label {
+      text-align: left;
+    }
+    .help-block {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.single_password.inset_form {
+  margin-left: 192px;
+}

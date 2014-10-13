@@ -93,11 +93,37 @@ $(function () {
   showNeutronVlanRange();
   $("input[name='staypuft_deployment[neutron][network_segmentation]']").change(showNeutronVlanRange);
   function showNeutronVlanRange() {
+    $('#staypuft_deployment_neutron_network_segmentation_vlan').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
     if ($('#staypuft_deployment_neutron_network_segmentation_vlan').is(":checked")) {
+      $('#staypuft_deployment_neutron_network_segmentation_vlan').parent().after($('.neutron_tenant_vlan_ranges'));
       $('.neutron_tenant_vlan_ranges').fadeIn(duration);
     }
     else {
       $('.neutron_tenant_vlan_ranges').fadeOut(duration)
+    }
+  }
+
+  showNeutronMl2Mechanisms();
+  $("input[name='staypuft_deployment[neutron][core_plugin]']").change(showNeutronMl2Mechanisms);
+  function showNeutronMl2Mechanisms() {
+    $('#staypuft_deployment_neutron_core_plugin_ml2').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
+    if ($('#staypuft_deployment_neutron_core_plugin_ml2').is(":checked")) {
+      $('#staypuft_deployment_neutron_core_plugin_ml2').parent().after($('.neutron_ml2_mechanisms'));
+      $('.neutron_ml2_mechanisms').fadeIn(duration);
+    } else {
+      $('.neutron_ml2_mechanisms').fadeOut(duration);
+    }
+  }
+
+  showNeutronN1kvParameters();
+  $("input[name='staypuft_deployment[neutron][core_plugin]']").change(showNeutronN1kvParameters);
+  function showNeutronN1kvParameters() {
+    $('#staypuft_deployment_neutron_core_plugin_n1kv').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
+    if ($('#staypuft_deployment_neutron_core_plugin_n1kv').is(":checked")) {
+      $('#staypuft_deployment_neutron_core_plugin_n1kv').parent().after($('.neutron_n1kv_parameters'));
+      $('.neutron_n1kv_parameters').fadeIn(duration);
+    } else {
+      $('.neutron_n1kv_parameters').fadeOut(duration);
     }
   }
 
@@ -115,7 +141,9 @@ $(function () {
   showGlanceNfsNetworkPath();
   $("input[name='staypuft_deployment[glance][driver_backend]']").change(showGlanceNfsNetworkPath);
   function showGlanceNfsNetworkPath() {
+    $('#staypuft_deployment_glance_driver_backend_nfs').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
     if ($('#staypuft_deployment_glance_driver_backend_nfs').is(":checked")) {
+      $('#staypuft_deployment_glance_driver_backend_nfs').parent().after($('.glance_nfs_network_path'));
       $('.glance_nfs_network_path').show();
     }
     else {
@@ -145,6 +173,20 @@ $(function () {
     }
     else {
       $('.cinder_equallogic').hide();
+    }
+  }
+
+  showNeutronMl2CiscoNexus();
+  $("#staypuft_deployment_neutron_ml2_cisco_nexus").change(showNeutronMl2CiscoNexus);
+  function showNeutronMl2CiscoNexus() {
+    if ($('#staypuft_deployment_neutron_ml2_cisco_nexus').is(":checked")) {
+      $('.neutron_cisco_nexus').show();
+      if($('#nexuses').children().length == 0) {
+        $('.add_another_switch').click();
+      }
+    }
+    else {
+      $('.neutron_cisco_nexus').hide();
     }
   }
 
@@ -234,6 +276,27 @@ $(function () {
           });
         }
     });
+    $('#configure_networks_modal .done').live('click', function(){
+      $("input:checkbox[name=host_ids[]]:checked").removeAttr('checked')
+      $("tr.checkbox_highlight").removeClass('checkbox_highlight');
+      $("tr.info").removeClass('info');
+
+    })
+  });
+
+  $('#new_subnet_modal').on('shown.bs.modal', function(e) {
+    var height = $(window).height() - 200;
+    $(this).find(".modal-body").css("max-height", height);
+    var to_path = $('#new_subnet_modal').data('path');
+    $.ajax({
+        url: to_path,
+        type: "GET",
+        success: function(data){
+          $('#new_subnet_ajax_content').html(data).promise().done(function(){
+            new_subnet();
+          });
+        }
+    });
   });
 
   var scrolled = false;
@@ -299,7 +362,24 @@ $(function () {
     }
   })
 
-  $(".eqlx h5 a.remove").live("click", function(){
+  $("button.add_another_switch").live("click", function() {
+    var nexus_form = function() {
+      return $('#nexus_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
+    }
+    $('#nexuses').append(nexus_form());
+    if($('#nexuses').children().length > 1) {
+      var added_form_span = $('#nexuses').children().last().find('h5').find('.switch_number');
+      var previous_span_number = $('#nexuses').children().eq(-2).find('h5').find('.switch_number');
+      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
+    }
+  })
+
+  function remove_element_on_click(element_name) {
+    $(element_name + " h5 a.remove").live("click", function(){
       $(this).parent().parent().remove();
-  });
+    });
+  }
+
+  remove_element_on_click('.eqlx');
+  remove_element_on_click('.nexus');
 });

@@ -16,7 +16,8 @@ module Staypuft
     EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords, :ceph]
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :layout_name, :networking, :platform
+                    :amqp_provider, :layout_name, :networking, :platform,
+                    :custom_repos
     after_save :update_hostgroup_name
     after_validation :check_form_complete
 
@@ -198,7 +199,7 @@ module Staypuft
     class Jail < Safemode::Jail
       allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
         :nova, :neutron, :glance, :cinder, :passwords, :ceph, :ha?, :non_ha?,
-        :hide_ceph_notification?, :network_query
+        :hide_ceph_notification?, :network_query, :has_custom_repos?, :custom_repos_paths
     end
 
     # TODO(mtaylor)
@@ -273,6 +274,10 @@ module Staypuft
       self.layout.subnet_types - self.subnet_types
     end
 
+    def unassigned_pxe_default_subnet_types
+      self.layout.subnet_types.pxe_defaults - self.subnet_types
+    end
+
     def ceph_hostgroup
       Hostgroup.includes(:deployment_role_hostgroup).
         where(DeploymentRoleHostgroup.table_name => { deployment_id: self,
@@ -282,6 +287,14 @@ module Staypuft
 
     def network_query
       @network_query || NetworkQuery.new(self)
+    end
+
+    def has_custom_repos?
+      self.custom_repos.present?
+    end
+
+    def custom_repos_paths
+      self.custom_repos.split("\n")
     end
 
     private

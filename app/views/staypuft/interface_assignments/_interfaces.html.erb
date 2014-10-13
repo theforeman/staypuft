@@ -1,0 +1,31 @@
+<h3><%= _("Network Interfaces") %></h3>
+
+<% interface_ids = interfaces.where(:type => 'Nic::Managed').map(&:identifier) %>
+<% interface_ids.append(host.primary_interface) %>
+<% interfaces_used_in_bonds = host.interfaces.where(:type => Nic::Bond).map(&:attached_devices).map{ |devices| devices.split(',') }.flatten.uniq %>
+
+<% if (subnet = host.subnet) && !interfaces_used_in_bonds.include?(host.primary_interface) %>
+  <%= render 'staypuft/interfaces/drop_zone',
+             :identifier => host.primary_interface,
+             :attached_devices => [],
+             :bond_mode => nil,
+             :subnet => subnet,
+             :deployment => deployment,
+             :host => host,
+             :hosts => hosts,
+             :interface_ids => (interface_ids - interfaces_used_in_bonds - [host.primary_interface]) %>
+<% end %>
+
+<% @interfaces.each do |interface| %>
+  <% unless interfaces_used_in_bonds.include?(interface.identifier) %>
+    <%= render 'staypuft/interfaces/drop_zone',
+               :identifier => interface.identifier,
+               :attached_devices => interface.is_a?(Nic::Bond) ? interface.attached_devices.split(',') : [],
+               :bond_mode => interface.is_a?(Nic::Bond) ? interface.mode : nil,
+               :subnet => interface.subnet,
+               :deployment => deployment,
+               :host => host,
+               :hosts => hosts,
+               :interface_ids => (interface_ids - interfaces_used_in_bonds - [interface.identifier]) %>
+    <% end %>
+<% end %>

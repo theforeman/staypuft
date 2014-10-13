@@ -38,7 +38,7 @@
           end.join
         end %>
   
-        <div class="single_password col-md-offset-0 hide">
+        <div class="single_password inset_form hide">
           <%= password_f p, :single_password,
                          :label       => _("Password"),
                          :class       => "single_password",
@@ -49,12 +49,14 @@
                          :class       => "single_password",
                          :placeholder => '' %>
         </div>
-  
+
         <%= render :partial => "wizard_form_buttons", 
                    :locals => { :deployment => @deployment,
                                 :step => Staypuft::Deployment::STEP_SETTINGS } %>
   
       <% end %>
+
+      <%= textarea_f f, :custom_repos, :rows => 3, :help_inline => _('If you need to add custom repositories on provisioned hosts you can specify base urls here, one per line. These repositories will have highest priority (50)') %>
     <% end %>
   </div>
 

@@ -37,29 +37,7 @@ module Staypuft
     end
 
     class SanIpValueValidator < ActiveModel::EachValidator
-      def validate_each(record, attribute, value)
-        return if value.empty?
-
-        begin
-          ip_addr = IPAddr.new(value)
-          ip_range = ip_addr.to_range
-          if ip_range.begin == ip_range.end
-            true
-          else
-            record.errors.add attribute, "Specify single IP address, not range"
-            false
-          end
-        rescue
-          # not IP addr
-          # validating as fqdn
-          if /(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63})$)/ =~ value
-            true
-          else
-            record.errors.add attribute, "Invalid IP address or FQDN supplied"
-            false
-          end
-        end
-      end
+      include Staypuft::Deployment::IpAddressValidator
     end
 
     validates :san_ip,

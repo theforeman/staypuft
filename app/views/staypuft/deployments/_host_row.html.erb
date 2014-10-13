@@ -16,6 +16,10 @@
     <%= host_nics(host) %>
   </td>
 
+  <td>
+    <%= host_disks(host) %>
+  </td>
+
   <% unless local_assigns[:disabled].nil? %>
     <td class="hidden-s hidden-xs">
       <% if disabled %>
