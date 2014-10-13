@@ -33,6 +33,8 @@ module Actions
             end
           when Hash
             output[:installed_at] = event.fetch(:installed_at).to_s
+          when Dynflow::Action::Skip
+            output[:installed_at] = Time.now.utc.to_s
           else
             raise TypeError
           end
