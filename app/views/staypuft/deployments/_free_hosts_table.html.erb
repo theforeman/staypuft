@@ -2,7 +2,7 @@
   <% if hosts.present? %>
     <%= form_tag(associate_host_deployment_path(id: deployment), class: 'form-horizontal well association') do |f| %>
 
-      <%= render 'hosts_header', :header => _("Free Hosts"), :child_hostgroup => child_hostgroup, :assign_text => _("Assign Hosts") %>
+      <%= render 'hosts_header', :header => _("Unassigned Hosts"), :child_hostgroup => child_hostgroup, :assign_text => _("Assign Hosts") %>
 
       <table class="table table-bordered table-striped table-condensed">
         <thead>
@@ -19,6 +19,6 @@
 
     <% end %>
   <% else %>
-    <%= render 'empty_hosts', :header => _("Free Hosts"), :message => _("All available hosts have been already assigned.") %>
+    <%= render 'empty_hosts', :header => _("Unassigned Hosts"), :message => _("All available hosts have been already assigned.") %>
   <% end %>
 </div>
