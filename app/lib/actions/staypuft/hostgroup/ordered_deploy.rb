@@ -68,7 +68,7 @@ module Actions
               tap { |v| v || raise('missing runmode LookupKey') }.
               id
 
-          concurrence do
+          sequence do
             hosts.each do |host|
               # enable puppet agent
               plan_action(Actions::Staypuft::Host::Update, host,
