@@ -41,7 +41,9 @@ module Staypuft
           interface.identifier = "vip#{n}"
           interface.subnet = subnet
           interface.managed = false
-          interface.mac = "00:00:00:00:00:#{n.to_s(16).rjust(2, '0')}"
+          mac_str = deployment.id.to_s(16).rjust(10,'0')
+          [8,6,4,2].each {|i| mac_str.insert(i,":") }
+          interface.mac = "#{mac_str}:#{n.to_s(16).rjust(2, '0')}"
           interface.tag = parameter
           n += 1
         end
