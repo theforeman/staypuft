@@ -17,10 +17,9 @@ module Staypuft
     delegate :to_key, :to => :subnet, :allow_nil => true
 
     validates :name, :dhcp_server, :network_address, presence: true
-    validates :gateway, :presence => true,
-                        :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
     validates_format_of :gateway, :with => Net::Validations::IP_REGEXP,
-                                  :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
+                                  :if => Proc.new { |subnet| subnet.dhcp_server == 'none' },
+                                  :allow_blank => true
     validate :validate_network_address
     validate :validate_ranges, :if => Proc.new { |subnet| subnet.dhcp_server == 'none' }
 
