@@ -173,6 +173,17 @@ span.editable, span.editable:hover {
   }
 }
 
+#all_details_modal {
+  .modal-dialog {
+    width: 60%;
+    min-width: 500px;
+  }
+
+  .modal-body{
+    overflow-y: auto;
+  }
+}
+
 h3[data-toggle="collapse"] {
   cursor: pointer;
   span.glyphicon:before {
