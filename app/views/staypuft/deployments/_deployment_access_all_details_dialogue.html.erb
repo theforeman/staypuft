@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body" style="max-height: 600px; overflow: auto;">
         <div class="row">
-          <div class="col-sm-8 col-sm-offset-1">
+          <div class="col-sm-12">
               <h4><%= @deployment.ha? ? _("VIP list") : _("Controller IPs") %></h4>
               <% if @deployment.ha? %>
                 <% Staypuft::NetworkQuery::VIP_NAMES.keys.each do | vip_name | %>
