@@ -39,6 +39,15 @@ module Actions
           0.1
         end
 
+        def run(event = nil)
+          case event
+          when Dynflow::Action::Skip
+            output[:status] = true
+          else
+            super(event)
+          end
+        end
+
         private
 
         def invoke_external_task
