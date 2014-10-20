@@ -9,10 +9,13 @@ module Staypuft::Concerns::HostsControllerExtensions
   def check_openstack_hostgroup
     if params[:host] and params[:host][:hostgroup_id]
       hostgroup_id = params[:host][:hostgroup_id]
-      if openstack_hostgroup? hostgroup_id
-        Rails.logger.error "Cannot set a deployment hostgroup directly."
-        error _('Invalid host group selected! Cannot select OpenStack deployment host group.')
-        render :action => :edit and return
+      hostgroup = Hostgroup.find(hostgroup_id)
+      unless hostgroup.deployment and @host.hostgroup == hostgroup
+        if openstack_hostgroup? hostgroup_id
+          Rails.logger.error "Cannot set a deployment hostgroup directly."
+          error _('Invalid host group selected! Cannot select OpenStack deployment host group.')
+          render :action => :edit and return
+        end
       end
     end
   end
