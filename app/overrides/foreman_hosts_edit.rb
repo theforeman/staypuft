@@ -28,7 +28,8 @@ Deface::Override.new(:virtual_path => "hosts/_form",
                      :replace => "#{erb_tag}:contains(':hostgroup_id')",
                      :original => '04903c858c6f96ed5c015cac5960e02708d8fea8'
                      ) do
-"       <%=  select_f f, :hostgroup_id, accessible_hostgroups.reject { |hg| hg.to_label =~ /\#{Setting[:base_hostgroup]}\\/.*/ }, :id, :to_label,
+"       <% hostgroups = accessible_hostgroups.reject { |hg| hg.to_label =~ /\#{Setting[:base_hostgroup]}\\/.*/ && hg.to_label != @host.hostgroup.to_label } %>
+        <%=  select_f f, :hostgroup_id, hostgroups, :id, :to_label,
           { :include_blank => true},
           { :onchange => 'hostgroup_changed(this);', :'data-host-id' => @host.id,
             :'data-url' => (@host.new_record? || @host.type_changed?) ? process_hostgroup_hosts_path : hostgroup_or_environment_selected_hosts_path,
