@@ -23,6 +23,7 @@ module Staypuft
 
       if errors.present?
         flash[:error] = errors.map{ |k, v| "#{k}: #{v}" }.join('<br />')
+        render :js => "$('#configure_networks_modal').modal('hide'); window.location = '#{deployment_path(@deployment)}'"
       end
     end
 
