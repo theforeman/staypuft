@@ -7,5 +7,5 @@ end
 
 Deface::Override.new(:virtual_path => "nic/_base_form",
                      :name => "add_network_types_to_subnet",
-                     :replace => "erb[loud]:contains(':subnet_id')",
+                     :replace => "#{erb_tag}:contains(':subnet_id')",
                      :template => "nic/_subnet_id_field")
