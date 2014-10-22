@@ -110,7 +110,7 @@ module Staypuft
     end
 
     def unassign_physicals
-      @host.interfaces.physical.where(:subnet_id => @subnet.id).each do |interface|
+      @host.interfaces.physical.non_vip.where(:subnet_id => @subnet.id).each do |interface|
         unassign_physical(interface)
       end
     end
