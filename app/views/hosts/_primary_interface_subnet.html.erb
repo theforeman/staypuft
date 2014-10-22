@@ -1,0 +1,14 @@
+<span id="subnet_select">
+  <%= fields_for @host do |f| %>
+    <%= select_f f, :subnet_id, domain_subnets, :id, :to_label,
+                 { :include_blank => domain_subnets.any? ? blank_or_inherit_f(f, :subnet) : _("No subnets") },
+                 { :disabled => domain_subnets.empty?,
+                   :data     => { :url     => SETTINGS[:unattended] ? freeip_subnets_path : '',
+                                  :subnets => subnets_ipam_data.to_json,
+                                  :types => list_subnet_types_for_host(@host, domain_subnets).to_json },
+                   :label    => _("Subnet"),
+                   :help_inline => :indicator,
+                   :onchange => 'subnet_selected(this);' }
+    %>
+  <% end %>
+</span>

@@ -1,13 +1,17 @@
 module Staypuft
   module HostsHelper
 
-    def list_subnet_types(nic, subnets)
+    def list_subnet_types_for_nic(nic, subnets)
+      list_subnet_types_for_host(nic.host, subnets)
+    end
+
+    def list_subnet_types_for_host(host, subnets)
       types = {}
 
-      return types if nic.host.nil? || nic.host.deployment.nil?
+      return types if host.nil? || host.deployment.nil?
 
       subnets.each do |subnet|
-        types[subnet.id] = subnet_types(nic.host.deployment, subnet)
+        types[subnet.id] = subnet_types(host.deployment, subnet)
       end
 
       return types
