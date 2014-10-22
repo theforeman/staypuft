@@ -2,5 +2,8 @@
              { :include_blank => accessible_subnets.any? ? true : _("No subnets")},
              { :disabled => accessible_subnets.empty? ? true : false,
                :class => 'interface_subnet',
-               'data-url' => freeip_subnets_path,
-               'data-types' => "#{list_subnet_types(f.object, accessible_subnets).to_json}" } %>
+               :data => {
+                 :url => freeip_subnets_path,
+                 :types => list_subnet_types_for_nic(f.object, accessible_subnets).to_json
+               }
+             } %>
