@@ -700,6 +700,7 @@ module Staypuft
               'pcmk_fs_options' => pcmk_fs_options },
           'quickstack::pacemaker::cinder'          => {
               'volume'                           => volume,
+              'multiple_backends'                => cinder_multiple_backends,
               'backend_iscsi'                    => cinder_backend_iscsi,
               'backend_nfs'                      => cinder_backend_nfs,
               'backend_gluster'                  => cinder_backend_gluster,
