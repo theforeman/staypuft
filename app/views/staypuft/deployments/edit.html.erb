@@ -36,13 +36,11 @@
                     <%= label_tag param_hash[:param_key].key %>
                   </div>
                   <div class="col-md-5">
-                    <%= text_field_tag format("staypuft_deployment[hostgroup_params][%s][puppetclass_params][%s][%s]",
-                                              param_hash[:hostgroup].id,
-                                              param_hash[:puppetclass].id,
-                                              param_hash[:param_key].key),
-                                       param_hash[:hostgroup].current_param_value_str(param_hash[:param_key]),
-                                       :class => "form-control",
-                                       :size  => "45" %>
+                    <%= render "param_field", {:hostgroup => param_hash[:hostgroup],
+                                              :puppetclass => param_hash[:puppetclass],
+                                              :param_key => param_hash[:param_key],
+                                              :disabled => false
+                                              } %>
                   </div>
                 </div>
                 <br/>
