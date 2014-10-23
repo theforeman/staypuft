@@ -1,0 +1,27 @@
+                  <% input_name = format("staypuft_deployment[hostgroup_params][%s][puppetclass_params][%s][%s]",
+                                            hostgroup.id,
+                                            puppetclass.id,
+                                            param_key.key)
+                     param_value = hostgroup.current_param_value_str(param_key)
+                  %>
+                  <% unless param_key.key_type.to_sym == :hash %>
+                  <%= text_field_tag input_name,
+                                     param_value,
+                                     { :class    => "form-control",
+                                       :size     => "45",
+                                       disabled: local_assigns[:disabled] } %>
+                  <% else %>
+                  <%= text_area_tag input_name,
+                                    param_value,
+                                    { :class    => "form-control",
+                                      :size     => "5",
+                                      disabled: local_assigns[:disabled] } %>
+                  <% end %>
+                  <% if local_assigns[:show_evaluation] %>
+                    <% if Staypuft::Concerns::LookupKeyExtensions.has_erb? param_value %>
+                      <span class="help-block">
+                        <%= _('evaluates to: ') %>
+                        <%= Staypuft::Concerns::LookupKeyExtensions.evaluate_value hostgroup, param_value %>
+                      </span>
+                    <% end %>
+                  <% end %>
