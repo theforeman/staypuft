@@ -106,7 +106,8 @@ module Staypuft
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
         :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
                                  :class => ['quickstack::openstack_common',
-                                            'quickstack::ceph::config'] },
+                                            'quickstack::ceph::config',
+                                            'quickstack::firewall::ceph_osd'] },
     }
 
     # The list of roles is still from astapor
