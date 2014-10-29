@@ -45,7 +45,8 @@ module Actions
             end
           end
 
-          if power_management
+          # ignore power management for discovery environment
+          if power_management && (host.environment != Environment.get_discovery)
             restart_with_power_management power_management
           else
             restart_with_foreman_proxy host
