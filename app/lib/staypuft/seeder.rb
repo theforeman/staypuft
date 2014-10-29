@@ -216,7 +216,7 @@ module Staypuft
                                            :required                => true,
                                            :foreman_managed_ips     => false,
                                            :default_to_provisioning => false,
-                                           :dedicated_subnet        => true,
+                                           :dedicated_subnet        => false,
                                            :layouts                 => ALL_LAYOUTS},
                      :storage         => { :name                    => Staypuft::SubnetType::STORAGE,
                                            :required                => true,
