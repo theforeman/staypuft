@@ -35,16 +35,6 @@ module Actions
         private
 
         def restart(host)
-          power_management = begin
-            host.power
-          rescue ::Foreman::Exception => e
-            if e.code == 'ERF42-9958' # Unknown power management support
-              nil
-            else
-              raise e
-            end
-          end
-
           # always ignore power management for now, since the hosts are already out
           # of discovery env when it hits this code
           # TODO: figure out if we need to put the power management code back at some point
