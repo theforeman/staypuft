@@ -28,6 +28,7 @@ module Staypuft
         results = @bonds.map(&:save)
         @result = results.all?
         clear_nic_assignments(params[:interfaces])
+        reassign_primary
         raise ActiveRecord::Rollback unless @result
       end
 
@@ -123,6 +124,21 @@ module Staypuft
 
             assigner = InterfaceAssigner.new(@deployment, interface, interface.subnet)
             assigner.unassign
+          end
+        end
+      end
+    end
+
+    def reassign_primary
+      @bonds.each do |bond|
+        if bond.attached_devices_identifiers.include? bond.host.primary_interface
+          subnet_typing = Staypuft::SubnetTyping.includes('subnet_type').where(:deployment_id => @deployment, :subnet_id => bond.host.subnet).first
+          if subnet_typing && subnet_typing.subnet_type.name == Staypuft::SubnetType::PXE
+            pxe_subnet = bond.host.subnet
+            assigner = InterfaceAssigner.new(@deployment, bond.host, bond.host.subnet)
+            assigner.unassign
+            pxe_assigner = InterfaceAssigner.new(@deployment, bond, pxe_subnet)
+            pxe_assigner.assign
           end
         end
       end
