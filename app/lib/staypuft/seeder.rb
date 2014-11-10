@@ -305,6 +305,22 @@ module Staypuft
       cinder_eqlx_chap_login        = { :array => '<%= @host.deployment.cinder.compute_eqlx_chap_logins %>' }
       cinder_eqlx_chap_password     = { :array => '<%= @host.deployment.cinder.compute_eqlx_chap_passwords %>' }
 
+      cinder_backend_netapp           = { :string => '<%= @host.deployment.cinder.netapp_backend? %>' }
+      cinder_netapp_hostname          = { :array => '<%= @host.deployment.cinder.compute_netapp_hostnames %>' }
+      cinder_netapp_login             = { :array => '<%= @host.deployment.cinder.compute_netapp_logins %>' }
+      cinder_netapp_password          = { :array => '<%= @host.deployment.cinder.compute_netapp_passwords %>' }
+      cinder_netapp_server_port       = { :array => '<%= @host.deployment.cinder.compute_netapp_server_ports %>' }
+      cinder_netapp_storage_family    = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_families %>' }
+      cinder_netapp_transport_type    = { :array => '<%= @host.deployment.cinder.compute_netapp_transport_types %>' }
+      cinder_netapp_storage_protocol  = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_protocols %>' }
+      cinder_netapp_nfs_shares_config = { :array => '<%= @host.deployment.cinder.compute_netapp_nfs_shares_configs %>' }
+      cinder_netapp_volume_list       = { :array => '<%= @host.deployment.cinder.compute_netapp_volume_lists %>' }
+      cinder_netapp_vfiler            = { :array => '<%= @host.deployment.cinder.compute_netapp_vfilers %>' }
+      cinder_netapp_vserver           = { :array => '<%= @host.deployment.cinder.compute_netapp_vservers %>' }
+      cinder_netapp_controller_ips    = { :array => '<%= @host.deployment.cinder.compute_netapp_controller_ips %>' }
+      cinder_netapp_sa_password       = { :array => '<%= @host.deployment.cinder.compute_netapp_sa_passwords %>' }
+      cinder_netapp_storage_pools     = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_pools %>' }
+
       # Keystone
       keystonerc = 'true'
 
@@ -519,6 +535,7 @@ module Staypuft
               'rbd_user'                         => cinder_rbd_user,
               'rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
               'backend_eqlx'                     => cinder_backend_eqlx,
+              'backend_netapp'                   => cinder_backend_netapp,
               'san_ip'                           => cinder_san_ip,
               'san_login'                        => cinder_san_login,
               'san_password'                     => cinder_san_password,
@@ -527,7 +544,21 @@ module Staypuft
               'eqlx_pool'                        => cinder_eqlx_pool,
               'eqlx_use_chap'                    => cinder_eqlx_use_chap,
               'eqlx_chap_login'                  => cinder_eqlx_chap_login,
-              'eqlx_chap_password'               => cinder_eqlx_chap_password },
+              'eqlx_chap_password'               => cinder_eqlx_chap_password,
+              'netapp_hostname'                  => cinder_netapp_hostname,
+              'netapp_login'                     => cinder_netapp_login,
+              'netapp_password'                  => cinder_netapp_password,
+              'netapp_server_port'               => cinder_netapp_server_port,
+              'netapp_storage_family'            => cinder_netapp_storage_family,
+              'netapp_transport_type'            => cinder_netapp_transport_type,
+              'netapp_storage_protocol'          => cinder_netapp_storage_protocol,
+              'netapp_nfs_shares_config'         => cinder_netapp_nfs_shares_config,
+              'netapp_volume_list'               => cinder_netapp_volume_list,
+              'netapp_vfiler'                    => cinder_netapp_vfiler,
+              'netapp_vserver'                   => cinder_netapp_vserver,
+              'netapp_controller_ips'            => cinder_netapp_controller_ips,
+              'netapp_sa_password'               => cinder_netapp_sa_password,
+              'netapp_storage_pools'             => cinder_netapp_storage_pools },
           'quickstack::pacemaker::keystone'        => {
               'keystonerc'     => keystonerc,
               'admin_password' => admin_pw,
