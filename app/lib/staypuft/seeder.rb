@@ -106,7 +106,8 @@ module Staypuft
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
         :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
                                  :class => ['quickstack::openstack_common',
-                                            'quickstack::ceph::config'] },
+                                            'quickstack::ceph::config',
+                                            'quickstack::firewall::ceph_osd'] },
     }
 
     # The list of roles is still from astapor
@@ -215,7 +216,7 @@ module Staypuft
                                            :required                => true,
                                            :foreman_managed_ips     => false,
                                            :default_to_provisioning => false,
-                                           :dedicated_subnet        => true,
+                                           :dedicated_subnet        => false,
                                            :layouts                 => ALL_LAYOUTS},
                      :storage         => { :name                    => Staypuft::SubnetType::STORAGE,
                                            :required                => true,
@@ -700,6 +701,7 @@ module Staypuft
               'pcmk_fs_options' => pcmk_fs_options },
           'quickstack::pacemaker::cinder'          => {
               'volume'                           => volume,
+              'multiple_backends'                => cinder_multiple_backends,
               'backend_iscsi'                    => cinder_backend_iscsi,
               'backend_nfs'                      => cinder_backend_nfs,
               'backend_gluster'                  => cinder_backend_gluster,

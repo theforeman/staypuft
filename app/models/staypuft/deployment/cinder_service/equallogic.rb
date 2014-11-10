@@ -12,7 +12,7 @@ module Staypuft
     def initialize(attrs = {})
       @errors = ActiveModel::Errors.new(self)
       self.attributes = attrs
-      self.thin_provision = false
+      self.thin_provision = true
       self.use_chap = false
       self.chap_login = ''
       self.chap_password = ''

@@ -75,14 +75,21 @@ $(function() {
 
 
   $('fieldset#interface').each(function(idx, fieldset) {
-    update_subnet_types(fieldset);
+    subnet_select = find_network_interface_field($(fieldset), 'subnet_id', 'select');
+    update_subnet_types(subnet_select);
   });
   $(document).on('change', 'fieldset#interface select.interface_subnet', function(event) {
     fieldset = $(event.target).parents('fieldset#interface');
-    update_subnet_types(fieldset);
-  });
-  function update_subnet_types(fieldset) {
     subnet_select = find_network_interface_field($(fieldset), 'subnet_id', 'select');
+    update_subnet_types(subnet_select);
+  });
+  $('#host_subnet_id').each(function(idx, subnet_select) {
+    update_subnet_types($(subnet_select));
+  });
+  $(document).on('change', 'select#host_subnet_id', function(event) {
+    update_subnet_types($(event.target));
+  });
+  function update_subnet_types(subnet_select) {
     subnet_types = subnet_select.data('types');
     help_message = subnet_types[subnet_select.val()];
 
