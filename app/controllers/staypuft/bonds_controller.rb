@@ -94,12 +94,12 @@ module Staypuft
     def find_hosts
       @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)
       @host = @hosts.first
-      @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
+      @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
       @deployment = Deployment.find(params[:deployment_id])
     end
 
     def find_unassigned_subnets
-      assigned_subnet_ids = ([@host.subnet_id] + @host.interfaces.non_vip.map(&:subnet_id)).compact.uniq
+      assigned_subnet_ids = ([@host.subnet_id] + @host.interfaces.map(&:subnet_id)).compact.uniq
       @subnets = @deployment.subnets.where(["#{Subnet.table_name}.id NOT IN (?)", assigned_subnet_ids]).uniq
     end
 
