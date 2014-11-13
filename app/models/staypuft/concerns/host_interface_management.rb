@@ -52,11 +52,18 @@ module Staypuft
       def network_query
         @network_query || NetworkQuery.new(self.hostgroup.deployment, self)
       end
-        
+
+      def primary_interface_is_bonded?
+        self.bond_interfaces.any? do |bond|
+          bond.attached_devices_identifiers.any? do |interface_identifier|
+            self.has_primary_interface? ? self.primary_interface == interface_identifier : false
+          end
+        end
+      end
     end
   end
 end
 
 class ::Host::Managed::Jail < Safemode::Jail
-  allow :network_query
+  allow :network_query, :primary_interface_is_bonded?
 end
