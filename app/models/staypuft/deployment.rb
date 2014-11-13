@@ -185,7 +185,7 @@ module Staypuft
     module Platform
       RHEL7  = 'rhel7'
       RHEL6  = 'rhel6'
-      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux OpenStack Platform 5 with RHEL 7')}
+      LABELS = { RHEL7 => N_('Red Hat Enterprise Linux OpenStack Platform 6 on RHEL 7')}
       TYPES  = LABELS.keys
       HUMAN  = N_('Platform')
     end
