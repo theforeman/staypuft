@@ -54,7 +54,7 @@
             </a>
             <%= link_to _("Cancel"), deployment_path(@deployment),
                         :class => "btn btn-danger" %>
-            <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
+            <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right", :id => "vip_modal_button" ) do %>
               <%= _("Next") %>
             <% end %>
           </div>
@@ -84,4 +84,15 @@
         </div>
       </div>
     </div>
+
+  <div class="modal fade" id="vip_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h3>Generating network configuration. This may take a few moments.</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <% end %>
