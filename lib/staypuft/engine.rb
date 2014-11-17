@@ -35,8 +35,6 @@ module Staypuft
       ::Host::Discovered.send :include, Staypuft::Concerns::HostOpenStackAffiliation
       ::Host::Discovered.send :include, Staypuft::Concerns::HostDetailsHelper
       ::Puppetclass.send :include, Staypuft::Concerns::PuppetclassExtensions
-      ::Nic::Base.send :include, Staypuft::Concerns::SubnetIpManagement
-      ::Nic::Base.send :include, Staypuft::Concerns::VipNicScopes
       ::Hostgroup.send :include, Staypuft::Concerns::HostgroupExtensions
       ::Environment.send :include, Staypuft::Concerns::EnvironmentExtensions
       ::LookupKey.send :include, Staypuft::Concerns::LookupKeyExtensions

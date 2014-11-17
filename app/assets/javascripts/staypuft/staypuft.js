@@ -299,6 +299,12 @@ $(function () {
     });
   });
 
+  $("#vip_modal_button").on('click', function(e) {
+    $("#vip_modal").modal('show');
+  });
+  $('#vip_modal').on('shown.bs.modal', function(){
+    $("#vip_modal_button").submit();
+  })
   var scrolled = false;
 
   $(window).scroll(function(){

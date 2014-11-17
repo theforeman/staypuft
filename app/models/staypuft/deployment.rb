@@ -46,6 +46,9 @@ module Staypuft
     has_many :subnet_types, :through => :subnet_typings
     has_many :subnets, :through => :subnet_typings
 
+    has_many :deployment_vip_nics, :dependent => :destroy
+    has_many :vip_nics, :through => :deployment_vip_nics
+
     validates :name, :presence => true, :uniqueness => true
 
     validates :layout, :presence => true
@@ -295,6 +298,39 @@ module Staypuft
 
     def custom_repos_paths
       self.custom_repos.split("\n")
+    end
+
+    def build_vips(parameters)
+      typings = self.subnet_typings
+      types = SubnetType.where(:name => parameters.values.uniq).all
+      n = 0
+      self.deployment_vip_nics.includes(:vip_nic).where("nics.tag not in (?)", parameters.keys).destroy_all
+      parameters.each do |parameter, subnet_type|
+        type = types.find { |t| t.name == subnet_type }
+        raise "unable to find subnet type with name #{subnet_type}" if type.nil?
+
+        subnet = typings.where(:subnet_type_id => type.id).first.subnet
+        raise "unable to find subnet assigned to type #{subnet_type} in deployment #{self.name}" if subnet.nil?
+
+        # for identifier, use pre-pended "vip_" rather than appended "_vip" to group interface names
+        vip_identifier = "vip_" + parameter.to_s.chomp("_vip")
+        deployment_vip_nic = self.deployment_vip_nics.includes(:vip_nic).where(:nics => {:identifier => vip_identifier}).first
+        interface = deployment_vip_nic.vip_nic if deployment_vip_nic
+        if deployment_vip_nic.nil?
+          interface = VipNic.new(:type => 'Staypuft::VipNic', :identifier => vip_identifier)
+        end
+        interface.subnet = subnet
+        interface.managed = false
+        mac_str = self.id.to_s(16).rjust(10,'0')
+        [8,6,4,2].each {|i| mac_str.insert(i,":") }
+        interface.mac = "#{mac_str}:#{n.to_s(16).rjust(2, '0')}"
+        interface.tag = parameter
+        interface.save!
+        if deployment_vip_nic.nil?
+          self.deployment_vip_nics.create(:vip_nic=> interface)
+        end
+        n += 1
+      end
     end
 
     private

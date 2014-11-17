@@ -55,6 +55,7 @@ module Staypuft
       when :network_configuration
         @deployment.form_step = Deployment::STEP_NETWORKING
         @subnets = Subnet.search_for(params[:search], :order => params[:order]).includes(:domains, :dhcp).paginate :page => params[:page]
+        @deployment.build_vips(NetworkQuery::VIP_NAMES) if @deployment.valid?
       else
         raise 'unknown step'
       end

@@ -7,10 +7,10 @@ module Staypuft
       host_ids = host_ids.split(',') unless host_ids.is_a? Array
       @hosts = Host::Managed.where(:id => host_ids).includes(:interfaces)
       @host = @hosts.first
-      assigned_subnet_ids = ([@host.subnet_id] + @host.interfaces.non_vip.map(&:subnet_id)).compact.uniq
+      assigned_subnet_ids = ([@host.subnet_id] + @host.interfaces.map(&:subnet_id)).compact.uniq
       @subnets = @deployment.subnets.where(["#{Subnet.table_name}.id NOT IN (?)", assigned_subnet_ids]).uniq
       if @host
-        @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").non_vip.order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
+        @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
       else
         @interfaces = []
       end
@@ -82,7 +82,7 @@ module Staypuft
     end
 
     def get_interfaces_to_compare(host)
-      host.interfaces.non_vip.where("type <> 'Nic::BMC'").order(:identifier)
+      host.interfaces.where("type <> 'Nic::BMC'").order(:identifier)
     end
   end
 end
