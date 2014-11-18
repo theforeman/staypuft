@@ -14,13 +14,13 @@ module Actions
   module Staypuft
     module Host
 
-      class WaitUntilHostReady < Actions::Base
+      class ReportCheck < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
         include Dynflow::Action::Polling
 
-        def plan(host_id)
-          plan_self host_id: host_id
+        def plan(host_id, after)
+          plan_self host_id: host_id, after: after
         end
 
         def external_task
@@ -39,6 +39,15 @@ module Actions
           0.1
         end
 
+        def run(event = nil)
+          case event
+          when Dynflow::Action::Skip
+            output[:status] = true
+          else
+            super(event)
+          end
+        end
+
         private
 
         def invoke_external_task
@@ -50,20 +59,20 @@ module Actions
         end
 
         def poll_external_task
-          host_ready?(input[:host_id])
+          host_ready?(input[:host_id], DateTime.parse(input[:after]).to_time)
         end
 
         def poll_interval
           5
         end
 
-        def host_ready?(host_id)
-          host = ::Host.find(host_id)
-          # take reports oldest first ignoring always the first one (auto-sign)
-          host.reports.order('reported_at DESC')[0..-2].any? do |report|
-            check_for_failures(report, host.id)
-            report_change?(report)
-          end
+        def host_ready?(host_id, after)
+          host   = ::Host.find(host_id)
+          report = host.reports.where('reported_at > ?', after).first
+          return false unless report
+
+          check_for_failures(report, host.id)
+          report_change?(report)
         end
 
         def report_change?(report)

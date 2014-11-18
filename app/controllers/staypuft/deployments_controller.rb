@@ -155,11 +155,11 @@ module Staypuft
 
     private
 
-    def assign_host_to_hostgroup(discovered_host, hostgroup)
-      converting_discovered = discovered_host.is_a? Host::Discovered
+    def assign_host_to_hostgroup(assignee_host, hostgroup)
+      converting_discovered = assignee_host.is_a? Host::Discovered
 
       if converting_discovered
-        hosts_facts = FactValue.joins(:fact_name).where(host_id: discovered_host.id)
+        hosts_facts = FactValue.joins(:fact_name).where(host_id: assignee_host.id)
         discovery_bootif = hosts_facts.where(fact_names: { name: 'discovery_bootif' }).first or
             raise 'unknown discovery_bootif fact'
 
@@ -175,15 +175,21 @@ module Staypuft
         ip = hosts_facts.where(fact_names: { name: "ipaddress_#{interface}" }).first
       end
 
-      original_type = discovered_host.type
-      host          = discovered_host.becomes(::Host::Managed)
-      host.type     = 'Host::Managed'
-      host.managed  = true
-      host.build    = true
-      host.ip       = ip.value if converting_discovered
-      host.mac      = discovery_bootif.value if converting_discovered
+      original_type = assignee_host.type
+      host          = if converting_discovered
+                        assignee_host.becomes(::Host::Managed).tap do |host|
+                          host.type    = 'Host::Managed'
+                          host.managed = true
+                          host.ip      = ip.value
+                          host.mac     = discovery_bootif.value
+                        end
+                      else
+                        assignee_host
+                      end
 
       host.hostgroup   = hostgroup
+      # set build to true so the PXE config-template takes effect under discovery environment
+      host.build       = true if assignee_host.managed?
       # set discovery environment to keep booting discovery image
       host.environment = Environment.get_discovery
 
@@ -199,12 +205,12 @@ module Staypuft
       # "WHERE "hosts"."type" IN ('Host::Managed') AND "hosts"."id" = 283"
       # which will not find the record since it's still Host::Discovered.
       # Using #update_column to change it directly in DB
-      # (discovered_host is used to avoid same WHERE condition problem here).
+      # (assignee_host is used to avoid same WHERE condition problem here).
       # FIXME this is definitely ugly, needs to be properly fixed
-      discovered_host.update_column :type, 'Host::Managed'
+      assignee_host.update_column :type, 'Host::Managed'
 
       [host.save, host].tap do |saved, _|
-        discovered_host.becomes(Host::Base).update_column(:type, original_type) unless saved
+        assignee_host.becomes(Host::Base).update_column(:type, original_type) unless saved
       end
     end
   end

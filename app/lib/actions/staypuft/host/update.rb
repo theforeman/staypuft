@@ -13,20 +13,20 @@
 module Actions
   module Staypuft
     module Host
-      class PuppetRun < Dynflow::Action
+      class Update < Dynflow::Action
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
 
-        def plan(host)
-          Type! host, ::Host::Base
-          plan_self host_id: host.id, name: host.name
+        def plan(host, updates)
+          plan_self host_id: host.id, updates: updates
         end
 
         def run
-          output[:executed_at] = DateTime.now.iso8601
-          ::Host.find(input.fetch(:host_id)).puppetrun!
+          host = ::Host.find(input.fetch :host_id)
+          host.update_attributes input.fetch(:updates)
+          output.update changing: host.changes
+          host.save!
         end
-
       end
     end
   end

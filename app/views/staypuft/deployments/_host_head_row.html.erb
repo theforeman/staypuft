@@ -8,5 +8,6 @@
   <% if local_assigns[:deploying_col] %>
     <th class="hidden-s hidden-xs"><%= _('Deploying?') %></th>
   <% end %>
+  <th class="hidden-s hidden-xs"><%= _('Managed?') %></th>
   <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
 </tr>

@@ -30,5 +30,13 @@
     </td>
   <% end %>
 
+  <td class="hidden-s hidden-xs">
+    <% if host.managed? %>
+      <span class="glyphicon glyphicon-ok"></span>
+    <% else %>
+      <span class="glyphicon glyphicon-minus"></span>
+    <% end %>
+  </td>
+
   <td class="hidden-s hidden-xs"><%= host.ip %></td>
 </tr>
