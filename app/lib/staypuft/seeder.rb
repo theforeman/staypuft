@@ -102,6 +102,8 @@ module Staypuft
         :horizon_ha         => { :name => 'Horizon (HA)', :class => ['quickstack::pacemaker::horizon'] },
         :galera_ha          => { :name => 'Galera (HA)', :class => ['quickstack::pacemaker::galera'] },
         :mysql_ha           => { :name => 'Mysql (HA)', :class => ['quickstack::pacemaker::mysql'] },
+        :ceilometer_ha      => { :name => 'Ceilometer (HA)', :class => ['quickstack::pacemaker::nosql',
+                                                                        'quickstack::pacemaker::ceilometer'] },
         :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] },
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
         :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
@@ -158,7 +160,7 @@ module Staypuft
           :layouts       => [[:ha_nova, 1], [:ha_neutron, 1]],
           :services      => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
                              :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
-                             :neutron_ha, :galera_ha],
+                             :neutron_ha, :galera_ha, :ceilometer_ha],
           :orchestration => 'concurrent' },
         { :name          => 'Generic RHEL 7',
           :class         => '',
@@ -244,7 +246,7 @@ module Staypuft
     def functional_dependencies
       amqp_provider               = { :string => '<%= @host.deployment.amqp_provider %>' }
       neutron                     = { :string => '<%= @host.deployment.neutron_networking? %>' }
-      ceilometer                  = { :string => '<%= @host.deployment.non_ha? %>' }
+      ceilometer                  = true
 
       # Nova
       network_manager             = { :string => '<%= @host.deployment.nova.network_manager %>' }
@@ -727,7 +729,8 @@ module Staypuft
           'quickstack::pacemaker::keystone'        => {
               'keystonerc'     => keystonerc,
               'admin_password' => admin_pw,
-              'admin_token'    => keystone_admin_token },
+              'admin_token'    => keystone_admin_token,
+              'ceilometer'     => "false" },
           'quickstack::pacemaker::horizon'         => {
               'secret_key' => horizon_secret_key },
           'quickstack::pacemaker::galera'          => {
@@ -849,6 +852,9 @@ module Staypuft
               'volumes_key'                => ceph_volumes_key,
               'osd_pool_default_size'      => ceph_osd_pool_size,
               'osd_journal_size'           => ceph_osd_journal_size
+          },
+          'quickstack::pacemaker::ceilometer' => {
+              'ceilometer_metering_secret' => ceilometer_metering,
           }
       }
     end
