@@ -28,6 +28,7 @@
           %>
             <div class="tab-pane" id="<%= service_name %>">
               <h3><%= _("%s Service Configuration") % service_name.to_s.capitalize %></h3>
+              <div class="<%= "%s-controller-warning" % service_name.to_s %> alert alert-warning base in fade alert-dismissable hide"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><h4 class="alert-heading"><%= _("Warning") %></h4><li><%= _("Only one controller should be assigned when using this option.") %><span class="replace"></span></li></div>
               <%= render partial: service_name.to_s, locals: {f: f}%>
             </div>
             <% end %>

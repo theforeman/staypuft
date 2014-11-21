@@ -138,6 +138,35 @@ $(function () {
     }
   }
 
+  showControllerWarning("glance");
+  showControllerWarning("cinder");
+  $("input[name='staypuft_deployment[glance][driver_backend]'").change(function(){
+    console.log("glance");
+    showControllerWarning("glance")
+  });
+  $("#staypuft_deployment_cinder_backend_lvm").change(function(){
+    console.log("cinder");
+    showControllerWarning("cinder")
+  });
+  function showControllerWarning(which_warning) {
+    if(which_warning == "glance") {
+      if($("#staypuft_deployment_glance_driver_backend_local").is(":checked")) {
+        $('.glance-controller-warning').find(".replace").html(" (Local File)");
+        $('.glance-controller-warning').show();
+      } else {
+        $('.glance-controller-warning').hide();
+      }
+    }
+    if(which_warning == "cinder") {
+      if($("#staypuft_deployment_cinder_backend_lvm").is(":checked")) {
+        $('.cinder-controller-warning').find(".replace").html(" (LVM)");
+        $('.cinder-controller-warning').show();
+      } else {
+        $('.cinder-controller-warning').hide();
+      }
+    }
+  }
+
   showGlanceNfsNetworkPath();
   $("input[name='staypuft_deployment[glance][driver_backend]']").change(showGlanceNfsNetworkPath);
   function showGlanceNfsNetworkPath() {
