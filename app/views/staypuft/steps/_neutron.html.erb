@@ -1,9 +1,8 @@
 <%= f.fields_for :neutron, @deployment.neutron do |p| %>
   <%= base_errors_for @deployment.neutron %>
-  <div class="form-group <%= @deployment.neutron.errors.empty? ? "" : 'has-error' %> hide"></div>
   <%= change_label_width(4, field(p, :network_segmentation, :label => _(Staypuft::Deployment::NeutronService::NetworkSegmentation::HUMAN)) do
     Staypuft::Deployment::NeutronService::NetworkSegmentation::LABELS.map do |value, label|
-      radio_button_f_non_inline(p, :network_segmentation,
+      radio_button_f_non_inline(p, :network_segmentation, :class   => "network_segmentation",
                                 :checked => @deployment.neutron.network_segmentation == value,
                                 :value   => value,
                                 :text    => label)
@@ -16,7 +15,7 @@
                                      help_inline:                   _(Staypuft::Deployment::NeutronService::TenantVlanRanges::HUMAN_AFTER)) %>
   </div>
 
-  <%= change_label_width(4, field(p, :core_plugin, :label => _(Staypuft::Deployment::NeutronService::CorePlugin::HUMAN)) do
+  <%= change_label_width(3, field(p, :core_plugin, :label => _(Staypuft::Deployment::NeutronService::CorePlugin::HUMAN)) do
     Staypuft::Deployment::NeutronService::CorePlugin::LABELS.map do |value, label|
       radio_button_f_non_inline(p, :core_plugin,
                                 :checked => @deployment.neutron.core_plugin == value,

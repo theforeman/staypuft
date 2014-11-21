@@ -115,6 +115,18 @@ $(function () {
     }
   }
 
+  showTenantNetworkType();
+  $("#staypuft_deployment_neutron_ml2_openvswitch").change(showTenantNetworkType);
+  function showTenantNetworkType() {
+$('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass('col-md-8');
+    if($("#staypuft_deployment_neutron_ml2_openvswitch").is(":checked")) {
+      $("#staypuft_deployment_neutron_ml2_openvswitch").parent().after($("label[for='network_segmentation']").parent())
+      $("label[for='network_segmentation']").parent().fadeIn(duration);
+    } else {
+      $("label[for='network_segmentation']").parent().fadeOut(duration);
+    }
+  }
+
   showNeutronN1kvParameters();
   $("input[name='staypuft_deployment[neutron][core_plugin]']").change(showNeutronN1kvParameters);
   function showNeutronN1kvParameters() {
