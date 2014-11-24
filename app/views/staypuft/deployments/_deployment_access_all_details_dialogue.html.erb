@@ -11,25 +11,14 @@
       <div class="modal-body" style="max-height: 600px; overflow: auto;">
         <div class="row">
           <div class="col-sm-12">
-              <h4><%= @deployment.ha? ? _("VIP list") : _("Controller IPs") %></h4>
-              <% if @deployment.ha? %>
-                <% Staypuft::NetworkQuery::VIP_NAMES.keys.each do | vip_name | %>
-                <div class="row">
-                  <label class="col-sm-4 control-label text-muted"><%= "#{vip_name}:" %></label>
-                  <div class="col-sm-8">
-                    <p class="form-control-static"><%= @deployment.network_query.get_vip(vip_name) %></p>
-                  </div>
+              <h4><%=  _("VIP list") %></h4>
+              <% Staypuft::NetworkQuery::VIP_NAMES.keys.each do | vip_name | %>
+              <div class="row">
+                <label class="col-sm-4 control-label text-muted"><%= "#{vip_name}:" %></label>
+                <div class="col-sm-8">
+                  <p class="form-control-static"><%= @deployment.network_query.get_vip(vip_name) %></p>
                 </div>
-                <% end %>
-              <% else %>
-                <% [Staypuft::SubnetType::PUBLIC_API, Staypuft::SubnetType::MANAGEMENT, Staypuft::SubnetType::ADMIN_API].each do |subnet_type| %>
-                <div class="row">
-                  <label class="col-sm-4 control-label text-muted"><%= "#{subnet_type}:" %></label>
-                  <div class="col-sm-8">
-                    <p class="form-control-static"><%= @deployment.network_query.controller_ips(subnet_type).first %></p>
-                  </div>
-                </div>
-                <% end %>
+              </div>
               <% end %>
           </div>
         </div>

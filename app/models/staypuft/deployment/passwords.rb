@@ -2,10 +2,10 @@ module Staypuft
   class Deployment::Passwords < Deployment::AbstractParamScope
 
     USER_SERVICES_PASSWORDS = :admin, :ceilometer_user, :cinder_user, :glance_user, :heat_user,
-        :heat_cfn_user, :keystone_user, :neutron_user, :nova_user, :swift_user, :swift_admin, :amqp
+        :heat_cfn_user, :keystone_user, :neutron_user, :nova_user, :swift_user, :amqp
 
     DB_SERVICES_PASSWORDS = :cinder_db, :glance_db, :heat_db, :mysql_root, :keystone_db,
-        :neutron_db, :nova_db, :amqp_nssdb
+        :neutron_db, :nova_db
 
     OTHER_PASSWORDS = :keystone_admin_token, :ceilometer_metering_secret, :heat_auth_encrypt_key,
         :horizon_secret_key, :swift_shared_secret, :neutron_metadata_proxy_secret

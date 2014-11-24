@@ -79,10 +79,6 @@ module Staypuft
       controllers.map { |controller| ip_for_host(subnet_type_name, controller) }
     end
 
-    def controller_ip(subnet_type_name)
-      ip_for_host(subnet_type_name, controllers.tap { |v| v.size == 1 or raise('only one controller is allowed') }.first)
-    end
-
     def controller_fqdns
       controllers.map &:fqdn
     end

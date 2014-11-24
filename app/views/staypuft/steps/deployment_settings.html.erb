@@ -12,8 +12,7 @@
       <%= text_f f, :name %>
       <%= textarea_f f, :description, :rows => 3 %>
   
-      <% { layout_name:   Staypuft::Deployment::LayoutName,
-           networking:    Staypuft::Deployment::Networking,
+      <% { networking:    Staypuft::Deployment::Networking,
            amqp_provider: Staypuft::Deployment::AmqpProvider,
            platform:      Staypuft::Deployment::Platform }.
              each do |attr, constants| %>

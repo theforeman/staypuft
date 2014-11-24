@@ -21,7 +21,6 @@
                                  :checked_value   => 'true',
                                  :unchecked_value => 'false',
                                  :checked         => @deployment.cinder.lvm_backend?,
-                                 :group_class     => @deployment.ha? ? "hide" : "",
                                  :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['lvm']))
       %>
 

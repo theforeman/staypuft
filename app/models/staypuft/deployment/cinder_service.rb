@@ -62,8 +62,7 @@ module Staypuft
         :multiple_backends?, :rbd_secret_uuid, :nfs_uri, :eqlxs, :eqlxs_attributes=,
         :compute_eqlx_san_ips, :compute_eqlx_san_logins, :compute_eqlx_san_passwords,
         :compute_eqlx_group_names, :compute_eqlx_pools, :compute_eqlx_thin_provision,
-        :compute_eqlx_use_chap, :compute_eqlx_chap_logins, :compute_eqlx_chap_passwords,
-        :compute_eqlx_backend_names
+        :compute_eqlx_use_chap, :compute_eqlx_chap_logins, :compute_eqlx_chap_passwords
     end
 
     def set_defaults
@@ -80,7 +79,7 @@ module Staypuft
     end
 
     def lvm_backend?
-      !self.deployment.ha? && self.backend_lvm == "true"
+      self.backend_lvm == "true"
     end
 
     def nfs_backend?
@@ -100,16 +99,11 @@ module Staypuft
         BACKEND_TYPE_PARAMS.select { |type| send(type.to_s) == "true" }.length > 1
     end
 
-    # view should use this rather than DriverBackend::LABELS to hide LVM for HA.
     def backend_labels_for_layout
-      ret_list = DriverBackend::LABELS.clone
-      ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      ret_list
+      DriverBackend::LABELS
     end
     def backend_types_for_layout
-      ret_list = DriverBackend::TYPES.clone
-      ret_list.delete(DriverBackend::LVM) if self.deployment.ha?
-      ret_list
+      DriverBackend::TYPES
     end
 
     def param_hash
@@ -135,10 +129,6 @@ module Staypuft
       end
     end
 
-    def compute_eqlx_backend_names
-      self.eqlxs.collect.with_index { |e,i| "eqlx#{i+1}" }
-    end
-
     private
 
     def set_lvm_ptable
@@ -157,9 +147,7 @@ module Staypuft
     end
 
     def at_least_one_backend_selected
-      params = BACKEND_TYPE_PARAMS.clone
-      params.delete :backend_lvm if self.deployment.ha?
-      unless params.detect(lambda { false }) { |field| self.send(field) == "true" }
+      unless BACKEND_TYPE_PARAMS.detect(lambda { false }) { |field| self.send(field) == "true" }
         errors.add :base, _("At least one storage backend must be selected")
       end
     end

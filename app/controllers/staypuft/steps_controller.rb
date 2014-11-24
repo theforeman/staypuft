@@ -10,7 +10,7 @@ module Staypuft
       when :deployment_settings
         @layouts = ordered_layouts
       when :services_overview
-        if !@deployment.ha? && @deployment.cinder.lvm_ptable.nil?
+        if @deployment.cinder.lvm_ptable.nil?
           flash[:warning] = "Missing Partition Table 'LVM with cinder-volumes', LVM cinder backend won't work." 
         end
       when :network_configuration

@@ -58,53 +58,39 @@ module Staypuft
     }
 
     # key (:ha, etc) is only  used internally for referencing from roles
-    LAYOUTS        = { :ha_nova        => { :name       => 'High Availability Controllers / Compute',
-                                            :networking => 'nova' },
-                       :non_ha_nova    => { :name       => 'Controller / Compute',
-                                            :networking => 'nova' },
-                       :ha_neutron     => { :name       => 'High Availability Controllers / Compute',
-                                            :networking => 'neutron' },
-                       :non_ha_neutron => { :name       => 'Controller / Compute',
-                                            :networking => 'neutron' } }
+    LAYOUTS        = { :nova        => { :name       => 'Controllers / Compute',
+                                         :networking => 'nova' },
+                       :neutron     => { :name       => 'Controllers / Compute',
+                                         :networking => 'neutron' } }
 
     # some services don't have puppetclasses yet, since they aren't broken out on the back end
     SERVICES       = {
-        :non_ha_amqp        => { :name => 'AMQP (non-HA)', :class => [] },
-        :mysql              => { :name => 'MySQL', :class => [] },
-        :non_ha_keystone    => { :name => 'Keystone (non-HA)', :class => [] },
-        :nova_controller    => { :name => 'Nova (Controller)', :class => [] },
-        :neutron_controller => { :name => 'Neutron (Controller)', :class => [] },
-        :non_ha_glance      => { :name => 'Glance (non-HA)', :class => [] },
-        :cinder_controller  => { :name => 'Cinder (controller)', :class => [] },
         :cinder_node        => { :name => 'Cinder (node)', :class => ['quickstack::storage_backend::cinder'] },
-        :heat               => { :name => 'Heat', :class => [] },
-        :ceilometer         => { :name => 'Ceilometer', :class => [] },
-        :neutron_networker  => { :name => 'Neutron Networker', :class => ['quickstack::neutron::networker'] },
         :nova_compute       => { :name => 'Nova-compute', :class => ['quickstack::nova_network::compute'] },
         :neutron_compute    => { :name => 'Neutron-compute', :class => ['quickstack::neutron::compute'] },
-        :swift              => { :name => 'Swift (node)', :class => ['quickstack::swift::storage'] },
-        :ha_controller      => { :name  => 'HA (Controller)',
+        :swift_node         => { :name => 'Swift (node)', :class => ['quickstack::swift::storage'] },
+        :controller         => { :name  => 'Controller',
                                  :class => ['quickstack::openstack_common',
                                             'quickstack::pacemaker::common',
                                             'quickstack::pacemaker::params'] },
-        :keystone_ha        => { :name  => 'Keystone (HA)',
+        :keystone           => { :name  => 'Keystone',
                                  :class => ['quickstack::pacemaker::keystone'] },
-        :load_balancer_ha   => { :name  => 'Load Balancer (HA)',
+        :load_balancer      => { :name  => 'Load Balancer',
                                  :class => ['quickstack::pacemaker::load_balancer'] },
-        :memcached_ha       => { :name  => 'Memcached (HA)',
+        :memcached          => { :name  => 'Memcached',
                                  :class => ['quickstack::pacemaker::memcached'] },
-        :qpid_ha            => { :name => 'qpid (HA)', :class => ['quickstack::pacemaker::qpid'] },
-        :glance_ha          => { :name => 'Glance (HA)', :class => ['quickstack::pacemaker::glance'] },
-        :nova_ha            => { :name => 'Nova (HA)', :class => ['quickstack::pacemaker::nova'] },
-        :heat_ha            => { :name => 'Heat (HA)', :class => ['quickstack::pacemaker::heat'] },
-        :cinder_ha          => { :name => 'Cinder (HA)', :class => ['quickstack::pacemaker::cinder'] },
-        :swift_ha           => { :name => 'Swift (HA)', :class => ['quickstack::pacemaker::swift'] },
-        :horizon_ha         => { :name => 'Horizon (HA)', :class => ['quickstack::pacemaker::horizon'] },
-        :galera_ha          => { :name => 'Galera (HA)', :class => ['quickstack::pacemaker::galera'] },
-        :mysql_ha           => { :name => 'Mysql (HA)', :class => ['quickstack::pacemaker::mysql'] },
-        :ceilometer_ha      => { :name => 'Ceilometer (HA)', :class => ['quickstack::pacemaker::nosql',
+        :qpid               => { :name => 'qpid', :class => ['quickstack::pacemaker::qpid'] },
+        :glance             => { :name => 'Glance', :class => ['quickstack::pacemaker::glance'] },
+        :nova               => { :name => 'Nova', :class => ['quickstack::pacemaker::nova'] },
+        :heat               => { :name => 'Heat', :class => ['quickstack::pacemaker::heat'] },
+        :cinder             => { :name => 'Cinder', :class => ['quickstack::pacemaker::cinder'] },
+        :swift              => { :name => 'Swift', :class => ['quickstack::pacemaker::swift'] },
+        :horizon            => { :name => 'Horizon', :class => ['quickstack::pacemaker::horizon'] },
+        :galera             => { :name => 'Galera', :class => ['quickstack::pacemaker::galera'] },
+        :mysql              => { :name => 'Mysql', :class => ['quickstack::pacemaker::mysql'] },
+        :ceilometer         => { :name => 'Ceilometer (HA)', :class => ['quickstack::pacemaker::nosql',
                                                                         'quickstack::pacemaker::ceilometer'] },
-        :neutron_ha         => { :name => 'Neutron (HA)', :class => ['quickstack::pacemaker::neutron'] },
+        :neutron            => { :name => 'Neutron', :class => ['quickstack::pacemaker::neutron'] },
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
         :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
                                  :class => ['quickstack::openstack_common',
@@ -118,32 +104,15 @@ module Staypuft
     # until we get the real list of roles per layout
     # layout refs below specify layout keys from layouts hash
     ROLES          = [
-        { :name          => 'Controller (Nova)',
-          :class         => 'quickstack::nova_network::controller',
-          :layouts       => [[:non_ha_nova, 1]],
-          :services      => [:non_ha_amqp, :mysql, :non_ha_keystone, :nova_controller, :non_ha_glance,
-                             :cinder_controller, :heat, :ceilometer],
-          :orchestration => 'concurrent' },
         { :name          => 'Compute (Nova)',
           :class         => [],
-          :layouts       => [[:ha_nova, 10], [:non_ha_nova, 10]],
+          :layouts       => [[:nova, 10]],
           :services      => [:nova_compute],
           :orchestration => 'leader' },
-        { :name          => 'Controller (Neutron)',
-          :class         => 'quickstack::neutron::controller',
-          :layouts       => [[:non_ha_neutron, 1]],
-          :services      => [:non_ha_amqp, :mysql, :non_ha_keystone, :neutron_controller, :non_ha_glance,
-                             :cinder_controller, :heat, :ceilometer],
-          :orchestration => 'concurrent' },
         { :name          => 'Compute (Neutron)',
           :class         => [],
-          :layouts       => [[:ha_neutron, 10], [:non_ha_neutron, 10]],
+          :layouts       => [[:neutron, 10]],
           :services      => [:neutron_compute],
-          :orchestration => 'concurrent' },
-        { :name          => 'Neutron Networker',
-          :class         => [],
-          :layouts       => [[:non_ha_neutron, 3]],
-          :services      => [:neutron_networker],
           :orchestration => 'concurrent' },
         { :name          => 'Cinder Block Storage',
           :class         => [],
@@ -155,21 +124,21 @@ module Staypuft
           :layouts       => [],
           :services      => [:swift],
           :orchestration => 'concurrent' },
-        { :name          => 'HA Controller',
+        { :name          => 'Controller',
           :class         => [],
-          :layouts       => [[:ha_nova, 1], [:ha_neutron, 1]],
-          :services      => [:ha_controller, :keystone_ha, :load_balancer_ha, :memcached_ha, :qpid_ha,
-                             :glance_ha, :nova_ha, :heat_ha, :cinder_ha, :swift_ha, :horizon_ha, :mysql_ha,
-                             :neutron_ha, :galera_ha, :ceilometer_ha],
+          :layouts       => [[:nova, 1], [:neutron, 1]],
+          :services      => [:controller, :keystone, :load_balancer, :memcached, :qpid,
+                             :glance, :nova, :heat, :cinder, :swift, :horizon, :mysql,
+                             :neutron, :galera, :ceilometer],
           :orchestration => 'concurrent' },
         { :name          => 'Generic RHEL 7',
           :class         => '',
-          :layouts       => [[:non_ha_nova, 20],[:non_ha_neutron, 20], [:ha_nova, 20], [:ha_neutron, 20]],
+          :layouts       => [[:nova, 20], [:neutron, 20]],
           :services      => [:generic_rhel_7],
           :orchestration => 'concurrent' },
         { :name          => 'Ceph Storage Node (OSD)',
           :class         => '',
-          :layouts       => [[:non_ha_nova, 20], [:non_ha_neutron, 20], [:ha_nova, 20], [:ha_neutron, 20]],
+          :layouts       => [[:nova, 20], [:neutron, 20]],
           :services      => [:ceph_osd],
           :orchestration => 'concurrent' },
       ]
@@ -235,7 +204,7 @@ module Staypuft
     }
 
     def get_host_format(param_name, subnet_type_name)
-      { :string => "<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:#{param_name}) : d.network_query.controller_ip('#{subnet_type_name}') %>" }
+      { :string => "<%= @host.deployment.network_query.get_vip(:#{param_name}) %>" }
     end
 
     # virtual ip addresses
@@ -274,7 +243,6 @@ module Staypuft
       tenant_network_type         = '<%= @host.deployment.neutron.network_segmentation %>'
       ml2_tenant_network_types    = [ tenant_network_type ]
       ml2_tunnel_id_ranges        = ['10:1000']
-      ml2_vni_ranges              = ['10:1000']
       ml2_mechanism_drivers       = { :array =>  '<%= @host.deployment.neutron.ml2_mechanisms %>' }
       ovs_tunnel_types            = { :array =>  '<%= @host.deployment.neutron.ovs_tunnel_types %>' }
       ovs_tunnel_iface            = { :string => '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host) : "" %>' }
@@ -303,24 +271,17 @@ module Staypuft
       pcmk_fs_dir                 = '/var/lib/glance/images'
       pcmk_fs_manage              = { :string => '<%= @host.deployment.glance.pcmk_fs_manage %>' }
       pcmk_fs_options             = { :string => '<%= @host.deployment.glance.pcmk_fs_options %>' }
-      glance_rbd_store_user       = 'images'
-      glance_rbd_store_pool       = 'images'
 
       # Cinder
       volume                      = true
       cinder_backend_gluster      = false
-      cinder_backend_gluster_name = 'gluster'
       cinder_backend_iscsi        = { :string => '<%= @host.deployment.cinder.lvm_backend? %>' }
-      cinder_backend_iscsi_name   = 'iscsi'
       cinder_backend_nfs          = { :string => '<%= @host.deployment.cinder.nfs_backend? %>' }
-      cinder_backend_nfs_name     = 'nfs'
       cinder_multiple_backends    = { :string => '<%= @host.deployment.cinder.multiple_backends? %>' }
-      cinder_create_volume_types  = true
       cinder_nfs_shares           = ['<%= @host.deployment.cinder.nfs_uri %>']
       cinder_nfs_mount_options    = 'nosharecache'
 
       cinder_backend_rbd                      = { :string => '<%= @host.deployment.cinder.ceph_backend? %>' }
-      cinder_backend_rbd_name                 = 'rbd'
       cinder_rbd_pool                         = 'volumes'
       cinder_rbd_ceph_conf                    = '/etc/ceph/ceph.conf'
       cinder_rbd_flatten_volume_from_snapshot = 'false'
@@ -329,7 +290,6 @@ module Staypuft
       cinder_rbd_secret_uuid                  = { :string => '<%= @host.deployment.cinder.rbd_secret_uuid %>' }
 
       cinder_backend_eqlx           = { :string => '<%= @host.deployment.cinder.equallogic_backend? %>' }
-      cinder_backend_eqlx_name      = { :array => '<%= @host.deployment.cinder.compute_eqlx_backend_names %>'}
       # TODO: confirm these params and add them to model where user input is needed
       # below dynamic calls are commented out since the model does not yet have san/chap entries
       cinder_san_ip                 = { :array => '<%= @host.deployment.cinder.compute_eqlx_san_ips %>' }
@@ -381,10 +341,8 @@ module Staypuft
       neutron_user_pw               = { :string => '<%= @host.deployment.passwords.effective_value(:neutron_user) %>' }
       nova_db_pw                    = { :string => '<%= @host.deployment.passwords.effective_value(:nova_db) %>' }
       nova_user_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:nova_user) %>' }
-      swift_admin_pw                = { :string => '<%= @host.deployment.passwords.effective_value(:swift_admin) %>' }
       swift_user_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:swift_user) %>' }
       amqp_pw                       = { :string => '<%= @host.deployment.passwords.effective_value(:amqp) %>' }
-      amqp_nssdb_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:amqp_nssdb) %>' }
       keystone_admin_token          = { :string => '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>' }
 
       #these don't share the user-supplied password value; they're always a random per param value
@@ -405,10 +363,6 @@ module Staypuft
       auth_host    = get_host_format :keystone_admin_vip, Staypuft::SubnetType::ADMIN_API
       # public API
       nova_host    = get_host_format :nova_public_vip, Staypuft::SubnetType::PUBLIC_API
-
-      controller_admin_host = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::ADMIN_API}') %>"}
-      controller_priv_host  = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::MANAGEMENT}') %>"}
-      controller_pub_host   = { :string => "<%= d = @host.deployment; d.ha? ? nil : d.network_query.controller_ip('#{Staypuft::SubnetType::PUBLIC_API}') %>"}
 
       fencing_type                   = { :string => '<%= (@host.bmc_nic && @host.bmc_nic.fencing_enabled?) ? @host.bmc_nic.attrs["fencing_type"] : "disabled" %>' }
       fence_ipmilan_address          = { :string => '<%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
@@ -436,166 +390,6 @@ module Staypuft
                                       }
 
       {
-          'quickstack::nova_network::controller'   => {
-              'amqp_provider'                           => amqp_provider,
-              'ceph_cluster_network'                    => ceph_cluster_network,
-              'ceph_public_network'                     => ceph_public_network,
-              'ceph_fsid'                               => ceph_fsid,
-              'ceph_images_key'                         => ceph_images_key,
-              'ceph_volumes_key'                        => ceph_volumes_key,
-              'ceph_mon_host'                           => ceph_mon_host,
-              'ceph_mon_initial_members'                => ceph_mon_initial_members,
-              'cinder_backend_gluster'                  => cinder_backend_gluster,
-              'cinder_backend_gluster_name'             => cinder_backend_gluster_name,
-              'cinder_backend_iscsi'                    => cinder_backend_iscsi,
-              'cinder_backend_iscsi_name'               => cinder_backend_iscsi_name,
-              'cinder_backend_nfs'                      => cinder_backend_nfs,
-              'cinder_backend_nfs_name'                 => cinder_backend_nfs_name,
-              'cinder_backend_rbd'                      => cinder_backend_rbd,
-              'cinder_backend_rbd_name'                 => cinder_backend_rbd_name,
-              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
-              'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
-              'cinder_multiple_backends'                => cinder_multiple_backends,
-              'cinder_create_volume_types'              => cinder_create_volume_types,
-              'cinder_nfs_shares'                       => cinder_nfs_shares,
-              'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_rbd_pool'                         => cinder_rbd_pool,
-              'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
-              'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
-              'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
-              'cinder_rbd_user'                         => cinder_rbd_user,
-              'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
-              'cinder_san_ip'                           => cinder_san_ip,
-              'cinder_san_login'                        => cinder_san_login,
-              'cinder_san_password'                     => cinder_san_password,
-              'cinder_san_thin_provision'               => cinder_san_thin_provision,
-              'cinder_eqlx_group_name'                  => cinder_eqlx_group_name,
-              'cinder_eqlx_pool'                        => cinder_eqlx_pool,
-              'cinder_eqlx_use_chap'                    => cinder_eqlx_use_chap,
-              'cinder_eqlx_chap_login'                  => cinder_eqlx_chap_login,
-              'cinder_eqlx_chap_password'               => cinder_eqlx_chap_password,
-              'glance_backend'                          => backend,
-              'glance_rbd_store_user'                   => glance_rbd_store_user,
-              'glance_rbd_store_pool'                   => glance_rbd_store_pool,
-              'keystonerc'                              => keystonerc,
-              'admin_password'                          => admin_pw,
-              'ceilometer_user_password'                => ceilometer_user_pw,
-              'cinder_db_password'                      => cinder_db_pw,
-              'cinder_user_password'                    => cinder_user_pw,
-              'glance_db_password'                      => glance_db_pw,
-              'glance_user_password'                    => glance_user_pw,
-              'heat_db_password'                        => heat_db_pw,
-              'heat_user_password'                      => heat_user_pw,
-              'keystone_db_password'                    => keystone_db_pw,
-              'mysql_root_password'                     => mysql_root_pw,
-              'nova_db_password'                        => nova_db_pw,
-              'nova_user_password'                      => nova_user_pw,
-              'swift_admin_password'                    => swift_admin_pw,
-              'amqp_password'                           => amqp_pw,
-              'amqp_nssdb_password'                     => amqp_nssdb_pw,
-              'keystone_admin_token'                    => keystone_admin_token,
-              'ceilometer_metering_secret'              => ceilometer_metering,
-              'heat_auth_encrypt_key'                   => heat_auth_encrypt_key,
-              'horizon_secret_key'                      => horizon_secret_key,
-              'amqp_host'                               => amqp_host,
-              'mysql_host'                              => mysql_host,
-              'swift_shared_secret'                     => swift_shared_secret,
-              'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
-              'cinder_gluster_shares'                   => [],
-              'controller_admin_host'                   => controller_admin_host,
-              'controller_priv_host'                    => controller_priv_host,
-              'controller_pub_host'                     => controller_pub_host },
-          'quickstack::neutron::controller'        => {
-              'amqp_provider'                           => amqp_provider,
-              'ceph_cluster_network'                    => ceph_cluster_network,
-              'ceph_public_network'                     => ceph_public_network,
-              'ceph_fsid'                               => ceph_fsid,
-              'ceph_images_key'                         => ceph_images_key,
-              'ceph_volumes_key'                        => ceph_volumes_key,
-              'ceph_mon_host'                           => ceph_mon_host,
-              'ceph_mon_initial_members'                => ceph_mon_initial_members,
-              'tenant_network_type'                     => tenant_network_type,
-              'ml2_network_vlan_ranges'                 => ml2_network_vlan_ranges,
-              'ml2_tenant_network_types'                => ml2_tenant_network_types,
-              'ml2_tunnel_id_ranges'                    => ml2_tunnel_id_ranges,
-              'ml2_vni_ranges'                          => ml2_vni_ranges,
-              'ml2_mechanism_drivers'                   => ml2_mechanism_drivers,
-              'ovs_vlan_ranges'                         => ovs_vlan_ranges,
-              'enable_tunneling'                        => enable_tunneling,
-              'cinder_backend_gluster'                  => cinder_backend_gluster,
-              'cinder_backend_gluster_name'             => cinder_backend_gluster_name,
-              'cinder_backend_iscsi'                    => cinder_backend_iscsi,
-              'cinder_backend_iscsi_name'               => cinder_backend_iscsi_name,
-              'cinder_backend_nfs'                      => cinder_backend_nfs,
-              'cinder_backend_nfs_name'                 => cinder_backend_nfs_name,
-              'cinder_backend_rbd'                      => cinder_backend_rbd,
-              'cinder_backend_rbd_name'                 => cinder_backend_rbd_name,
-              'cinder_backend_eqlx'                     => cinder_backend_eqlx,
-              'cinder_backend_eqlx_name'                => cinder_backend_eqlx_name,
-              'cinder_multiple_backends'                => cinder_multiple_backends,
-              'cinder_create_volume_types'              => cinder_create_volume_types,
-              'cinder_nfs_shares'                       => cinder_nfs_shares,
-              'cinder_nfs_mount_options'                => cinder_nfs_mount_options,
-              'cinder_rbd_pool'                         => cinder_rbd_pool,
-              'cinder_rbd_ceph_conf'                    => cinder_rbd_ceph_conf,
-              'cinder_rbd_flatten_volume_from_snapshot' => cinder_rbd_flatten_volume_from_snapshot,
-              'cinder_rbd_max_clone_depth'              => cinder_rbd_max_clone_depth,
-              'cinder_rbd_user'                         => cinder_rbd_user,
-              'cinder_rbd_secret_uuid'                  => cinder_rbd_secret_uuid,
-              'cinder_san_ip'                           => cinder_san_ip,
-              'cinder_san_login'                        => cinder_san_login,
-              'cinder_san_password'                     => cinder_san_password,
-              'cinder_san_thin_provision'               => cinder_san_thin_provision,
-              'cinder_eqlx_group_name'                  => cinder_eqlx_group_name,
-              'cinder_eqlx_pool'                        => cinder_eqlx_pool,
-              'cinder_eqlx_use_chap'                    => cinder_eqlx_use_chap,
-              'cinder_eqlx_chap_login'                  => cinder_eqlx_chap_login,
-              'cinder_eqlx_chap_password'               => cinder_eqlx_chap_password,
-              'glance_backend'                          => backend,
-              'glance_rbd_store_user'                   => glance_rbd_store_user,
-              'glance_rbd_store_pool'                   => glance_rbd_store_pool,
-              'keystonerc'                              => keystonerc,
-              'admin_password'                          => admin_pw,
-              'ceilometer_user_password'                => ceilometer_user_pw,
-              'cinder_db_password'                      => cinder_db_pw,
-              'cinder_user_password'                    => cinder_user_pw,
-              'glance_db_password'                      => glance_db_pw,
-              'glance_user_password'                    => glance_user_pw,
-              'heat_db_password'                        => heat_db_pw,
-              'heat_user_password'                      => heat_user_pw,
-              'keystone_db_password'                    => keystone_db_pw,
-              'mysql_root_password'                     => mysql_root_pw,
-              'neutron_db_password'                     => neutron_db_pw,
-              'neutron_user_password'                   => neutron_user_pw,
-              'nova_db_password'                        => nova_db_pw,
-              'nova_user_password'                      => nova_user_pw,
-              'swift_admin_password'                    => swift_admin_pw,
-              'amqp_password'                           => amqp_pw,
-              'amqp_nssdb_password'                     => amqp_nssdb_pw,
-              'keystone_admin_token'                    => keystone_admin_token,
-              'ceilometer_metering_secret'              => ceilometer_metering,
-              'heat_auth_encrypt_key'                   => heat_auth_encrypt_key,
-              'horizon_secret_key'                      => horizon_secret_key,
-              'swift_shared_secret'                     => swift_shared_secret,
-              'neutron_metadata_proxy_secret'           => neutron_metadata_proxy_secret,
-              'amqp_host'                               => amqp_host,
-              'mysql_host'                              => mysql_host,
-              'swift_shared_secret'                     => swift_shared_secret,
-              'swift_ringserver_ip'                     => '',
-              'swift_storage_ips'                       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
-              'cinder_gluster_shares'                   => [],
-              'controller_admin_host'                   => controller_admin_host,
-              'controller_priv_host'                    => controller_priv_host,
-              'controller_pub_host'                     => controller_pub_host,
-              'nexus_config'                            => cisco_nexus_config,
-              'neutron_conf_additional_params'          => neutron_conf_additional_params,
-              'nova_conf_additional_params'             => nova_conf_additional_params,
-              'n1kv_plugin_additional_params'           => n1kv_plugin_additional_params,
-              'n1kv_vsm_ip'                             => n1kv_vsm_ip,
-              'n1kv_vsm_password'                       => n1kv_vsm_password,
-              'security_group_api'                      => neutron_security_group_api,
-              'neutron_core_plugin'                     => neutron_core_plugin_module },
           'quickstack::pacemaker::params'          => {
               'include_swift'                 => 'false',
               'include_neutron'               => neutron,
@@ -742,25 +536,6 @@ module Staypuft
           'quickstack::pacemaker::nova'            => {
               'multi_host'                    => 'true',
               'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret },
-          'quickstack::neutron::networker'         => {
-              'amqp_provider'                 => amqp_provider,
-              'enable_tunneling'              => enable_tunneling,
-              'tenant_network_type'           => tenant_network_type,
-              'ovs_bridge_mappings'           => ovs_bridge_mappings,
-              'ovs_bridge_uplinks'            => ovs_bridge_uplinks,
-              'ovs_tunnel_iface'              => ovs_tunnel_iface,
-              'ovs_tunnel_types'              => ovs_tunnel_types,
-              'ovs_vlan_ranges'               => ovs_vlan_ranges,
-              'neutron_db_password'           => neutron_db_pw,
-              'neutron_user_password'         => neutron_user_pw,
-              'nova_db_password'              => nova_db_pw,
-              'nova_user_password'            => nova_user_pw,
-              'amqp_password'                 => amqp_pw,
-              'neutron_metadata_proxy_secret' => neutron_metadata_proxy_secret,
-              'amqp_host'                     => amqp_host,
-              'mysql_host'                    => mysql_host,
-              'controller_priv_host'          => controller_priv_host,
-              'agent_type'                    => neutron_agent_type },
           'quickstack::storage_backend::cinder'    => {
               'amqp_provider'        => amqp_provider,
               'cinder_db_password'   => cinder_db_pw,
