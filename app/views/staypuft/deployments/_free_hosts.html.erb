@@ -1,5 +1,5 @@
 <% if hosts.exists? %>
-<h4 class="pull-left"><%= _("Free Hosts") %></h4>
+<h4 class="pull-left"><%= _("Unassigned Hosts") %></h4>
 <div class="" id="table_free_hosts">
   <%= form_tag(associate_host_deployment_path(id: @deployment), class: 'form-horizontal association') do |f| %>
     <div class="pull-right top_actions">
@@ -44,7 +44,7 @@
 </div>
 <% else %>
   <div class="association">
-    <h4><%= _("Free Hosts") %></h4>
+    <h4><%= _("Unassigned Hosts") %></h4>
     <div class="alert alert-warning">
       <span class="glyphicon glyphicon-warning-sign">&nbsp;</span>
       <%= _("All available hosts have been already assigned.") %>
