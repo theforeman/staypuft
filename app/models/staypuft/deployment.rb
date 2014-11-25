@@ -12,11 +12,11 @@ module Staypuft
     NEW_NAME_PREFIX = 'uninitialized_'
 
     # supporting import/export
-    EXPORT_PARAMS   = [:amqp_provider, :networking, :layout_name, :platform]
+    EXPORT_PARAMS   = [:amqp_provider, :networking, :platform]
     EXPORT_SERVICES = [:nova, :neutron, :glance, :cinder, :passwords, :ceph]
 
     attr_accessible :description, :name, :layout_id, :layout,
-                    :amqp_provider, :layout_name, :networking, :platform,
+                    :amqp_provider, :networking, :platform,
                     :custom_repos
     after_save :update_hostgroup_name
     after_validation :check_form_complete
@@ -83,7 +83,6 @@ module Staypuft
 
     def initialize(attributes = {}, options = {})
       super({ amqp_provider: AmqpProvider::RABBITMQ,
-              layout_name:   LayoutName::NON_HA,
               networking:    Networking::NEUTRON,
               platform:      Platform::RHEL7 }.merge(attributes),
             options)
@@ -96,8 +95,7 @@ module Staypuft
       self.cinder.set_defaults
       self.passwords.set_defaults
       self.ceph.set_defaults
-      self.layout = Layout.where(:name       => self.layout_name,
-                                 :networking => self.networking).first
+      self.layout = Layout.where(:networking => self.networking).first
     end
 
     extend AttributeParamStorage
@@ -176,15 +174,6 @@ module Staypuft
       HUMAN   = N_('Networking')
     end
 
-    module LayoutName
-      NON_HA = 'Controller / Compute'
-      HA     = 'High Availability Controllers / Compute'
-      LABELS = { NON_HA => N_('Controller / Compute'),
-                 HA     => N_('High Availability Controllers / Compute') }
-      TYPES  = LABELS.keys
-      HUMAN  = N_('High Availability')
-    end
-
     module Platform
       RHEL7  = 'rhel7'
       RHEL6  = 'rhel6'
@@ -193,15 +182,14 @@ module Staypuft
       HUMAN  = N_('Platform')
     end
 
-    param_attr :amqp_provider, :networking, :layout_name, :platform
+    param_attr :amqp_provider, :networking, :platform
     validates :amqp_provider, :presence => true, :inclusion => { :in => AmqpProvider::TYPES }
     validates :networking, :presence => true, :inclusion => { :in => Networking::TYPES }
-    validates :layout_name, presence: true, inclusion: { in: LayoutName::TYPES }
     validates :platform, presence: true, inclusion: { in: Platform::TYPES }
 
     class Jail < Safemode::Jail
-      allow :amqp_provider, :networking, :layout_name, :platform, :nova_networking?, :neutron_networking?,
-        :nova, :neutron, :glance, :cinder, :passwords, :ceph, :ha?, :non_ha?,
+      allow :amqp_provider, :networking, :platform, :nova_networking?, :neutron_networking?,
+        :nova, :neutron, :glance, :cinder, :passwords, :ceph,
         :hide_ceph_notification?, :network_query, :has_custom_repos?, :custom_repos_paths
     end
 
@@ -242,14 +230,6 @@ module Staypuft
       self.form_step.to_sym == Deployment::STEP_COMPLETE
     end
 
-    def ha?
-      self.layout_name == LayoutName::HA
-    end
-
-    def non_ha?
-      self.layout_name == LayoutName::NON_HA
-    end
-
     def nova_networking?
       networking == Networking::NOVA
     end
@@ -259,11 +239,7 @@ module Staypuft
     end
 
     def horizon_url
-      if ha?
-        "http://#{network_query.get_vip(:horizon_public_vip)}"
-      else
-        network_query.controller_ips(Staypuft::SubnetType::PUBLIC_API).empty? ? nil : "http://#{network_query.controller_ip(Staypuft::SubnetType::PUBLIC_API)}"
-      end
+      "http://#{network_query.get_vip(:horizon_public_vip)}"
     end
 
     def controller_hostgroup
@@ -336,7 +312,7 @@ module Staypuft
     private
 
     def update_layout
-      self.layout = Layout.where(:name => layout_name, :networking => networking).first
+      self.layout = Layout.where(:networking => networking).first
     end
 
     def update_based_on_settings

@@ -87,19 +87,12 @@ module Staypuft
       backend == BACKEND_FILE
     end
 
-    # view should use this rather than DriverBackend::LABELS to hide LOCAL for HA.
     def backend_labels_for_layout
-      ret_list = DriverBackend::LABELS.clone
-      ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
-      ret_list.delete(DriverBackend::NFS)   if self.deployment.non_ha?
-      ret_list
+      DriverBackend::LABELS
     end
 
     def backend_types_for_layout
-      ret_list = DriverBackend::TYPES.clone
-      ret_list.delete(DriverBackend::LOCAL) if self.deployment.ha?
-      ret_list.delete(DriverBackend::NFS)   if self.deployment.non_ha?
-      ret_list
+      DriverBackend::TYPES
     end
 
     def param_hash

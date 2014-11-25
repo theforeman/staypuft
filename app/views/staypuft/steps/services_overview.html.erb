@@ -9,8 +9,7 @@
     <h3><%= _("Deployment Roles & Available Services") %></h3>
     <h4><%= "#{@deployment.layout.name} - #{@deployment.layout.networking.capitalize} " + _("Networking") %></h4>
 
-    <%= render partial: @deployment.networking +
-        (@deployment.ha? ? "_ha" : "_non_ha")%>
+    <%= render partial: @deployment.networking + "_ha"%>
 
     <%= render :partial => "wizard_form_buttons", 
                :locals => { :deployment => @deployment,
