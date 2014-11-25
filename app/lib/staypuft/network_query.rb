@@ -91,6 +91,12 @@ module Staypuft
       controllers.map &:shortname
     end
 
+    def controller_pcmk_shortnames
+      controllers.map do |controller|
+        "pcmk-"+controller.shortname
+      end
+    end
+
     def get_vip(vip_name)
       if VIP_NAMES[vip_name]
         interface = @deployment.vip_nics.where(:tag => vip_name).first
@@ -100,7 +106,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
-            :controller_ip, :controller_ips, :controller_fqdns, :get_vip,
+            :controller_ip, :controller_ips, :controller_fqdns, :get_vip, :controller_pcmk_shortnames,
             :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac
     end
 
