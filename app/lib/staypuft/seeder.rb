@@ -454,12 +454,11 @@ module Staypuft
               'swift_public_vip'              => vip_format(:swift_public_vip),
               'private_ip'                    => private_ip,
               'cluster_control_ip'            => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
-              'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
+              'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::CLUSTER_MGMT}') %>" },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_pcmk_shortnames %>' },
               'agent_type'                    => neutron_agent_type,
               'n1kv_plugin_additional_params' => n1kv_plugin_additional_params },
           'quickstack::pacemaker::common'          => {
-              'pacemaker_cluster_members' => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::CLUSTER_MGMT}').join(' ') %>" },
               'fencing_type'                  => fencing_type,
               'fence_ipmilan_address'         => fence_ipmilan_address,
               'fence_ipmilan_username'        => fence_ipmilan_username,
