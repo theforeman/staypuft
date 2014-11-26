@@ -20,4 +20,7 @@
   <%= change_label_width 4, text_f(p, :private_fixed_range,
                                    label:       _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN),
                                    help_inline: _(Staypuft::Deployment::NovaService::PrivateFixedRange::HUMAN_AFTER)) %>
+  <%= change_label_width 4, text_f(p, :network_device_mtu,
+                                   label:       _(Staypuft::Deployment::NovaService::Mtu::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NovaService::Mtu::HUMAN_AFTER)) %>
 <% end %>

@@ -9,7 +9,7 @@ module Staypuft
     ML2MECHANISM_TYPES  = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
     N1KV_PARAMS         = :n1kv_vsm_ip, :n1kv_vsm_password
 
-    param_attr :network_segmentation, :tenant_vlan_ranges, :core_plugin,
+    param_attr :network_segmentation, :tenant_vlan_ranges, :core_plugin, :network_device_mtu,
                *ML2MECHANISM_TYPES, *N1KV_PARAMS
     param_attr_array :nexuses => Cisconexus
 
@@ -85,6 +85,13 @@ module Staypuft
               :presence   => true,
               :if         => [:ml2_plugin?, :cisco_nexus_mechanism?]
 
+    module Mtu
+      HUMAN           = N_('Tenant Network Device MTU')
+      HUMAN_AFTER     = N_('(Optional) Only set this if changing the default')
+    end
+
+    validates :network_device_mtu, numericality: { only_integer: true }, allow_blank: true
+
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
@@ -92,7 +99,7 @@ module Staypuft
         :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
         :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config, :core_plugin,
         :ml2_plugin?, :n1kv_plugin?, :n1kv_vsm_ip, :n1kv_vsm_password,
-        :core_plugin_module
+        :core_plugin_module, :network_device_mtu
     end
 
     def set_defaults
@@ -101,6 +108,7 @@ module Staypuft
       self.ml2_openvswitch = "true"
       self.ml2_l2population = "true"
       self.ml2_cisco_nexus = "false"
+      self.network_device_mtu = nil
     end
 
     def active?

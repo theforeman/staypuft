@@ -235,6 +235,7 @@ module Staypuft
                                                   'quota_fixed_ips' => 'default',
                                                   'quota_driver' => 'default' }
                                     }
+      nova_network_device_mtu     = { :string => '<%= @host.deployment.nova.network_device_mtu %>' }
 
       # Neutron
       ovs_vlan_ranges             = { :array =>  '<%= @host.deployment.neutron.networker_vlan_ranges %>' }
@@ -263,6 +264,7 @@ module Staypuft
                                                       'quota_security_group_rule' => 'default',
                                                       'network_auto_schedule' => 'default' }
                                         }
+      neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.network_device_mtu %>' }
 
       # Glance
       backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
@@ -486,7 +488,9 @@ module Staypuft
               'n1kv_plugin_additional_params'  => n1kv_plugin_additional_params,
               'n1kv_vsm_ip'                    => n1kv_vsm_ip,
               'n1kv_vsm_password'              => n1kv_vsm_password,
-              'security_group_api'             => neutron_security_group_api },
+              'security_group_api'             => neutron_security_group_api,
+              'network_device_mtu'             => neutron_network_device_mtu,
+            },
           'quickstack::pacemaker::glance'          => {
               'backend'         => backend,
               'pcmk_fs_type'    => pcmk_fs_type,
@@ -575,7 +579,9 @@ module Staypuft
               'glance_host'                => glance_host,
               'auth_host'                  => auth_host,
               'nova_host'                  => nova_host,
-              'private_ip'                 => private_ip },
+              'private_ip'                 => private_ip,
+              'network_device_mtu'         => nova_network_device_mtu,
+            },
           'quickstack::neutron::compute'           => {
               'amqp_provider'              => amqp_provider,
               'ceilometer'                 => ceilometer,
@@ -613,7 +619,9 @@ module Staypuft
               'nova_host'                  => nova_host,
               'private_ip'                 => private_ip,
               'agent_type'                 => neutron_agent_type,
-              'security_group_api'         => neutron_security_group_api },
+              'security_group_api'         => neutron_security_group_api,
+              'network_device_mtu'         => neutron_network_device_mtu,
+            },
           'quickstack::pacemaker::rsync::keystone' => {
               'keystone_private_vip' => vip_format(:keystone) },
           'quickstack::ceph::config' => {
