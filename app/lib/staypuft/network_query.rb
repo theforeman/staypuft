@@ -59,6 +59,14 @@ module Staypuft
       interface_hash_for_host(subnet_type_name, host)[:subnet]
     end
 
+    def mtu_for_tenant_subnet
+      mtu = @deployment.neutron_networking? ? @deployment.neutron.network_device_mtu : @deployment.nova.network_device_mtu
+    end
+
+    def tenant_subnet?(subnet, host=@host)
+      subnet == subnet_for_host(Staypuft::SubnetType::TENANT, host)
+    end
+
     def gateway_subnet(host=@host)
       gateway_hash_for_host(host)[:subnet]
     end
@@ -103,7 +111,8 @@ module Staypuft
     class Jail < Safemode::Jail
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
             :controller_ip, :controller_ips, :controller_fqdns, :get_vip, :controller_pcmk_shortnames,
-            :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac
+            :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac,
+            :tenant_subnet?, :mtu_for_tenant_subnet
     end
 
     private

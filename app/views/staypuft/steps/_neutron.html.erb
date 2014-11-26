@@ -24,6 +24,10 @@
     end.join
   end) %>
 
+  <%= change_label_width 3, text_f(p, :network_device_mtu,
+                                   label:       _(Staypuft::Deployment::NeutronService::Mtu::HUMAN),
+                                   help_inline: _(Staypuft::Deployment::NeutronService::Mtu::HUMAN_AFTER)) %>
+
   <div class="neutron_ml2_mechanisms inset_form hide">
     <%= _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::HUMAN) %>
     <%= check_box_f_non_inline(p, :ml2_openvswitch,

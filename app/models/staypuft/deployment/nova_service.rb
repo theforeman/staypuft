@@ -6,7 +6,8 @@ module Staypuft
 
     VLAN_HELP         = Deployment::NeutronService::VLAN_HELP
 
-    param_attr :network_manager, :vlan_range, :public_floating_range, :private_fixed_range
+    param_attr :network_manager, :vlan_range, :public_floating_range, :private_fixed_range,
+               :network_device_mtu
 
     class NetworkRangesValidator < ActiveModel::Validator
       def validate(record)
@@ -90,8 +91,16 @@ module Staypuft
 
     validates :private_fixed_range, presence: true
 
+    module Mtu
+      HUMAN       = Staypuft::Deployment::NeutronService::Mtu::HUMAN
+      HUMAN_AFTER = Staypuft::Deployment::NeutronService::Mtu::HUMAN_AFTER
+    end
+
+    validates :network_device_mtu, numericality: { only_integer: true }, allow_blank: true
+
     def set_defaults
       self.network_manager = NetworkManager::FLAT_DHCP
+      self.network_device_mtu = nil
     end
 
     def active?
@@ -164,7 +173,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :network_manager, :network_overrides, :private_fixed_range, :public_floating_range,
-        :num_networks, :network_size
+        :num_networks, :network_size, :network_device_mtu
     end
 
   end
