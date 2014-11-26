@@ -88,7 +88,7 @@ module Staypuft
         :horizon            => { :name => 'Horizon', :class => ['quickstack::pacemaker::horizon'] },
         :galera             => { :name => 'Galera', :class => ['quickstack::pacemaker::galera'] },
         :mysql              => { :name => 'Mysql', :class => ['quickstack::pacemaker::mysql'] },
-        :ceilometer         => { :name => 'Ceilometer (HA)', :class => ['quickstack::pacemaker::nosql',
+        :ceilometer         => { :name => 'Ceilometer', :class => ['quickstack::pacemaker::nosql',
                                                                         'quickstack::pacemaker::ceilometer'] },
         :neutron            => { :name => 'Neutron', :class => ['quickstack::pacemaker::neutron'] },
         :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
