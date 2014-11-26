@@ -1,5 +1,6 @@
 var subnets_assigments = (function() {
   $("div.subnet-type-pull").draggable({
+    helper: 'clone',
     revert: 'invalid'
   });
   

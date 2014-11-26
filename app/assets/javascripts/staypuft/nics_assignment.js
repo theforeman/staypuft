@@ -6,6 +6,7 @@ var nics_assignment = (function() {
       dropped.data.left = ui.originalPosition.left;
       dropped.data.top = ui.originalPosition.top;
     },
+    helper: 'clone',
     revert: 'invalid'
   });
 
