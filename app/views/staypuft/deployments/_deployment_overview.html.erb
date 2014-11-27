@@ -8,12 +8,12 @@
     <% @deployment.child_hostgroups.deploy_order.each_with_index do |child_hostgroup, i| %>
       <li>
         <div class="col-xs-2">
-          <% if child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count > 0 %>
+          <% if child_hostgroup.hosts.select { |h| !@deployment.in_progress? && h.open_stack_deployed? }.count > 0 %>
             <a href="#<%= child_hostgroup.name.parameterize.underscore %>_deployed_hosts" data-toggle="tab" class="roles_list">
-              <span><%= child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count %></span>
+              <span><%= child_hostgroup.hosts.select { |h| !@deployment.in_progress? && h.open_stack_deployed? }.count %></span>
             </a>
           <% else %>
-            <span><%= child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? }.count %></span>
+            <span><%= child_hostgroup.hosts.select { |h| !@deployment.in_progress? && h.open_stack_deployed? }.count %></span>
           <% end %>
         </div>
         <div class="col-xs-6">
@@ -22,14 +22,14 @@
           </div>
         </div>
         <div class="col-xs-2">
-          <% if child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count > 0 %>
+          <% if child_hostgroup.hosts.select { |h| !(!@deployment.in_progress? && h.open_stack_deployed?) }.count > 0 %>
             <a href="#<%= child_hostgroup.name.parameterize.underscore %>_assigned_hosts" data-toggle="tab" class="roles_list">
-              <% unless @deployment.in_progress? %>
-                <i class="glyphicon glyphicon-time"></i>
-              <% else %>
+              <% if child_hostgroup.hosts.select { |h| (@deployment.in_progress? && h.open_stack_deployed?) }.count > 0 %>
                 <%= image_tag '/assets/spinner.gif' %>
+              <% else %>
+                <i class="glyphicon glyphicon-time"></i>
               <% end %>
-              <span><%= child_hostgroup.hosts.select { |h| !(!ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed?) }.count %></span>
+              <span><%= child_hostgroup.hosts.select { |h| !(!@deployment.in_progress? && h.open_stack_deployed?) }.count %></span>
             </a>
           <% end %>
         </div>
@@ -55,7 +55,7 @@
       <%= render 'deployed_hosts_table', :deployment => @deployment,
                  :hostgroup => @hostgroup,
                  :child_hostgroup => child_hostgroup,
-                 :hosts => child_hostgroup.hosts.select { |h| !ForemanTasks::Lock.locked?(@deployment, nil) && h.open_stack_deployed? } %>
+                 :hosts => child_hostgroup.hosts.select { |h| !@deployment.in_progress? && h.open_stack_deployed? } %>
     <% end %>
     <%= render :partial => "deployment_summary", :locals => { :deployment => @deployment } %>
   </div>
