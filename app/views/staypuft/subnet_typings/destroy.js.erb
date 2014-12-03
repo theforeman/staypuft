@@ -4,7 +4,7 @@
       :object => @subnet_type,
       :locals => { :deployment => @deployment },
       :as => 'subnet_type' %>');
-  $("#<%= dom_id(@subnet_type) %>").draggable({revert: 'invalid'});
+  $("#<%= dom_id(@subnet_type) %>").draggable({helper: 'clone',revert: 'invalid'});
 <% else %>
   error = '<%=j @errors.map { |k, v| "#{h(k)}: #{v.join(', ')}" }.join('<br />').html_safe %>';
   $.jnotify(error, { type: "error", sticky: true });
