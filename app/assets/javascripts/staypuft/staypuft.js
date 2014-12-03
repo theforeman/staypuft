@@ -152,12 +152,10 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
 
   showControllerWarning("glance");
   showControllerWarning("cinder");
-  $("input[name='staypuft_deployment[glance][driver_backend]'").change(function(){
-    console.log("glance");
+  $("input[name='staypuft_deployment[glance][driver_backend]']").change(function(){
     showControllerWarning("glance")
   });
   $("#staypuft_deployment_cinder_backend_lvm").change(function(){
-    console.log("cinder");
     showControllerWarning("cinder")
   });
   function showControllerWarning(which_warning) {
