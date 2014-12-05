@@ -31,10 +31,15 @@ module Staypuft
       HUMAN       = N_('NFS URI:')
       HUMAN_AFTER = Deployment::GlanceService::NFS_HELP
     end
+
+    class NfsUriValueValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::NfsUriValidator
+    end
+
     validates :nfs_uri,
-              :presence => true,
-              :if       => :nfs_backend?
-    # TODO: uri validation
+              :presence      => true,
+              :if            => :nfs_backend?,
+              :nfs_uri_value => true
 
     module SanIp
       HUMAN       = N_('SAN IP Addr:')
