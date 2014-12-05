@@ -41,16 +41,32 @@ module Actions
 
             input.update hostgroups: {}
             hostgroups.each do |hostgroup|
-              concurrence do
-                input[:hostgroups].update hostgroup.id => { name: hostgroup.name, hosts: {} }
+              input[:hostgroups].update hostgroup.id => { name: hostgroup.name, hosts: {} }
+              hostgroup_hosts = (hostgroup.hosts & hosts_to_deploy_filter)
 
-                (hostgroup.hosts & hosts_to_deploy_filter).each do |host|
+              # wait till all hosts are ready
+              concurrence do
+                hostgroup_hosts.each do |host|
                   input[:hostgroups][hostgroup.id][:hosts].update host.id => host.name
 
-                  sequence do
-                    plan_action Host::WaitUntilReady, host
-                    plan_action Host::Deploy, host
+                  plan_action Host::WaitUntilReady, host
+                  plan_action Host::Update, host, :environment => nil
+                end
+              end
+
+              # run puppet twice without checking for puppet success
+              2.times do
+                concurrence do
+                  hostgroup_hosts.each do |host|
+                    plan_action Host::Deploy, host, false
                   end
+                end
+              end
+
+              # run puppet once and check it succeeded
+              concurrence do
+                hostgroup_hosts.each do |host|
+                  plan_action Host::Deploy, host
                 end
               end
             end
@@ -87,7 +103,10 @@ module Actions
 
           concurrence do
             hosts.zip(puppet_runs).each do |host, puppet_run|
-              plan_action Actions::Staypuft::Host::ReportCheck, host.id, puppet_run.output[:executed_at]
+              sequence do
+                plan_action Actions::Staypuft::Host::ReportWait, host.id, puppet_run.output[:executed_at]
+                plan_action Actions::Staypuft::Host::AssertReportSuccess, host.id
+              end
             end
           end
         end
