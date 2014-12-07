@@ -28,10 +28,14 @@ module Staypuft
       HUMAN_AFTER = NFS_HELP
     end
 
+    class NfsNetworkPathValueValidator < ActiveModel::EachValidator
+      include Staypuft::Deployment::NfsUriValidator
+    end
+
     validates :nfs_network_path,
-              :presence => true,
-              :if       => :nfs_backend?
-    # TODO: network_path validation
+              :presence               => true,
+              :if                     => :nfs_backend?,
+              :nfs_network_path_value => true
 
     class Jail < Safemode::Jail
       allow :driver_backend, :pcmk_fs_type, :pcmk_fs_device, :pcmk_fs_options, :backend,
