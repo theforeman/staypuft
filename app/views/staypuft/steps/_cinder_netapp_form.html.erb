@@ -30,7 +30,7 @@
                          label:      _(Staypuft::Deployment::CinderService::NetappNfsSharesConfig::HUMAN) %>
             </div>
 
-            <div class="netapp-7mode-iscsi netapp-option hidden">
+            <div class="netapp-7mode-iscsi netapp-option hide">
               <%= text_f e, :volume_list, class: "cinder_netapp",
                          label:      _(Staypuft::Deployment::CinderService::NetappVolumeList::HUMAN) %>
               <%= text_f e, :vfiler, class: "cinder_netapp",
@@ -42,7 +42,7 @@
                          label:      _(Staypuft::Deployment::CinderService::NetappVserver::HUMAN) %>
             </div>
 
-            <div class="netapp-eseries netapp-option hidden">
+            <div class="netapp-eseries netapp-option hide">
               <%= text_f e, :controller_ips, class: "cinder_netapp",
                          label:      _(Staypuft::Deployment::CinderService::NetappControllerIps::HUMAN) %>
               <%= text_f e, :sa_password, class: "cinder_netapp",
