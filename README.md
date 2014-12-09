@@ -4,6 +4,8 @@ Staypuft is the name of the OpenStack Foreman Installer plugin for The Foreman.
 
 ## Installation
 
+NOTE: Staypuft requires a [nightly build of Foreman](http://yum.theforeman.org/nightly/)
+
 You can either use [staypuft-installer](https://github.com/theforeman/foreman-installer-staypuft) which is basically
 foreman installer with staypuft specific wizards or you can install staypuft 
 plugin into existing foreman instance. The first options is preferred and you
