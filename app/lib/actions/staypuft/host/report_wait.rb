@@ -14,7 +14,7 @@ module Actions
   module Staypuft
     module Host
 
-      class ReportCheck < Actions::Base
+      class ReportWait < Actions::Base
 
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
         include Dynflow::Action::Polling
@@ -69,21 +69,7 @@ module Actions
         def host_ready?(host_id, after)
           host   = ::Host.find(host_id)
           report = host.reports.where('reported_at > ?', after).first
-          return false unless report
-
-          check_for_failures(report, host.id)
-          report_change?(report)
-        end
-
-        def report_change?(report)
-          report.status['applied'] > 0
-        end
-
-        def check_for_failures(report, id)
-          if report.status['failed'] > 0
-            output[:report_id] = report.id
-            fail(::Staypuft::Exception, "Latest Puppet Run Contains Failures for Host: #{id}")
-          end
+          return !!report
         end
 
       end

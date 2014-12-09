@@ -15,20 +15,22 @@ module Actions
     module Host
       class Deploy < Dynflow::Action
 
-        def plan(host)
+        def plan(host, check_success = true)
           Type! host, ::Host::Base
 
           input.update host: { id: host.id, name: host.name }
 
           sequence do
-            plan_action Actions::Staypuft::Host::Update, host, :environment => nil
             puppet_run = plan_action Host::PuppetRun, host
-            plan_action Host::ReportCheck, host.id, puppet_run.output[:executed_at]
+            plan_action Host::ReportWait, host.id, puppet_run.output[:executed_at]
+            if check_success
+              plan_action Host::AssertReportSuccess, host.id
+            end
           end
         end
 
         def task_output
-          steps    = planned_actions(Host::ReportCheck).inject([]) { |s, a| s + a.steps[1..2] }.compact
+          steps    = planned_actions(Host::ReportWait).inject([]) { |s, a| s + a.steps[1..2] }.compact
           progress = if steps.empty?
                        1
                      else
