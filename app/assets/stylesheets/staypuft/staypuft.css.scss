@@ -214,3 +214,7 @@ h3[data-toggle="collapse"] {
 .single_password.inset_form {
   margin-left: 192px;
 }
+
+.ui-draggable-dragging {
+  z-index: 1000;
+}
