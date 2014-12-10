@@ -151,7 +151,7 @@ module Staypuft
     end
 
     def suggest_ip(interface)
-      interface.ip = @subnet.unused_ip if interface.ip.blank?
+      interface.ip = @subnet.unused_ip(interface.mac) if interface.ip.blank?
     end
   end
 end
