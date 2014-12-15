@@ -95,6 +95,12 @@ module Staypuft
       controllers.map &:shortname
     end
 
+    def controller_lb_backend_shortnames
+      controllers.map do |controller|
+        "lb-backend-"+controller.shortname
+      end
+    end
+
     def controller_pcmk_shortnames
       controllers.map do |controller|
         "pcmk-"+controller.shortname
@@ -112,7 +118,7 @@ module Staypuft
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
             :controller_ip, :controller_ips, :controller_fqdns, :get_vip, :controller_pcmk_shortnames,
             :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac,
-            :tenant_subnet?, :mtu_for_tenant_subnet
+            :tenant_subnet?, :mtu_for_tenant_subnet, :controller_lb_backend_shortnames
     end
 
     private
