@@ -355,7 +355,8 @@ module Staypuft
       neutron_metadata_proxy_secret = { :string => '<%= @host.deployment.passwords.neutron_metadata_proxy_secret %>' }
 
 
-      private_ip   = { :string => "<%= @host.deployment.network_query.ip_for_host('#{Staypuft::SubnetType::MANAGEMENT}', @host) %>" }
+      private_ip   = { :string => "<%= @host.network_query.ip_for_host('#{Staypuft::SubnetType::MANAGEMENT}') %>" }
+      pcmk_ip      = { :string => "<%= @host.network_query.ip_for_host('#{Staypuft::SubnetType::CLUSTER_MGMT}') %>" }
       # private API/management
       amqp_host    = get_host_format :amqp_vip, Staypuft::SubnetType::MANAGEMENT
       mysql_host   = get_host_format :db_vip, Staypuft::SubnetType::MANAGEMENT
@@ -455,6 +456,7 @@ module Staypuft
               'amqp_vip'                      => vip_format(:amqp_vip),
               'swift_public_vip'              => vip_format(:swift_public_vip),
               'private_ip'                    => private_ip,
+              'pcmk_ip'                       => pcmk_ip,
               'cluster_control_ip'            => { :string => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}').first %>" },
               'lb_backend_server_addrs'       => { :array => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" },
               'lb_backend_server_names'       => { :array => '<%= @host.deployment.network_query.controller_lb_backend_shortnames %>' },
