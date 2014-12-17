@@ -92,6 +92,12 @@ module Staypuft
 
     validates :network_device_mtu, numericality: { only_integer: true }, allow_blank: true
 
+    def compute_network_device_mtu
+      # Note: This should only be used for setting the puppet params, not for the
+      # physical interfaces
+      this.enable_tunneling? ? this.network_device_mtu - 50 : this.network_device_mtu
+    end
+
     class Jail < Safemode::Jail
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
@@ -99,7 +105,7 @@ module Staypuft
         :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
         :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config, :core_plugin,
         :ml2_plugin?, :n1kv_plugin?, :n1kv_vsm_ip, :n1kv_vsm_password,
-        :core_plugin_module, :network_device_mtu
+        :core_plugin_module, :network_device_mtu, :compute_network_device_mtu
     end
 
     def set_defaults
