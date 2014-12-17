@@ -264,7 +264,7 @@ module Staypuft
                                                       'quota_security_group_rule' => 'default',
                                                       'network_auto_schedule' => 'default' }
                                         }
-      neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.network_device_mtu %>' }
+      neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.compute_network_device_mtu %>' }
 
       # Glance
       backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
@@ -494,6 +494,7 @@ module Staypuft
               'n1kv_vsm_password'              => n1kv_vsm_password,
               'security_group_api'             => neutron_security_group_api,
               'network_device_mtu'             => neutron_network_device_mtu,
+              'veth_mtu'                       => neutron_network_device_mtu,
             },
           'quickstack::pacemaker::glance'          => {
               'backend'         => backend,
@@ -625,6 +626,7 @@ module Staypuft
               'agent_type'                 => neutron_agent_type,
               'security_group_api'         => neutron_security_group_api,
               'network_device_mtu'         => neutron_network_device_mtu,
+              'veth_mtu'                   => neutron_network_device_mtu,
             },
           'quickstack::pacemaker::rsync::keystone' => {
               'keystone_private_vip' => vip_format(:keystone) },
