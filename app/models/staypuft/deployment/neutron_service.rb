@@ -95,7 +95,7 @@ module Staypuft
     def compute_network_device_mtu
       # Note: This should only be used for setting the puppet params, not for the
       # physical interfaces
-      self.enable_tunneling? ? self.network_device_mtu - 50 : self.network_device_mtu
+      (self.enable_tunneling? && self.network_device_mtu.present?) ? "#{self.network_device_mtu.to_i - 50}" : self.network_device_mtu
     end
 
     class Jail < Safemode::Jail
