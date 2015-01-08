@@ -18,7 +18,7 @@ module Staypuft
         params[:interfaces].each do |interface|
           bond.add_slave(interface)
         end
-        bond.mode = 'balance-tlb'
+        bond.mode = 'active-backup'
         bond.bond_options = 'miimon=100'
         bond.host = host
         @bonds.push bond
