@@ -4,7 +4,7 @@ module Staypuft
       'neutron'
     end
 
-    SEGMENTATION_LIST   = ['vxlan', 'vlan', 'gre', 'flat']
+    SEGMENTATION_LIST   = ['vxlan', 'vlan', 'gre']
     VLAN_HELP           = N_('[1-4094] (e.g. 10:15)')
     ML2MECHANISM_TYPES  = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
     N1KV_PARAMS         = :n1kv_vsm_ip, :n1kv_vsm_password
@@ -17,11 +17,9 @@ module Staypuft
       VXLAN  = 'vxlan'
       GRE    = 'gre'
       VLAN   = 'vlan'
-      FLAT   = 'flat'
       LABELS = { VXLAN => N_('VXLAN Segmentation'),
                  GRE   => N_('GRE Segmentation'),
-                 VLAN  => N_('VLAN Segmentation'),
-                 FLAT  => N_('Flat') }
+                 VLAN  => N_('VLAN Segmentation')}
       TYPES  = LABELS.keys
       HUMAN  = N_('Tenant Network Type')
     end
