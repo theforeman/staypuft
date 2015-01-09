@@ -44,34 +44,56 @@ module Actions
               input[:hostgroups].update hostgroup.id => { name: hostgroup.name, hosts: {} }
               hostgroup_hosts = (hostgroup.hosts & hosts_to_deploy_filter)
 
-              # wait till all hosts are ready
-              concurrence do
-                hostgroup_hosts.each do |host|
-                  input[:hostgroups][hostgroup.id][:hosts].update host.id => host.name
-
-                  plan_action Host::WaitUntilReady, host
-                  plan_action Host::Update, host, :environment => nil
-                end
-              end
-
-              # run puppet twice without checking for puppet success
-              2.times do
-                concurrence do
-                  hostgroup_hosts.each do |host|
-                    plan_action Host::Deploy, host, false
-                  end
-                end
-              end
-
-              # run puppet once and check it succeeded
-              concurrence do
-                hostgroup_hosts.each do |host|
-                  plan_action Host::Deploy, host
-                end
+              case hostgroup.role.orchestration
+              when 'leader'
+                configure_hosts_leader(hostgroup, hostgroup_hosts)
+              else
+                configure_hosts_concurrent(hostgroup, hostgroup_hosts)
               end
             end
 
             enable_puppet_agent hosts_to_deploy
+          end
+        end
+
+        def configure_hosts_concurrent(hostgroup, hostgroup_hosts)
+          return if hostgroup_hosts.empty?
+
+          # wait till all hosts are ready
+          concurrence do
+            hostgroup_hosts.each do |host|
+              input[:hostgroups][hostgroup.id][:hosts].update host.id => host.name
+
+              plan_action Host::WaitUntilReady, host
+              plan_action Host::Update, host, :environment => nil
+            end
+          end
+
+          # run puppet twice without checking for puppet success
+          2.times do
+            concurrence do
+              hostgroup_hosts.each do |host|
+                plan_action Host::Deploy, host, false
+              end
+            end
+          end
+
+          # run puppet once and check it succeeded
+          concurrence do
+            hostgroup_hosts.each do |host|
+              plan_action Host::Deploy, host
+            end
+          end
+        end
+
+        def configure_hosts_leader(hostgroup, hostgroup_hosts)
+          return if hostgroup_hosts.empty?
+
+          leader_host, *rest_of_hosts = hostgroup_hosts
+
+          sequence do
+            configure_hosts_concurrent(hostgroup, [leader_host])
+            configure_hosts_concurrent(hostgroup, rest_of_hosts)
           end
         end
 

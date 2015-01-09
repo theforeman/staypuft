@@ -23,7 +23,7 @@ module Actions
 
           input.update id: deployment.id, name: deployment.name
           plan_action Hostgroup::OrderedDeploy,
-                      deployment.child_hostgroups.deploy_order.to_a,
+                      deployment.child_hostgroups.includes(:role).deploy_order.to_a,
                       hosts_to_deploy,
                       hosts_to_provision
           lock! deployment
