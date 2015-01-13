@@ -7,8 +7,8 @@ module Staypuft
 
     attr_accessor :id, :hostname, :login, :password, :server_port,
                   :storage_family, :transport_type, :storage_protocol,
-                  :nfs_shares_config, :volume_list, :vfiler, :vserver,
-                  :controller_ips, :sa_password, :storage_pools
+                  :nfs_shares, :nfs_shares_config, :volume_list, :vfiler,
+                  :vserver, :controller_ips, :sa_password, :storage_pools
     attr_reader :errors
 
     STORAGE_FAMILIES = { :ontap_cluster => 'Clustered Data ONTAP',
@@ -37,7 +37,7 @@ module Staypuft
     def attributes
       { 'hostname' => nil, 'login' => nil, 'password' => nil,
         'server_port' => nil, 'storage_family' => nil, 'transport_type' => nil,
-        'storage_protocol' => nil, 'nfs_shares_config' => nil,
+        'storage_protocol' => nil, 'nfs_shares' => nil, 'nfs_shares_config' => nil,
         'volume_list' => nil, 'vfiler' => nil, 'vserver' => nil,
         'controller_ips' => nil, 'sa_password' => nil,
         'storage_pools' => nil }

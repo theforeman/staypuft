@@ -86,6 +86,9 @@ module Staypuft
     module NetappStorageProtocol
       HUMAN   = N_('Storage Protocol:')
     end
+    module NetappNfsShares
+      HUMAN   = N_('NFS Shares:')
+    end
     module NetappNfsSharesConfig
       HUMAN   = N_('NFS Shares Config:')
     end
@@ -123,7 +126,7 @@ module Staypuft
         :netapps, :compute_netapp_hostnames, :compute_netapp_logins, :compute_netapp_passwords,
         :compute_netapp_server_ports, :compute_netapp_storage_families,
         :compute_netapp_transport_types, :compute_netapp_storage_protocolss,
-        :compute_netapp_nfs_shares_configs, :compute_netapp_volume_list,
+        :compute_netapp_nfs_shares, :compute_netapp_nfs_shares_configs, :compute_netapp_volume_list,
         :compute_netapp_vfilers, :compute_netapp_vservers, :compute_netapp_controller_ips,
         :compute_netapp_sa_passwords, :compute_netapp_storage_pools
     end

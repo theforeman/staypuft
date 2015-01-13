@@ -313,6 +313,7 @@ module Staypuft
       cinder_netapp_storage_family    = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_families %>' }
       cinder_netapp_transport_type    = { :array => '<%= @host.deployment.cinder.compute_netapp_transport_types %>' }
       cinder_netapp_storage_protocol  = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_protocols %>' }
+      cinder_netapp_nfs_shares        = { :array => '<%= @host.deployment.cinder.compute_netapp_nfs_shares %>' }
       cinder_netapp_nfs_shares_config = { :array => '<%= @host.deployment.cinder.compute_netapp_nfs_shares_configs %>' }
       cinder_netapp_volume_list       = { :array => '<%= @host.deployment.cinder.compute_netapp_volume_lists %>' }
       cinder_netapp_vfiler            = { :array => '<%= @host.deployment.cinder.compute_netapp_vfilers %>' }
@@ -552,6 +553,7 @@ module Staypuft
               'netapp_storage_family'            => cinder_netapp_storage_family,
               'netapp_transport_type'            => cinder_netapp_transport_type,
               'netapp_storage_protocol'          => cinder_netapp_storage_protocol,
+              'netapp_nfs_shares'                => cinder_netapp_nfs_shares,
               'netapp_nfs_shares_config'         => cinder_netapp_nfs_shares_config,
               'netapp_volume_list'               => cinder_netapp_volume_list,
               'netapp_vfiler'                    => cinder_netapp_vfiler,

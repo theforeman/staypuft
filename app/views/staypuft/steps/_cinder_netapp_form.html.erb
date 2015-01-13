@@ -26,6 +26,8 @@
             </div>
 
             <div class="netapp-nfs netapp-option">
+              <%= text_f e, :nfs_shares, class: "cinder_netapp",
+                         label:      _(Staypuft::Deployment::CinderService::NetappNfsShares::HUMAN) %>
               <%= text_f e, :nfs_shares_config, class: "cinder_netapp",
                          label:      _(Staypuft::Deployment::CinderService::NetappNfsSharesConfig::HUMAN) %>
             </div>
