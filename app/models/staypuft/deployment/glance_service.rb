@@ -39,7 +39,7 @@ module Staypuft
 
     class Jail < Safemode::Jail
       allow :driver_backend, :pcmk_fs_type, :pcmk_fs_device, :pcmk_fs_options, :backend,
-            :pcmk_fs_manage
+            :pcmk_fs_manage, :ceph_backend?
     end
 
     def set_defaults
