@@ -47,6 +47,8 @@ module Actions
               case hostgroup.role.orchestration
               when 'leader'
                 configure_hosts_leader(hostgroup, hostgroup_hosts)
+              when 'serial'
+                configure_hosts_serial(hostgroup, hostgroup_hosts)
               else
                 configure_hosts_concurrent(hostgroup, hostgroup_hosts)
               end
@@ -94,6 +96,16 @@ module Actions
           sequence do
             configure_hosts_concurrent(hostgroup, [leader_host])
             configure_hosts_concurrent(hostgroup, rest_of_hosts)
+          end
+        end
+
+        def configure_hosts_serial(hostgroup, hostgroup_hosts)
+          return if hostgroup_hosts.empty?
+
+          sequence do
+            hostgroup_hosts.each do |host|
+              configure_hosts_concurrent(hostgroup, [host])
+            end
           end
         end
 
