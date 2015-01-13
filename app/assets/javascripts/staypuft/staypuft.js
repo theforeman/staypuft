@@ -166,6 +166,12 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
       } else {
         $('.glance-controller-warning').hide();
       }
+      if($("#staypuft_deployment_glance_driver_backend_ceph").is(":checked")) {
+        $('.glance-ceph-warning').find(".replace").html(" (Ceph)");
+        $('.glance-ceph-warning').show();
+      } else {
+        $('.glance-ceph-warning').hide();
+      }
     }
     if(which_warning == "cinder") {
       if($("#staypuft_deployment_cinder_backend_lvm").is(":checked")) {

@@ -267,6 +267,7 @@ module Staypuft
       neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.compute_network_device_mtu %>' }
 
       # Glance
+      glance                      = { :string => '<%= @host.deployment.glance.ceph_backend? ? "false" : "true" %>'}
       backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
       pcmk_fs_type                = { :string => '<%= @host.deployment.glance.pcmk_fs_type %>' }
       pcmk_fs_device              = { :string => '<%= @host.deployment.glance.pcmk_fs_device %>' }
@@ -409,6 +410,7 @@ module Staypuft
               'ceph_osd_journal_size'         => ceph_osd_journal_size,
               'cinder_db_password'            => cinder_db_pw,
               'cinder_user_password'          => cinder_user_pw,
+              'include_glance'                => glance,
               'glance_db_password'            => glance_db_pw,
               'glance_user_password'          => glance_user_pw,
               'heat_db_password'              => heat_db_pw,
