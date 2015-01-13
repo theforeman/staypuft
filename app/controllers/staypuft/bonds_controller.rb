@@ -92,7 +92,7 @@ module Staypuft
     end
 
     def find_hosts
-      @hosts = Host::Managed.where(:id => params[:host_ids].split(",").map(&:to_i)).includes(:interfaces)
+      @hosts = Host::Managed.where(:id => params[:host_ids]).includes(:interfaces)
       @host = @hosts.first
       @interfaces = @host.interfaces.where("type <> 'Nic::BMC'").order(:identifier).where(['(virtual = ? OR type = ?)', false, 'Nic::Bond'])
       @deployment = Deployment.find(params[:deployment_id])

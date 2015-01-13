@@ -1,7 +1,7 @@
 <div class="panel panel-default interface" id="<%= identifier %>-interface" data-interface="<%= identifier %>">
   <div class="panel-heading clearfix">
     <% if bond_mode %>
-      <div id="bonding_mode" class="dropdown pull-right" data-path="<%= change_mode_deployment_bond_path(:id => identifier) %>">
+        <div id="bonding_mode" class="dropdown pull-right" data-path="<%= change_mode_deployment_bond_path(:id => identifier, :host_ids => hosts.map(&:id)) %>">
         <%= _('Bonding Mode:') %>
         <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
           <%= bond_mode %>
