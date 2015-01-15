@@ -16,6 +16,8 @@ module Actions
 
       class WaitUntilReady < Actions::Base
 
+        STARTUP_GRACE_PERIOD = 60
+
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
         include Dynflow::Action::Polling
 
@@ -42,12 +44,24 @@ module Actions
         end
 
         def poll_external_task
-          host = ::Host.find input.fetch(:host_id)
-          host.send :ssh_open?, host.ip
+          if !output[:ssh_port_open_at] && check_ssh_port_open
+            output[:ssh_port_open_at] ||= Time.now.to_i
+          end
+
+          if output[:ssh_port_open_at]
+            Time.now.to_i - output[:ssh_port_open_at] > STARTUP_GRACE_PERIOD
+          else
+            false
+          end
         end
 
         def poll_interval
           5
+        end
+
+        def check_ssh_port_open
+          host = ::Host.find input.fetch(:host_id)
+          host.send :ssh_open?, host.ip
         end
 
       end
