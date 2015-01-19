@@ -155,6 +155,7 @@ module Staypuft
     def gateway_hash_for_host(host)
       gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PUBLIC_API, host)
       gateway_hash = interface_hash_for_host(Staypuft::SubnetType::PXE, host) unless gateway_hash[:subnet]
+      gateway_hash = interface_hash_for_host(Staypuft::SubnetType::EXTERNAL, host) if Staypuft::Role.compute.any? { |r| r.name == host.hostgroup.name } && host.deployment.nova_networking?
       gateway_hash
     end
   end

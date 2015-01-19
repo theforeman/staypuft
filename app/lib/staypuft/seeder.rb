@@ -145,6 +145,7 @@ module Staypuft
 
     CONTROLLER_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Controller/ }
     CEPH_ROLES = ROLES.select {|h| h.fetch(:name) =~ /Ceph/ }
+    COMPUTE_ROLES = ROLES.select { |h| h.fetch(:name) =~ /Compute/ }
 
     ALL_LAYOUTS = LAYOUTS.keys
     SUBNET_TYPES = { :pxe             => { :name                    => Staypuft::SubnetType::PXE,
