@@ -262,6 +262,10 @@ module Staypuft
                                                       'quota_port'  => 'default',
                                                       'quota_security_group' => 'default',
                                                       'quota_security_group_rule' => 'default',
+                                                      'quota_vip' => 'default',
+                                                      'quota_pool' => 'default',
+                                                      'quota_router' => 'default',
+                                                      'quota_floatingip' => 'default',
                                                       'network_auto_schedule' => 'default' }
                                         }
       neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.compute_network_device_mtu %>' }
@@ -390,7 +394,8 @@ module Staypuft
                                                     'http_pool_size' => '4',
                                                     'http_timeout' => '120',
                                                     'firewall_driver' => 'neutron.agent.firewall.NoopFirewallDriver',
-                                                    'enable_sync_on_start' => 'True' }
+                                                    'enable_sync_on_start' => 'True',
+                                                    'restrict_policy_profiles' => 'False' }
                                       }
 
       {
