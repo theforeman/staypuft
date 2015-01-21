@@ -38,5 +38,7 @@ module Staypuft
     scope(:controller, where(name: Seeder::CONTROLLER_ROLES.map { |h| h.fetch(:name) }))
 
     scope(:cephosd, where(name: Seeder::CEPH_ROLES.map { |h| h.fetch(:name) }))
+
+    scope(:compute, where(name: Seeder::COMPUTE_ROLES.map { |h| h.fetch(:name) }))
   end
 end
