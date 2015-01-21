@@ -21,6 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'wicked'
   s.add_dependency 'deface'
 
-  s.add_dependency 'foreman_discovery', '~> 1.4.0.rc1'
+  s.add_dependency 'foreman_discovery'
   s.add_dependency 'ipaddress'
 end
