@@ -17,7 +17,9 @@ module Actions
       class WaitUntilReady < Actions::Base
 
         STARTUP_GRACE_PERIOD = 60
+        TIMEOUT = 1800
 
+        middleware.use Actions::Staypuft::Middleware::Timeout
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
         include Dynflow::Action::Polling
 

@@ -16,6 +16,9 @@ module Actions
 
       class ReportWait < Actions::Base
 
+        TIMEOUT = 9000
+
+        middleware.use Actions::Staypuft::Middleware::Timeout
         middleware.use Actions::Staypuft::Middleware::AsCurrentUser
         include Dynflow::Action::Polling
 
