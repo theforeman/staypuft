@@ -221,61 +221,6 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
     }
   }
 
-  showCinderNetApp();
-  // trigger function whenever NetApp checkmark is changed
-  $("#staypuft_deployment_cinder_backend_netapp").change(showCinderNetApp);
-
-  /**
-   * Shows NetApp configuration options if it is selected as a backend
-   */
-  function showCinderNetApp() {
-    if ($('#staypuft_deployment_cinder_backend_netapp').is(":checked")) {
-      $('.cinder_netapp').show();
-      if($('#netapps').children().length == 0) {
-        $('.add_another_netapp').click();
-      }
-    }
-    else {
-      $('.cinder_netapp').hide();
-    }
-  }
-
-  /**
-   * The user first selects their NetApp storage family and protocol
-   * and then relevant options are presented to them.
-   */
-  function showHideNetAppOptions(){
-    $('#netapps').children().each(function(){
-      var family = $(this).find('.netapp-main select[name*=storage_family]').val()
-      var protocol = $(this).find('.netapp-main select[name*=storage_protocol]').val()
-
-      // Hide all NetApp options
-      $(this).find('.netapp-option').hide();
-      $(this).find('.netapp-main select[name*=storage_protocol]').removeAttr("disabled");
-
-      // Selectively show options based on storage family & protocol
-      if (family == 'eseries'){
-        protocol = 'iscsi';
-        $(this).find('.netapp-main select[name*=storage_protocol]').val(protocol).attr('disabled', 'disabled');
-        $(this).find('.netapp-eseries').show();
-      }
-
-      if (protocol == 'nfs'){
-        $(this).find('.netapp-nfs').show();
-      }
-
-      if (protocol == 'iscsi' && family == 'ontap_7mode'){
-        $(this).find('.netapp-7mode-iscsi').show();
-      }
-
-      if (family == 'ontap_cluster'){
-        $(this).find('.netapp-vserver').show();
-      }
-
-    })
-
-  }
-
   showNeutronMl2CiscoNexus();
   $("#staypuft_deployment_neutron_ml2_cisco_nexus").change(showNeutronMl2CiscoNexus);
   function showNeutronMl2CiscoNexus() {
@@ -466,25 +411,6 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
       var previous_span_number = $('#eqlxs').children().eq(-2).find('h5').find('.server_number');
       added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
     }
-  })
-
-  /**
-   * Adds another NetApp storage system configuration section
-   */
-  $("button.add_another_netapp").live("click", function() {
-    var netapp_form = function () {
-      return $('#netapp_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
-    }
-    $('#netapps').append(netapp_form());
-    if($('#netapps').children().length > 1) {
-      var added_form_span = $('#netapps').children().last().find('h5').find('.server_number');
-      var previous_span_number = $('#netapps').children().eq(-2).find('h5').find('.server_number');
-      added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
-    }
-
-    // Unbind existing handlers & add event handlers to all NetApp config sections
-    $(".netapp-main select[name*=storage_family]").unbind().change(showHideNetAppOptions);
-    $(".netapp-main select[name*=storage_protocol]").unbind().change(showHideNetAppOptions);
   })
 
   $("button.add_another_switch").live("click", function() {
