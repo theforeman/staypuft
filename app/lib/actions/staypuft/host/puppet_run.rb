@@ -31,6 +31,7 @@ module Actions
           while !result && tries < 3
             result = host.puppetrun!
             tries += 1
+            output[:errors] = host.errors.full_messages unless result
           end
 
           # we need executed_at for both success and failure cases
@@ -40,7 +41,6 @@ module Actions
           output[:result] = result
 
           unless result
-            output[:errors] = host.errors.full_messages
             fail(::Staypuft::Exception, "Puppet run failed for host: #{host.id}")
           end
         end
