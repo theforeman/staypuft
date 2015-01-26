@@ -35,13 +35,6 @@
                                  :unchecked_value => 'false',
                                  :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['equallogic']))
       %>
-
-      <%= check_box_f_non_inline(p, :backend_netapp,
-                                 :checked_value   => 'true',
-                                 :unchecked_value => 'false',
-                                 :text            => _(Staypuft::Deployment::CinderService::DriverBackend::LABELS['netapp']))
-      %>
-
       <div class="cinder_equallogic col-md-offset-1 hide">
         <div id="eqlxs" class="cinder_equallogic_picker">
         <% @deployment.cinder.eqlxs.each_with_index do |eqlx, index| %>
@@ -55,20 +48,6 @@
         </script>
         <button type="button" class= "btn btn-primary btn-sm add_another_server"><%= _("Add Another Server") %></button>
     </div>
-
-      <div class="cinder_netapp col-md-offset-1 hide">
-        <div id="netapps" class="cinder_netapp_picker">
-        <% @deployment.cinder.netapps.each_with_index do |netapp, index| %>
-          <%= p.fields_for "netapps[]", netapp, index: index do |e| %>
-            <% render partial: 'cinder_netapp_form', locals: {e: e} %>
-          <% end %>
-        <% end %>
-        </div>
-        <script type='html/template' id='netapp_form_template'>
-          <%= p.fields_for 'netapps[]', Staypuft::Deployment::CinderService::Netapp.new, index: 'NEW_RECORD' do |e| render(partial: 'cinder_netapp_form', locals: {e: e}); end %>
-        </script>
-        <button type="button" class= "btn btn-primary btn-sm add_another_netapp"><%= _("Add Another NetApp Storage System") %></button>
-      </div>
     <%end%>
   </div>
 </div>
