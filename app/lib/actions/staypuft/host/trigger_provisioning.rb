@@ -20,9 +20,12 @@ module Actions
         def plan(host)
           fail 'cannot provision unmanaged host' unless host.managed?
 
-          # return back to hostgroup's environment
           sequence do
-            plan_action Actions::Staypuft::Host::Update, host, :environment => nil
+            # set the env to 'provisioning' to avoid compiling the
+            # production catalog when actually not applying it, which
+            # might cause errors
+            plan_action Actions::Staypuft::Host::Update, host,
+                        :environment_id => Environment.get_or_create_provisioning.id
             plan_self host_id: host.id
           end
         end
