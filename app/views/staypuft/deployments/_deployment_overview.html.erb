@@ -82,12 +82,17 @@
             </div>
           <% end %>
         </div>
+        <div class="network_checkbox">
+          <%= check_box_tag 'networks_configured' %>
+          <%= label_tag 'networks_configured', _("The networks have been configured for these hosts.") %>
+        </div>
       </div>
       <div class="modal-footer">
+        <div class="network_checkbox_unchecked"><p class="small"><%= _("In order to deploy, you must acknowledge that networks have been configured by checking above.") %></p></div>
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= _("Cancel") %></button>
         <%= display_link_if_authorized(_("Deploy"),
                                        hash_for_deploy_deployment_path,
-                                       :class  => 'btn btn-primary',
+                                       :class  => 'btn btn-primary disabled',
                                        :method => :post,
                                        :data   => { :disable_with => _("Deploying...") }) %>
       </div>
