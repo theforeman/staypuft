@@ -433,4 +433,10 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
 
   remove_element_on_click('.eqlx');
   remove_element_on_click('.nexus');
+
+  var networks_configured = $('#networks_configured');
+  networks_configured.click(function(){
+    $(".modal-footer .btn-primary").removeClass("disabled").attr("disabled", !networks_configured.is(":checked"));
+    $(".network_checkbox_unchecked").toggle();
+  });
 });
