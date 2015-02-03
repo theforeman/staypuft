@@ -6,10 +6,10 @@
     <%= link_to _("Cancel"), deployment_path(@deployment),
                 :method  => :delete,
                 :confirm => _("This will clear whole deployment configuration. Are you sure?"),
-                :class   => "btn btn-danger" %>
+                :class   => "btn btn-danger cancel" %>
   <% else %>
       <%= link_to _("Cancel"), deployment_path(@deployment),
-                  :class => "btn btn-danger" %>
+                  :class => "btn btn-danger cancel" %>
   <% end %>
 
   <!-- Render Back Button -->
@@ -21,7 +21,7 @@
   <% end %>
 
   <!-- Render Next/Submit Button -->
-  <%= button_tag(:type => 'submit', :class => "btn btn-primary") do %>
+  <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right") do %>
     <% if step == Staypuft::Deployment::STEP_CONFIGURATION %>
       <%= _("Submit") %>
     <% else %>

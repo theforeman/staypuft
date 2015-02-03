@@ -4,7 +4,7 @@
 <%= render :layout => 'title' do %>
   <%= alert_if_deployed %>
 
-  <div class="well">
+  <div class="well deployment-wizard">
     <div class="wizard-container">
       <%= deployment_wizard 2 %>
     </div>
@@ -53,9 +53,10 @@
               <%= _("Back") %>
             </a>
             <%= link_to _("Cancel"), deployment_path(@deployment),
-                        :class => "btn btn-danger" %>
+                        :class => "btn btn-danger cancel" %>
             <%= button_tag(:type => 'submit', :class => "btn btn-primary pull-right", :id => "vip_modal_button" ) do %>
               <%= _("Next") %>
+              <span class="glyphicon glyphicon-chevron-right"></span>
             <% end %>
           </div>
         <% end %>
