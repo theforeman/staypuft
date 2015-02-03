@@ -26,7 +26,7 @@ li.inner-nav a {
 li.inner-nav.active a {
   text-decoration:underline;
 }
-.deployment-wizard .wizard {
+.deployment-wizard .wizard, .wizard-container .wizard {
   width: 100%;
   float: left;
   padding-left: 0;
@@ -48,6 +48,15 @@ li.inner-nav.active a {
   position: absolute;
   bottom: 20px;
   right: 20px;
+}
+
+.deployment-wizard .pull-right {
+  margin-left: 5px;
+}
+
+.deployment-wizard .cancel {
+  margin-right: 5px;
+  float: left;
 }
 
 .network_checkbox {
