@@ -341,7 +341,7 @@ module Staypuft
                                        when Platform::RHEL6
                                          Operatingsystem.where(name: name, major: '6', minor: '5').first
                                        when Platform::RHEL7
-                                         Operatingsystem.where(name: name, major: '7', minor: '0').first
+                                         Operatingsystem.where(name: name, major: '7').order('minor desc').first
                                        end or
           raise 'missing Operatingsystem'
       self.hostgroup.save!
