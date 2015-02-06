@@ -88,7 +88,7 @@ module Staypuft
     end
 
     def pcmk_fs_manage
-      backend == BACKEND_FILE
+      nfs_backend?
     end
 
     def backend_labels_for_layout
