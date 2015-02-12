@@ -65,14 +65,18 @@ module Staypuft
 
     # some services don't have puppetclasses yet, since they aren't broken out on the back end
     SERVICES       = {
-        :cinder_node        => { :name => 'Cinder (node)', :class => ['quickstack::storage_backend::cinder'] },
-        :nova_compute       => { :name => 'Nova-compute', :class => ['quickstack::nova_network::compute'] },
-        :neutron_compute    => { :name => 'Neutron-compute', :class => ['quickstack::neutron::compute'] },
+        :cinder_node        => { :name => 'Cinder (node)', :class => ['quickstack::storage_backend::cinder',
+                                                                      'quickstack::ntp'] },
+        :nova_compute       => { :name => 'Nova-compute', :class => ['quickstack::nova_network::compute',
+                                                                     'quickstack::ntp'] },
+        :neutron_compute    => { :name => 'Neutron-compute', :class => ['quickstack::neutron::compute',
+                                                                        'quickstack::ntp'] },
         :swift_node         => { :name => 'Swift (node)', :class => ['quickstack::swift::storage'] },
         :controller         => { :name  => 'Controller',
                                  :class => ['quickstack::openstack_common',
                                             'quickstack::pacemaker::common',
-                                            'quickstack::pacemaker::params'] },
+                                            'quickstack::pacemaker::params',
+                                            'quickstack::ntp'] },
         :keystone           => { :name  => 'Keystone',
                                  :class => ['quickstack::pacemaker::keystone'] },
         :load_balancer      => { :name  => 'Load Balancer',
@@ -84,18 +88,21 @@ module Staypuft
         :nova               => { :name => 'Nova', :class => ['quickstack::pacemaker::nova'] },
         :heat               => { :name => 'Heat', :class => ['quickstack::pacemaker::heat'] },
         :cinder             => { :name => 'Cinder', :class => ['quickstack::pacemaker::cinder'] },
-        :swift              => { :name => 'Swift', :class => ['quickstack::pacemaker::swift'] },
+        :swift              => { :name => 'Swift', :class => ['quickstack::pacemaker::swift',
+                                                              'quickstack::ntp'] },
         :horizon            => { :name => 'Horizon', :class => ['quickstack::pacemaker::horizon'] },
         :galera             => { :name => 'Galera', :class => ['quickstack::pacemaker::galera'] },
         :mysql              => { :name => 'Mysql', :class => ['quickstack::pacemaker::mysql'] },
         :ceilometer         => { :name => 'Ceilometer', :class => ['quickstack::pacemaker::nosql',
                                                                         'quickstack::pacemaker::ceilometer'] },
         :neutron            => { :name => 'Neutron', :class => ['quickstack::pacemaker::neutron'] },
-        :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common'] },
+        :generic_rhel_7     => { :name => 'Generic RHEL 7', :class => ['quickstack::openstack_common',
+                                                                       'quickstack::ntp'] },
         :ceph_osd           => { :name => 'Ceph Storage (OSD) (node)',
                                  :class => ['quickstack::openstack_common',
                                             'quickstack::ceph::config',
-                                            'quickstack::firewall::ceph_osd'] },
+                                            'quickstack::firewall::ceph_osd',
+                                            'quickstack::ntp'] },
     }
 
     # The list of roles is still from astapor
@@ -347,6 +354,8 @@ module Staypuft
       ceph_osd_pool_size       = { :string => '<%= @host.deployment.ceph.osd_pool_size %>' }
       ceph_osd_journal_size    = { :string => '<%= @host.deployment.ceph.osd_journal_size %>' }
 
+      # NTP
+      ntp_servers              = { :array => "<%= @host.params['ntp-servers'].split(',') %>" }
 
       # effective_value grabs shared password if deployment is in shared password mode,
       # otherwise use the service-specific one
@@ -687,6 +696,9 @@ module Staypuft
           },
           'quickstack::pacemaker::ceilometer' => {
               'ceilometer_metering_secret' => ceilometer_metering,
+          },
+          'quickstack::ntp' => {
+              'servers' => ntp_servers,
           }
       }
     end
