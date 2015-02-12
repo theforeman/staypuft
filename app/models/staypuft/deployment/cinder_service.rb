@@ -202,12 +202,21 @@ module Staypuft
       end
     end
 
-    %w{hostname login password server_port storage_familie transport_type storage_protocol
-        nfs_share nfs_shares_config volume_list vfiler vserver controller_ip sa_password 
-        storage_pool }.each do |name|
+    %w{hostname login password server_port transport_type storage_protocol
+        nfs_shares_config volume_list vfiler vserver sa_password }.each do |name|
       define_method "compute_netapp_#{name}s" do
         self.netapps.collect { |e| e.send name }
       end
+    end
+
+    %w{controller_ips nfs_shares storage_pools}.each do |name|
+      define_method "compute_netapp_#{name}" do
+        self.netapps.collect { |e| e.send name }
+      end
+    end
+
+    def compute_netapp_storage_families
+      self.netapps.collect { |e| e.send :storage_family }
     end
 
     private
