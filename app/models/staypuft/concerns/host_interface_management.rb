@@ -17,6 +17,16 @@ module Staypuft
         interfaces
       end
 
+      def interfaces_identifiers_with_subnets
+        interfaces = [ [self.primary_interface, self.subnet.name] ]
+        if self.respond_to?(:interfaces)
+          interfaces += self.interfaces.where("type <> 'Nic::BMC'").physical.map do |interface|
+            [interface.identifier, ((sub = interface.subnet) ? sub.name :  "")]
+          end
+        end
+        interfaces
+      end
+
       def make_all_interfaces_managed
         self.interfaces.each do |interface|
           interface.managed = true
