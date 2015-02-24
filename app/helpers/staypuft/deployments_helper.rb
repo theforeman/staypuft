@@ -52,6 +52,14 @@ module Staypuft
       host.interfaces_identifiers.compact.sort.join(tag(:br)).html_safe
     end
 
+    def host_nics_with_subnets(host)
+      nics_list = ""
+      host.interfaces_identifiers_with_subnets.each do |nic_plus_subnet|
+        nics_list += nic_plus_subnet[0] + " (#{nic_plus_subnet[1]})" + tag(:br)
+      end
+      nics_list.html_safe
+    end
+
     def host_disks(host)
       hosts_facts = FactValue.joins(:fact_name).where(host_id: host.id)
       host.blockdevices.collect do |blockdevice|

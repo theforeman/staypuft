@@ -14,7 +14,11 @@
           <th><%= _("CPUs") %><br/><span class="text-muted small"><%= _("(cores)") %></span></th>
           <th><%= _("Memory") %><br/><span class="text-muted small"><%= _("(GB)") %></span></th>
           <th><%= _("Storage") %></th>
-          <th><%= _("NICs") %></th>
+          <% if local_assigns[:deployment_role_col] %>
+            <th><%= _("NICs (Subnet)") %></th>
+          <% else %>
+            <th><%= _("NICs") %></th>
+          <% end %>
           <th class="hidden-s hidden-xs"><%= sort :ip, :as => _('IP Address') %></th>
         </tr>
       </thead>
@@ -43,7 +47,11 @@
             <td><%= host.cpus if host.respond_to?(:cpus) %></td>
             <td><%= host.mem if host.respond_to?(:mem) %></td>
             <td><%= host_disks(host) %></td>
-            <td><%= host_nics(host) %></td>
+            <% if local_assigns[:deployment_role_col] %>
+              <td><%= host_nics_with_subnets(host) %></td>
+            <% else %>
+              <td><%= host_nics(host) %></td>
+            <% end %>
             <td class="hidden-s hidden-xs"><%= host.ip %></td>
           </tr>
         <% end %>
