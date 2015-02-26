@@ -19,11 +19,11 @@ module Staypuft
 
     def initialize(attrs = {})
       @errors = ActiveModel::Errors.new(self)
-      self.attributes = attrs
       self.server_port = 80
       self.storage_family = 'ontap_cluster'
       self.transport_type = 'http'
       self.storage_protocol = 'nfs'
+      self.attributes = attrs
     end
 
     def self.human_attribute_name(attr, options = {})
