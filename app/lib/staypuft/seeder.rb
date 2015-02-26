@@ -323,7 +323,7 @@ module Staypuft
       cinder_netapp_login             = { :array => '<%= @host.deployment.cinder.compute_netapp_logins %>' }
       cinder_netapp_password          = { :array => '<%= @host.deployment.cinder.compute_netapp_passwords %>' }
       cinder_netapp_server_port       = { :array => '<%= @host.deployment.cinder.compute_netapp_server_ports %>' }
-      cinder_netapp_storage_family    = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_families %>' }
+      cinder_netapp_storage_family    = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_familys %>' }
       cinder_netapp_transport_type    = { :array => '<%= @host.deployment.cinder.compute_netapp_transport_types %>' }
       cinder_netapp_storage_protocol  = { :array => '<%= @host.deployment.cinder.compute_netapp_storage_protocols %>' }
       cinder_netapp_nfs_shares        = { :array => '<%= @host.deployment.cinder.compute_netapp_nfs_shares %>' }

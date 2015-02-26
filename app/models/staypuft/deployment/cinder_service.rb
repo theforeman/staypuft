@@ -124,7 +124,7 @@ module Staypuft
         :compute_eqlx_group_names, :compute_eqlx_pools, :compute_eqlx_thin_provision,
         :compute_eqlx_use_chap, :compute_eqlx_chap_logins, :compute_eqlx_chap_passwords,
         :netapps, :compute_netapp_hostnames, :compute_netapp_logins, :compute_netapp_passwords,
-        :compute_netapp_server_ports, :compute_netapp_storage_families,
+        :compute_netapp_server_ports, :compute_netapp_storage_familys,
         :compute_netapp_transport_types, :compute_netapp_storage_protocols,
         :compute_netapp_nfs_shares, :compute_netapp_nfs_shares_configs, :compute_netapp_volume_lists,
         :compute_netapp_vfilers, :compute_netapp_vservers, :compute_netapp_controller_ips,
@@ -202,21 +202,28 @@ module Staypuft
       end
     end
 
-    %w{hostname login password server_port transport_type storage_protocol
-        nfs_shares_config volume_list vfiler vserver sa_password }.each do |name|
+    %w{hostname login password server_port storage_family transport_type
+       storage_protocol nfs_shares_config volume_list vfiler vserver
+       sa_password }.each do |name|
       define_method "compute_netapp_#{name}s" do
         self.netapps.collect { |e| e.send name }
       end
     end
 
-    %w{controller_ips nfs_shares storage_pools}.each do |name|
+    %w{controller_ips storage_pools}.each do |name|
       define_method "compute_netapp_#{name}" do
         self.netapps.collect { |e| e.send name }
       end
     end
 
-    def compute_netapp_storage_families
-      self.netapps.collect { |e| e.send :storage_family }
+    # We need to split the NFS share by comma since puppet-cinder
+    # is expecting an array of shares instead of just a comma
+    # separated list.  .split() splits up the string by commas
+    # and .reject() removes any empty elements in the resulting array
+    %w{nfs_shares}.each do |name|
+      define_method "compute_netapp_#{name}" do
+        self.netapps.collect { |e| e.send(name).split(',').reject(&:empty?) }
+      end
     end
 
     private
