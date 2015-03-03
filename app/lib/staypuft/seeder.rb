@@ -342,7 +342,7 @@ module Staypuft
       ceph_cluster_network      = { :string => "<%= @host.network_query.network_address_for_host('#{Staypuft::SubnetType::STORAGE_CLUSTERING}') %>" }
       # FIXME: this should actually be STORAGE instead of PXE, but only after we have a reliable way of identifying DNS names
       #        on the storage network
-      ceph_public_network      = { :string => "<%= @host.network_query.network_address_for_host('#{Staypuft::SubnetType::PXE}') %>" }
+      ceph_public_network      = { :string => "<%= @host.network_query.network_address_for_host('#{Staypuft::SubnetType::STORAGE}') %>" }
       ceph_fsid                = { :string => '<%= @host.deployment.ceph.fsid %>' }
       ceph_images_key          = { :string => '<%= @host.deployment.ceph.images_key %>' }
       ceph_volumes_key         = { :string => '<%= @host.deployment.ceph.volumes_key %>' }
