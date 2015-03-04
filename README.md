@@ -44,7 +44,7 @@ remote is github.com/theforeman/staypuft. Now bump the version in lib/staypuft/v
 Finally build and release new gem by running `rake release`. This will build the package,
 tag the commit, push the commit and the tag to origin and uploads the gem to rubygems.org.
 
-To build and RPM we recommend using our specs in [Foreman packaging](https://github.com/theforeman/foreman-packaging).
+To build an RPM we recommend using our specs in [Foreman packaging](https://github.com/theforeman/foreman-packaging).
 You should find the spec in rpm/develop branch. There's also a README.md which explains
 how you should update and build a package. Long story short, you update the gem and spec,
 send and send a PR. Once it's merged you can build in our koji instance (if you have
