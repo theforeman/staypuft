@@ -277,7 +277,7 @@ module Staypuft
                                                       'network_auto_schedule' => 'default' }
                                         }
       neutron_network_device_mtu  = { :string => '<%= @host.deployment.neutron.compute_network_device_mtu %>' }
-
+      l3_ha                       = { :string => "<%= @host.deployment.neutron.l3_ha.to_s %>" }
       # Glance
       glance                      = { :string => '<%= @host.deployment.glance.ceph_backend? ? "false" : "true" %>'}
       backend                     = { :string => '<%= @host.deployment.glance.backend %>' }
@@ -525,6 +525,7 @@ module Staypuft
               'security_group_api'             => neutron_security_group_api,
               'network_device_mtu'             => neutron_network_device_mtu,
               'veth_mtu'                       => neutron_network_device_mtu,
+              'l3_ha'                          => l3_ha,
             },
           'quickstack::pacemaker::glance'          => {
               'backend'         => backend,
