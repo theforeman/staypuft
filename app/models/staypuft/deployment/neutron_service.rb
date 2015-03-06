@@ -103,7 +103,7 @@ module Staypuft
         :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
         :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config, :core_plugin,
         :ml2_plugin?, :n1kv_plugin?, :n1kv_vsm_ip, :n1kv_vsm_password,
-        :core_plugin_module, :network_device_mtu, :compute_network_device_mtu
+        :core_plugin_module, :network_device_mtu, :compute_network_device_mtu, :l3_ha
     end
 
     def set_defaults
@@ -206,6 +206,10 @@ module Staypuft
 
     def ml2_mechanisms
       Ml2Mechanisms::TYPES.map { |ml2_type| ml2_type if self.send("#{ml2_type}_mechanism?") }.compact
+    end
+
+    def l3_ha
+      deployment.network_query.controllers.size > 1
     end
 
     def param_hash
