@@ -43,6 +43,7 @@ module Staypuft
       ::Api::V1::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
       ::Api::V2::HostsController.send :include, Staypuft::Concerns::HostsApiExtensions
       ::HostsController.send :include, Staypuft::Concerns::HostsControllerExtensions
+      ::Nic::Bond.send :include, Staypuft::Concerns::NicBondingExtensions
 
       # preload all the Foreman's lib files but only in production
       if Rails.env.production?
