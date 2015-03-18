@@ -211,7 +211,7 @@ module Staypuft
                                            :layouts                 => ALL_LAYOUTS}
     }
 
-    def get_host_format(param_name, subnet_type_name)
+    def get_host_format(param_name)
       { :string => "<%= @host.deployment.network_query.get_vip(:#{param_name}) %>" }
     end
 
@@ -386,14 +386,15 @@ module Staypuft
       pcmk_ip                 = { :string => "<%= @host.network_query.ip_for_host('#{Staypuft::SubnetType::CLUSTER_MGMT}') %>" }
       lb_backend_server_addrs = { :array  => "<%= @host.deployment.network_query.controller_ips('#{Staypuft::SubnetType::MANAGEMENT}') %>" }
       # private API/management
-      amqp_host    = get_host_format :amqp_vip, Staypuft::SubnetType::MANAGEMENT
-      mysql_host   = get_host_format :db_vip, Staypuft::SubnetType::MANAGEMENT
-      glance_host  = get_host_format :glance_private_vip, Staypuft::SubnetType::MANAGEMENT
-      neutron_host = get_host_format :neutron_private_vip, Staypuft::SubnetType::MANAGEMENT
+      amqp_host     = get_host_format :amqp_vip
+      mysql_host    = get_host_format :db_vip
+      glance_host   = get_host_format :glance_private_vip
+      neutron_host  = get_host_format :neutron_private_vip
+      nova_host     = get_host_format :nova_private_vip
       #admin API
-      auth_host    = get_host_format :keystone_admin_vip, Staypuft::SubnetType::ADMIN_API
+      auth_host     = get_host_format :keystone_admin_vip
       # public API
-      nova_host    = get_host_format :nova_public_vip, Staypuft::SubnetType::PUBLIC_API
+      vncproxy_host = get_host_format :nova_public_vip
 
       fencing_type                   = { :string => '<%= (@host.bmc_nic && @host.bmc_nic.fencing_enabled?) ? @host.bmc_nic.attrs["fencing_type"] : "disabled" %>' }
       fence_ipmilan_address          = { :string => '<%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled? %>' }
@@ -631,6 +632,7 @@ module Staypuft
               'glance_host'                => glance_host,
               'auth_host'                  => auth_host,
               'nova_host'                  => nova_host,
+              'vncproxy_host'              => vncproxy_host,
               'private_ip'                 => private_ip,
               'network_device_mtu'         => nova_network_device_mtu,
               'rabbit_hosts'               => lb_backend_server_addrs,
@@ -670,6 +672,7 @@ module Staypuft
               'auth_host'                  => auth_host,
               'neutron_host'               => neutron_host,
               'nova_host'                  => nova_host,
+              'vncproxy_host'              => vncproxy_host,
               'private_ip'                 => private_ip,
               'agent_type'                 => neutron_agent_type,
               'security_group_api'         => neutron_security_group_api,
