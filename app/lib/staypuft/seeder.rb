@@ -384,6 +384,7 @@ module Staypuft
       amqp_pw                       = { :string => '<%= @host.deployment.passwords.effective_value(:amqp) %>' }
       amqp_nssdb_pw                 = { :string => '<%= @host.deployment.passwords.effective_value(:amqp_nssdb) %>' }
       keystone_admin_token          = { :string => '<%= @host.deployment.passwords.effective_value(:keystone_admin_token) %>' }
+      hacluster_pw                  = { :string => '<%= @host.deployment.passwords.effective_value(:hacluster) %>' }
 
       #these don't share the user-supplied password value; they're always a random per param value
       ceilometer_metering           = { :string => '<%= @host.deployment.passwords.ceilometer_metering_secret %>' }
@@ -672,7 +673,8 @@ module Staypuft
               'fence_ipmilan_hostlist'        => fence_ipmilan_hostlist,
               'fence_ipmilan_host_to_address' => fence_ipmilan_host_to_address,
               'fence_ipmilan_expose_lanplus'  => fence_ipmilan_expose_lanplus,
-              'fence_ipmilan_lanplus_options' => fence_ipmilan_lanplus_options },
+              'fence_ipmilan_lanplus_options' => fence_ipmilan_lanplus_options,
+              'hacluster_pwd'                 => hacluster_pw },
           'quickstack::pacemaker::neutron'         => {
               'ml2_network_vlan_ranges'        => ml2_network_vlan_ranges,
               'ml2_tenant_network_types'       => ml2_tenant_network_types,
