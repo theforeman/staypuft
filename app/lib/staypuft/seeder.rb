@@ -656,6 +656,7 @@ module Staypuft
               'ovs_tunnel_iface'           => compute_ovs_tunnel_iface,
               'ovs_tunnel_types'           => ovs_tunnel_types,
               'ovs_vlan_ranges'            => compute_ovs_vlan_ranges,
+              'ovs_l2_population'          => { :string =>  '<%= @host.deployment.neutron.l2population_mechanism? ? "True" : "False" %>' },
               'admin_password'             => admin_pw,
               'ceilometer_user_password'   => ceilometer_user_pw,
               'neutron_db_password'        => neutron_db_pw,
