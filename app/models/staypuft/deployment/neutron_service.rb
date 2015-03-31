@@ -209,7 +209,7 @@ module Staypuft
     end
 
     def l3_ha
-      deployment.network_query.controllers.size > 1
+      (deployment.network_query.controllers.size > 1) && !l2population_mechanism?
     end
 
     def param_hash
