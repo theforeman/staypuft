@@ -5,7 +5,7 @@ module Staypuft
         :heat_cfn_user, :keystone_user, :neutron_user, :nova_user, :swift_user, :swift_admin, :amqp
 
     DB_SERVICES_PASSWORDS = :cinder_db, :glance_db, :heat_db, :mysql_root, :keystone_db,
-        :neutron_db, :nova_db, :amqp_nssdb
+        :neutron_db, :nova_db, :amqp_nssdb, :hacluster
 
     OTHER_PASSWORDS = :keystone_admin_token, :ceilometer_metering_secret, :heat_auth_encrypt_key,
         :horizon_secret_key, :swift_shared_secret, :neutron_metadata_proxy_secret
