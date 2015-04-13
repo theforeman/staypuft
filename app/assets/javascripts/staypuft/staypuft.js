@@ -16,7 +16,7 @@
 
 $(function () {
   // Check all checkboxes in table
-  $('.check_all').on('change', function (e) {
+  $('.check_all').live('change', function (e) {
     var table = $(e.target).closest('table');
     $('td input:checkbox', table).attr('checked', e.target.checked);
     $('td input:checkbox', table).closest("tr").toggleClass("info", this.checked);
@@ -380,8 +380,15 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
       $("input:checkbox[name=host_ids[]]:checked").removeAttr('checked')
       $("tr.checkbox_highlight").removeClass('checkbox_highlight');
       $("tr.info").removeClass('info');
+      //reload the assigned hosts div
+      var to_path = $('#configure_networks_modal').data('refresh_path');
 
-    })
+      $('#configure_networks_modal').modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+      $('#assigned-hosts_table').html('<img alt="Spinner" src="/assets/spinner.gif" style="display: block; margin-left: auto; margin-right: auto">');
+      $('#assigned-hosts_table').load(to_path);
+    });
   });
 
   $('#new_subnet_modal').on('shown.bs.modal', function(e) {
