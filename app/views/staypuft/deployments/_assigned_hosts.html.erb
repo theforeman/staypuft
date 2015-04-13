@@ -11,8 +11,8 @@
         <%= submit_tag _("Unassign Hosts"), :class => "btn btn-primary btn-sm", :disabled => true, :id => "unassign_hosts_button" %>
       </div>
     </div>
-    <%= render partial: "hosts_table", locals: { hosts: hosts, deployment_role_col: true } %>
-    <div class="modal fade" id="configure_networks_modal" tabindex="-1" role="dialog" aria-labelledby="<%= _("Configure Networks") %>" aria-hidden="true" data-path="<%= deployment_interface_assignments_path(@deployment.id) %>">
+    <div id="assigned-hosts_table"><%= render partial: "hosts_table", locals: { hosts: hosts, deployment_role_col: true } %></div>
+    <div class="modal fade" id="configure_networks_modal" tabindex="-1" role="dialog" aria-labelledby="<%= _("Configure Networks") %>" aria-hidden="true" data-path="<%= deployment_interface_assignments_path(@deployment.id)  %>" data-refresh_path="<%= refresh_assigned_hosts_deployment_path(@deployment.id)%>">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">

@@ -57,3 +57,12 @@
         <% end %>
       </tbody>
     </table>
+
+
+    <script type="text/javascript">
+      //small replacement to make the behavior the same as it was before we had a refreshs
+      jQuery('a[href*="refresh_assigned_hosts"]').each(function(){
+        var _href = $(this).attr('href');
+        $(this).attr('href', _href.replace(/refresh_assigned_hosts/, ''));
+      })
+    </script>

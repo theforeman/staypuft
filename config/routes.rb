@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         post 'unassign_host'
         get 'export_config'
         post 'import_config'
+        get 'refresh_assigned_hosts'
       end
 
       resources :steps

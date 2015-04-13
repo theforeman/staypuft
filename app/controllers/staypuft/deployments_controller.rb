@@ -153,6 +153,12 @@ module Staypuft
       redirect_to deployment_path(@deployment)
     end
 
+    def refresh_assigned_hosts
+      @deployment = Deployment.find(params[:id])
+      assigned_hosts = @deployment.hosts.select { |h| !h.open_stack_deployed? }
+      render partial: "hosts_table", locals: { hosts: assigned_hosts, deployment_role_col: true, path: deployment_path(@deployment.id) }
+    end
+
     private
 
     def assign_host_to_hostgroup(assignee_host, hostgroup)
