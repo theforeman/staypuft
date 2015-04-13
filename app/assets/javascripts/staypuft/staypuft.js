@@ -411,7 +411,7 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
   });
   $('#vip_modal').on('shown.bs.modal', function(){
     $("#vip_modal_button").submit();
-  })
+  });
   var scrolled = false;
 
   $(window).scroll(function(){
@@ -427,7 +427,7 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
     this.form.method = $(this).data('method');
     this.form.submit();
     return false;
-  })
+  });
 
   var free_host_checkboxes = $('#free-hosts table input:checkbox');
   free_host_checkboxes.click(function(){
@@ -461,19 +461,19 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
   $(".tab-content").find(".form-group.has-error").each(function(index) {
     var id = $(this).parentsUntil(".tab-content").last().attr("id");
     $("a[href=#"+id+"]").parent().addClass("tab-error");
-  })
+  });
 
   $("button.add_another_server").live("click", function() {
     var eqlx_form = function () {
       return $('#eqlx_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
-    }
+    };
     $('#eqlxs').append(eqlx_form());
     if($('#eqlxs').children().length > 1) {
       var added_form_span = $('#eqlxs').children().last().find('h5').find('.server_number');
       var previous_span_number = $('#eqlxs').children().eq(-2).find('h5').find('.server_number');
       added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
     }
-  })
+  });
 
   /**
    * Adds another NetApp storage system configuration section
@@ -481,7 +481,7 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
   $("button.add_another_netapp").live("click", function() {
     var netapp_form = function () {
       return $('#netapp_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
-    }
+    };
     $('#netapps').append(netapp_form());
     if($('#netapps').children().length > 1) {
       var added_form_span = $('#netapps').children().last().find('h5').find('.server_number');
@@ -492,19 +492,19 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
     // Unbind existing handlers & add event handlers to all NetApp config sections
     $(".netapp-main select[name*=storage_family]").unbind().change(showHideNetAppOptions);
     $(".netapp-main select[name*=storage_protocol]").unbind().change(showHideNetAppOptions);
-  })
+  });
 
   $("button.add_another_switch").live("click", function() {
     var nexus_form = function() {
       return $('#nexus_form_template').text().replace(/NEW_RECORD/g, new Date().getTime());
-    }
+    };
     $('#nexuses').append(nexus_form());
     if($('#nexuses').children().length > 1) {
       var added_form_span = $('#nexuses').children().last().find('h5').find('.switch_number');
       var previous_span_number = $('#nexuses').children().eq(-2).find('h5').find('.switch_number');
       added_form_span.html(parseInt(previous_span_number.html(), 10) + 1);
     }
-  })
+  });
 
   function remove_element_on_click(element_name) {
     $(element_name + " h5 a.remove").live("click", function(){
