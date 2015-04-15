@@ -152,11 +152,15 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
 
   showControllerWarning("glance");
   showControllerWarning("cinder");
+  showControllerWarning("l2pop");
   $("input[name='staypuft_deployment[glance][driver_backend]']").change(function(){
     showControllerWarning("glance")
   });
   $("#staypuft_deployment_cinder_backend_lvm").change(function(){
     showControllerWarning("cinder")
+  });
+  $("#staypuft_deployment_neutron_ml2_l2population").change(function(){
+    showControllerWarning("l2pop")
   });
   function showControllerWarning(which_warning) {
     if(which_warning == "glance") {
@@ -179,6 +183,14 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
         $('.cinder-controller-warning').show();
       } else {
         $('.cinder-controller-warning').hide();
+      }
+    }
+    if(which_warning == "l2pop") {
+      if($("#staypuft_deployment_neutron_ml2_l2population").is(":checked")) {
+        $('.neutron-l2pop-warning').find(".replace").html(" (L2 Population)");
+        $('.neutron-l2pop-warning').show();
+      } else {
+        $('.neutron-l2pop-warning').hide();
       }
     }
   }
