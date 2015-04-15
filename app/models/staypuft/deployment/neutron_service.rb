@@ -110,7 +110,7 @@ module Staypuft
       self.network_segmentation   = NetworkSegmentation::VXLAN
       self.core_plugin = CorePlugin::ML2
       self.ml2_openvswitch = "true"
-      self.ml2_l2population = "true"
+      self.ml2_l2population = "false"
       self.ml2_cisco_nexus = "false"
       self.network_device_mtu = nil
     end
