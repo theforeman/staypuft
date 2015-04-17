@@ -582,7 +582,7 @@ module Staypuft
               'keystonerc'     => keystonerc,
               'admin_password' => admin_pw,
               'admin_token'    => keystone_admin_token,
-              'ceilometer'     => "false" },
+              'ceilometer'     => ceilometer },
           'quickstack::pacemaker::horizon'         => {
               'secret_key' => horizon_secret_key },
           'quickstack::pacemaker::galera'          => {
