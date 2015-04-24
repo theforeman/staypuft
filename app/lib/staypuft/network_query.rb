@@ -59,6 +59,29 @@ module Staypuft
       interface_hash_for_host(subnet_type_name, host)[:subnet]
     end
 
+    def interfaces_for_tenant_subnet(host=@host)
+      interface_hash = interface_hash_for_host(
+        Staypuft::SubnetType::TENANT, host)
+      return [] if interface_hash.empty?
+      subnet = interface_hash[:subnet]
+      top_level_interface = host.interfaces.where(
+        identifier: interface_hash[:interface]).first
+      interfaces = [top_level_interface.identifier]
+      if subnet && subnet.has_vlanid?
+        next_interface = host.interfaces.where(identifier:
+          top_level_interface.attached_to).first
+        interfaces << next_interface.identifier
+        if next_interface.is_a? Nic::Bond
+          interfaces << next_interface.attached_devices_identifiers
+        end
+      end
+      interfaces.flatten
+    end
+
+    def tenant_interface?(interface, host=@host)
+      interfaces_for_tenant_subnet(host).include?(interface)
+    end
+
     def mtu_for_tenant_subnet
       mtu = @deployment.neutron_networking? ? @deployment.neutron.network_device_mtu : @deployment.nova.network_device_mtu
     end
@@ -118,7 +141,8 @@ module Staypuft
       allow :ip_for_host, :interface_for_host, :network_address_for_host,
             :controller_ip, :controller_ips, :controller_fqdns, :get_vip, :controller_pcmk_shortnames,
             :subnet_for_host, :gateway_subnet, :gateway_interface, :gateway_interface_mac,
-            :tenant_subnet?, :mtu_for_tenant_subnet, :controller_lb_backend_shortnames
+            :tenant_subnet?, :mtu_for_tenant_subnet, :controller_lb_backend_shortnames,
+            :interfaces_for_tenant_subnet, :tenant_interface?
     end
 
     private
