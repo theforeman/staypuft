@@ -64,15 +64,20 @@ module Staypuft
         Staypuft::SubnetType::TENANT, host)
       return [] if interface_hash.empty?
       subnet = interface_hash[:subnet]
-      top_level_interface = host.interfaces.where(
-        identifier: interface_hash[:interface]).first
-      interfaces = [top_level_interface.identifier]
-      if subnet && subnet.has_vlanid?
-        next_interface = host.interfaces.where(identifier:
-          top_level_interface.attached_to).first
-        interfaces << next_interface.identifier
-        if next_interface.is_a? Nic::Bond
-          interfaces << next_interface.attached_devices_identifiers
+      interfaces = []
+      if interface_hash[:interface] == host.primary_interface
+        interfaces << host.primary_interface
+      else
+        top_level_interface = host.interfaces.where(
+          identifier: interface_hash[:interface]).first
+        interfaces << top_level_interface.identifier
+        if subnet && subnet.has_vlanid? && top_level_interface
+          next_interface = host.interfaces.where(identifier:
+            top_level_interface.attached_to).first
+          interfaces << next_interface.identifier
+          if next_interface.is_a? Nic::Bond
+            interfaces << next_interface.attached_devices_identifiers
+          end
         end
       end
       interfaces.flatten
