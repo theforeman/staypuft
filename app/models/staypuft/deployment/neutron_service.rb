@@ -6,7 +6,7 @@ module Staypuft
 
     SEGMENTATION_LIST   = ['vxlan', 'vlan', 'gre']
     VLAN_HELP           = N_('[1-4094] (e.g. 10:15)')
-    ML2MECHANISM_TYPES  = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus
+    ML2MECHANISM_TYPES  = :ml2_openvswitch, :ml2_l2population, :ml2_cisco_nexus, :ml2_cisco_n1kv
     N1KV_PARAMS         = :n1kv_vsm_ip, :n1kv_vsm_password
 
     param_attr :network_segmentation, :tenant_vlan_ranges, :core_plugin, :network_device_mtu,
@@ -69,9 +69,11 @@ module Staypuft
       OPENVSWITCH = 'openvswitch'
       L2POPULATION = 'l2population'
       CISCO_NEXUS = 'cisco_nexus'
+      CISCO_N1KV = 'cisco_n1kv'
       LABELS = { OPENVSWITCH => N_('Open vSwitch'),
                  L2POPULATION => N_('L2 Population'),
-                 CISCO_NEXUS => N_('Cisco Nexus') }
+                 CISCO_NEXUS => N_('Cisco Nexus'),
+                 CISCO_N1KV  => N_('Cisco N1KV')}
       TYPES = LABELS.keys
       HUMAN = N_('ML2 Mechanism Drivers')
     end
@@ -100,7 +102,7 @@ module Staypuft
       allow :networker_vlan_ranges, :compute_vlan_ranges, :network_segmentation, :enable_tunneling?,
         :tenant_iface, :networker_ovs_bridge_mappings, :networker_ovs_bridge_uplinks,
         :compute_ovs_bridge_mappings, :compute_ovs_bridge_uplinks, :ovs_tunnel_types,
-        :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?,
+        :openvswitch_mechanism?, :l2population_mechanism?, :cisco_nexus_mechanism?, :cisco_n1kv_mechanism?,
         :ml2_mechanisms, :nexuses, :active?, :compute_cisco_nexus_config, :core_plugin,
         :ml2_plugin?, :n1kv_plugin?, :n1kv_vsm_ip, :n1kv_vsm_password,
         :core_plugin_module, :network_device_mtu, :compute_network_device_mtu, :l3_ha
@@ -112,6 +114,7 @@ module Staypuft
       self.ml2_openvswitch = "true"
       self.ml2_l2population = "false"
       self.ml2_cisco_nexus = "false"
+      self.ml2_cisco_n1kv = "false"
       self.network_device_mtu = nil
     end
 
@@ -188,6 +191,10 @@ module Staypuft
       self.ml2_cisco_nexus == "true"
     end
 
+    def cisco_n1kv_mechanism?
+      self.ml2_cisco_n1kv == "true"
+    end
+
     def ml2_plugin?
       self.core_plugin == CorePlugin::ML2
     end
@@ -219,6 +226,7 @@ module Staypuft
         'ml2_openvswitch'            => ml2_openvswitch,
         'ml2_l2population'           => ml2_l2population,
         'ml2_cisco_nexus'            => ml2_cisco_nexus,
+        'ml2_cisco_n1kv'             => ml2_cisco_n1kv,
         'nexuses'                    => nexuses,
         'n1kv_vsm_ip'                => n1kv_vsm_ip,
         'n1kv_vsm_password'          => n1kv_vsm_password }
