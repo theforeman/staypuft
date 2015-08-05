@@ -411,8 +411,8 @@ module Staypuft
       cisco_nexus_config             = { :hash => '<%= n = @host.deployment.neutron; (n.active? && n.cisco_nexus_mechanism?) ? n.compute_cisco_nexus_config : {} %>' }
 
       # Cisco N1KV params
-      n1kv_vsm_ip                    = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_ip : "" %>' }
-      n1kv_vsm_password              = { :string => '<%= n = @host.deployment.neutron; (n.active? && n.n1kv_plugin?) ? n.n1kv_vsm_password : "" %>' }
+      n1kv_vsm_ip                    = { :string => '<%= n = @host.deployment.neutron; (n.active? && (n.n1kv_plugin? || n.cisco_n1kv_mechanism?)) ? n.n1kv_vsm_ip : "" %>' }
+      n1kv_vsm_password              = { :string => '<%= n = @host.deployment.neutron; (n.active? && (n.n1kv_plugin? || n.cisco_n1kv_mechanism?)) ? n.n1kv_vsm_password : "" %>' }
       n1kv_plugin_additional_params  = { :hash => { 'default_policy_profile' => 'default-pp',
                                                     'network_node_policy_profile' => 'default-pp',
                                                     'poll_duration' => '10',
