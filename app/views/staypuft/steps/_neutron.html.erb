@@ -48,6 +48,13 @@
                                :checked         => @deployment.neutron.cisco_nexus_mechanism?,
                                :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['cisco_nexus']))
     %>
+    <%= check_box_f_non_inline(p, :ml2_cisco_n1kv,
+                               :checked_value   => 'true',
+                               :unchecked_value => 'false',
+                               :checked         => @deployment.neutron.cisco_n1kv_mechanism?,
+                               :text            => _(Staypuft::Deployment::NeutronService::Ml2Mechanisms::LABELS['cisco_n1kv']))
+    %>
+
   </div>
 
   <div class="neutron_n1kv_parameters inset_form hide">
@@ -67,6 +74,11 @@
       <%= p.fields_for 'nexuses[]', Staypuft::Deployment::NeutronService::Cisconexus.new, index: 'NEW_RECORD' do |e| render(partial: 'neutron_cisco_nexus_form', locals: {e: e}); end %>
     </script>
     <button type="button" class= "btn btn-primary btn-sm add_another_switch"><%= _("Add Another Switch") %></button> 
+  </div>
+
+  <div class="neutron_cisco_n1kv inset_form hide">
+    <%= change_label_width 4, text_f(p, :n1kv_vsm_ip, class: "neutron_n1kv_vsm_ip", label: _('VSM IP')) %>
+    <%= change_label_width 4, text_f(p, :n1kv_vsm_password, class: "neutron_n1kv_vsm_password", label: _('VSM Password')) %>
   </div>
 
 <% end %>

@@ -302,6 +302,18 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
     }
   }
 
+  showNeutronMl2CiscoN1kv();
+  $("#staypuft_deployment_neutron_ml2_cisco_n1kv").change(showNeutronMl2CiscoN1kv);
+  function showNeutronMl2CiscoN1kv() {
+    if ($('#staypuft_deployment_neutron_ml2_cisco_n1kv').is(":checked")) {
+      $('#staypuft_deployment_neutron_ml2_cisco_n1kv').parent().after($('.neutron_cisco_n1kv'));
+      $('.neutron_cisco_n1kv').fadeIn(duration);
+    }
+    else {
+      $('.neutron_cisco_n1kv').fadeOut(duration);
+    }
+  }
+
   showCephNotification();
   function showCephNotification() {
     var cephDeploymentNotification = readFromCookie();
