@@ -127,17 +127,6 @@ $('.neutron_ml2_mechanisms').parent().parent().removeClass('col-md-6').addClass(
     }
   }
 
-  showNeutronN1kvParameters();
-  $("input[name='staypuft_deployment[neutron][core_plugin]']").change(showNeutronN1kvParameters);
-  function showNeutronN1kvParameters() {
-    $('#staypuft_deployment_neutron_core_plugin_n1kv').parent().parent().parent().removeClass('col-md-4').addClass('col-md-6')
-    if ($('#staypuft_deployment_neutron_core_plugin_n1kv').is(":checked")) {
-      $('#staypuft_deployment_neutron_core_plugin_n1kv').parent().after($('.neutron_n1kv_parameters'));
-      $('.neutron_n1kv_parameters').fadeIn(duration);
-    } else {
-      $('.neutron_n1kv_parameters').fadeOut(duration);
-    }
-  }
 
   showNeutronExternalInterface();
   $("input[name='staypuft_deployment[neutron][use_external_interface]']").change(showNeutronExternalInterface);
