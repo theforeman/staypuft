@@ -57,11 +57,6 @@
 
   </div>
 
-  <div class="neutron_n1kv_parameters inset_form hide">
-    <%= change_label_width 4, text_f(p, :n1kv_vsm_ip, class: "neutron_n1kv_vsm_ip", label: _('VSM IP')) %>
-    <%= change_label_width 4, text_f(p, :n1kv_vsm_password, class: "neutron_n1kv_vsm_password", label: _('VSM Password')) %>
-  </div>
-
   <div class="neutron_cisco_nexus col-md-offset-1 hide">
     <div id="nexuses" class="neutron_nexus_picker">
       <% @deployment.neutron.nexuses.each_with_index do |nexus, index| %>
